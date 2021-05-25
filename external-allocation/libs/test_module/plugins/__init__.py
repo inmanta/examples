@@ -15,14 +15,16 @@
 
     Contact: code@inmanta.com
 """
-from filelock import FileLock
-import os
 import json
-from inmanta_plugins.lsm.allocation import AllocationContext, Allocator, AllocationSpec
+import os
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
-from inmanta.resources import resource, PurgeableResource
+
+from filelock import FileLock
+from inmanta_plugins.lsm.allocation import AllocationContext, AllocationSpec, Allocator
+
 from inmanta.agent.handler import CRUDHandler, HandlerContext, ResourcePurged, provider
+from inmanta.resources import PurgeableResource, resource
 
 
 class VlanPool:
@@ -33,10 +35,11 @@ class VlanPool:
     The implementation is really simple, all available and allocated vlans are stored in a
     file, this file is loaded and saved on every actions.
     """
+
     def __init__(self, path: str) -> None:
         """
         :param path: The path to the file saving the vlans.  This file should exist and contain
-            a json with range.from and range.to specified.  Those indicates the range of vlans 
+            a json with range.from and range.to specified.  Those indicates the range of vlans
             that can be used.
         """
         self._path = path
@@ -56,7 +59,7 @@ class VlanPool:
             self._range = (range.get("from", 0), range.get("to", 0))
 
             self._allocations: Dict[str, int] = pool.get("allocations", {})
-    
+
     def _save(self) -> None:
         """
         This needs to be called after doing any operation.  It will commit any changes done since last
@@ -72,19 +75,25 @@ class VlanPool:
                     # Anyone modifying the file should increase the version or its changes might be
                     # overwritten.
 
-                    raise RuntimeError("Version mismatch, the file has been modified since last load")
-            
+                    raise RuntimeError(
+                        "Version mismatch, the file has been modified since last load"
+                    )
+
             version += 1
 
             with open(self._path, "w") as f:
-                f.write(json.dumps({
-                    "version": version,
-                    "range": {
-                        "from": self._range[0],
-                        "to": self._range[1],
-                    },
-                    "allocations": self._allocations,
-                }))
+                f.write(
+                    json.dumps(
+                        {
+                            "version": version,
+                            "range": {
+                                "from": self._range[0],
+                                "to": self._range[1],
+                            },
+                            "allocations": self._allocations,
+                        }
+                    )
+                )
 
     def _get_first_free_vlan(self) -> Optional[int]:
         used = set(self._allocations.values())
@@ -135,7 +144,10 @@ class ExternalVlanAllocator(Allocator):
         - vlan_id, contianing the allocated vlan
         - vlan_allocation_key, the key that should be used for deallocation
     """
-    def __init__(self, vlan_pool: VlanPool, vlan_attribute: str, key_attribute: str) -> None:
+
+    def __init__(
+        self, vlan_pool: VlanPool, vlan_attribute: str, key_attribute: str
+    ) -> None:
         self.vlan_pool = vlan_pool
         self.vlan_attribute = vlan_attribute
         self.key_attribute = key_attribute
@@ -143,7 +155,9 @@ class ExternalVlanAllocator(Allocator):
     def get_attributes(self) -> List[str]:
         return [self.vlan_attribute, self.key_attribute]
 
-    def allocate_for(self, ctx: AllocationContext, instance: Dict[str, Any]) -> Dict[str, Any]:
+    def allocate_for(
+        self, ctx: AllocationContext, instance: Dict[str, Any]
+    ) -> Dict[str, Any]:
         key, vlan = self.vlan_pool.reserve_vlan()
         return {
             self.vlan_attribute: vlan,
@@ -153,7 +167,7 @@ class ExternalVlanAllocator(Allocator):
 
 @resource("test_module::VlanDeallocation", agent="agent", id_attribute="allocation_key")
 class VlanDeallocationResource(PurgeableResource):
-    fields = ("allocation_key", )
+    fields = ("allocation_key",)
 
 
 @provider("test_module::VlanDeallocation", name="vlan_deallocation")
@@ -162,11 +176,15 @@ class VlanDeallocation(CRUDHandler):
         super(VlanDeallocation, self).__init__(*args, **kwargs)
         self.vlan_pool = VlanPool(os.environ.get("vlan_pool_file"))
 
-    def read_resource(self, ctx: HandlerContext, resource: VlanDeallocationResource) -> None:
+    def read_resource(
+        self, ctx: HandlerContext, resource: VlanDeallocationResource
+    ) -> None:
         if not self.vlan_pool.is_reserve_key(resource.allocation_key):
             raise ResourcePurged()
 
-    def delete_resource(self, ctx: HandlerContext, resource: VlanDeallocationResource) -> None:
+    def delete_resource(
+        self, ctx: HandlerContext, resource: VlanDeallocationResource
+    ) -> None:
         self.vlan_pool.free_vlan(resource.allocation_key)
 
 

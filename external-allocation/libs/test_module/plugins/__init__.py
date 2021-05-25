@@ -23,9 +23,9 @@ from uuid import uuid4
 from filelock import FileLock
 from inmanta_plugins.lsm.allocation import AllocationContext, AllocationSpec, Allocator
 
-from inmanta.plugins import plugin
 from inmanta import config
 from inmanta.agent.handler import CRUDHandler, HandlerContext, ResourcePurged, provider
+from inmanta.plugins import plugin
 from inmanta.resources import PurgeableResource, resource
 
 
@@ -152,9 +152,7 @@ class ExternalVlanAllocator(Allocator):
         - vlan_allocation_key, the key that should be used for deallocation
     """
 
-    def __init__(
-        self, vlan_attribute: str, key_attribute: str
-    ) -> None:
+    def __init__(self, vlan_attribute: str, key_attribute: str) -> None:
         self.vlan_attribute = vlan_attribute
         self.key_attribute = key_attribute
 
@@ -180,9 +178,6 @@ class VlanDeallocationResource(PurgeableResource):
 class VlanDeallocation(CRUDHandler):
     def __init__(self, *args, **kwargs):
         super(VlanDeallocation, self).__init__(*args, **kwargs)
-        self.vlan_pool = None
-
-    def pre(self, ctx: HandlerContext, resource: VlanDeallocationResource) -> None:
         # The state_dir of the handler already contains the environment id
         self.vlan_pool = VlanPool(vlan_pool_file(""))
 

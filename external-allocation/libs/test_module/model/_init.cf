@@ -5,16 +5,16 @@ entity VlanService extends lsm::ServiceEntity:
     string name
     lsm::attribute_modifier name__modifier = "rw"
 
-    int? north_vlan_id = null
+    int? north_vlan_id
     lsm::attribute_modifier north_vlan_id__modifier = "r"
 
-    std::uuid? north_vlan_allocation_key = null
+    std::uuid? north_vlan_allocation_key
     lsm::attribute_modifier north_vlan_allocation_key__modifier = "r"
 
-    int? south_vlan_id = null
+    int? south_vlan_id
     lsm::attribute_modifier south_vlan_id__modifier = "r"
 
-    std::uuid? south_vlan_allocation_key = null
+    std::uuid? south_vlan_allocation_key
     lsm::attribute_modifier south_vlan_allocation_key__modifier = "r"
 end
 

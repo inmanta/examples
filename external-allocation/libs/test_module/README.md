@@ -17,5 +17,5 @@ export INMANTA_MODULE_REPO=git@github.com:inmanta/
 2. Run tests
 
 ```bash
-pytest tests
+pytest tests --lsm_host <your-running-orchestrator-ip>
 ```

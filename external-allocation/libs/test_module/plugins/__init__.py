@@ -23,8 +23,15 @@ from uuid import uuid4
 from filelock import FileLock
 from inmanta_plugins.lsm.allocation import AllocationContext, AllocationSpec, Allocator
 
+from inmanta.plugins import plugin
+from inmanta import config
 from inmanta.agent.handler import CRUDHandler, HandlerContext, ResourcePurged, provider
 from inmanta.resources import PurgeableResource, resource
+
+
+@plugin
+def vlan_pool_file(environment: "string") -> "string":
+    return os.path.join(config.state_dir.get(), environment, "vlan-pool.json")
 
 
 class VlanPool:
@@ -146,9 +153,8 @@ class ExternalVlanAllocator(Allocator):
     """
 
     def __init__(
-        self, vlan_pool: VlanPool, vlan_attribute: str, key_attribute: str
+        self, vlan_attribute: str, key_attribute: str
     ) -> None:
-        self.vlan_pool = vlan_pool
         self.vlan_attribute = vlan_attribute
         self.key_attribute = key_attribute
 
@@ -158,7 +164,7 @@ class ExternalVlanAllocator(Allocator):
     def allocate_for(
         self, ctx: AllocationContext, instance: Dict[str, Any]
     ) -> Dict[str, Any]:
-        key, vlan = self.vlan_pool.reserve_vlan()
+        key, vlan = VlanPool(vlan_pool_file(ctx.env)).reserve_vlan()
         return {
             self.vlan_attribute: vlan,
             self.key_attribute: key,
@@ -174,7 +180,11 @@ class VlanDeallocationResource(PurgeableResource):
 class VlanDeallocation(CRUDHandler):
     def __init__(self, *args, **kwargs):
         super(VlanDeallocation, self).__init__(*args, **kwargs)
-        self.vlan_pool = VlanPool(os.environ.get("VLAN_POOL_FILE"))
+        self.vlan_pool = None
+
+    def pre(self, ctx: HandlerContext, resource: VlanDeallocationResource) -> None:
+        # The state_dir of the handler already contains the environment id
+        self.vlan_pool = VlanPool(vlan_pool_file(""))
 
     def read_resource(
         self, ctx: HandlerContext, resource: VlanDeallocationResource
@@ -191,16 +201,10 @@ class VlanDeallocation(CRUDHandler):
 AllocationSpec(
     "vlan_allocator",
     ExternalVlanAllocator(
-        VlanPool(
-            os.environ.get("VLAN_POOL_FILE"),
-        ),
         vlan_attribute="north_vlan_id",
         key_attribute="north_vlan_allocation_key",
     ),
     ExternalVlanAllocator(
-        VlanPool(
-            os.environ.get("VLAN_POOL_FILE"),
-        ),
         vlan_attribute="south_vlan_id",
         key_attribute="south_vlan_allocation_key",
     ),

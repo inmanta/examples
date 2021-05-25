@@ -174,7 +174,7 @@ class VlanDeallocationResource(PurgeableResource):
 class VlanDeallocation(CRUDHandler):
     def __init__(self, *args, **kwargs):
         super(VlanDeallocation, self).__init__(*args, **kwargs)
-        self.vlan_pool = VlanPool(os.environ.get("vlan_pool_file"))
+        self.vlan_pool = VlanPool(os.environ.get("VLAN_POOL_FILE"))
 
     def read_resource(
         self, ctx: HandlerContext, resource: VlanDeallocationResource
@@ -192,14 +192,14 @@ AllocationSpec(
     "vlan_allocator",
     ExternalVlanAllocator(
         VlanPool(
-            os.environ.get("vlan_pool_file"),
+            os.environ.get("VLAN_POOL_FILE"),
         ),
         vlan_attribute="north_vlan_id",
         key_attribute="north_vlan_allocation_key",
     ),
     ExternalVlanAllocator(
         VlanPool(
-            os.environ.get("vlan_pool_file"),
+            os.environ.get("VLAN_POOL_FILE"),
         ),
         vlan_attribute="south_vlan_id",
         key_attribute="south_vlan_allocation_key",

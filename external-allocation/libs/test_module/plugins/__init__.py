@@ -27,6 +27,7 @@ from inmanta_plugins.lsm.allocation import AllocationContext, AllocationSpec, Al
 from inmanta import config
 from inmanta.agent.handler import CRUDHandler, HandlerContext, ResourcePurged, provider
 from inmanta.plugins import plugin
+from inmanta.protocol.endpoints import SyncClient
 from inmanta.resources import PurgeableResource, resource
 
 LOGGER = logging.getLogger(__name__)
@@ -191,7 +192,6 @@ class ExternalVlanAllocatorWrapper(Allocator):
     ) -> Dict[str, Any]:
         allocation_keys = list()
         allocated_attributes = dict()
-        error = None
         for allocator in self.allocators:
             try:
                 allocation_result = allocator.allocate_for(ctx, instance)
@@ -199,21 +199,24 @@ class ExternalVlanAllocatorWrapper(Allocator):
                 allocated_attributes.update(allocation_result)
             except Exception as e:
                 LOGGER.warning(
-                    "An error occurred, this would cause a partial allocation for this "
-                    "service so we clean other allocations"
+                    "An error occurred during an allocation, here are the previously "
+                    f"completed allocations keys: {allocation_keys}"
                 )
-                error = e
-                break
 
-        if error is None:
-            return allocated_attributes
+                # We force the update of the service, so that when it is deleted, the allocations
+                # that did succeed can be de-allocated
+                client = SyncClient("client")
+                client.lsm_services_update_attributes(
+                    tid=ctx.env,
+                    service_entity=ctx.service_entity_name,
+                    service_id=instance["id"],
+                    current_version=instance["version"],
+                    attributes=allocated_attributes,
+                )
 
-        # If an error occurred, we first free all the allocated vlans then raise it.
-        vlan_pool = VlanPool(vlan_pool_file(ctx.env))
-        for key in allocation_keys:
-            vlan_pool.free_vlan(key)
+                raise e
 
-        raise error
+        return allocated_attributes
 
 
 @resource("test_module::VlanDeallocation", agent="agent", id_attribute="allocation_key")

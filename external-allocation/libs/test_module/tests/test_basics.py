@@ -17,6 +17,7 @@
 """
 import json
 
+from helpers import recompile_environment
 from pytest_inmanta.plugin import Project
 from pytest_inmanta_lsm.remote_orchestrator import RemoteOrchestrator
 
@@ -51,9 +52,7 @@ def test_basics(project: Project, remote_orchestrator: RemoteOrchestrator):
     remote_orchestrator.export_service_entities()
 
     # Triggering a compile to deploy the vlan-pool file
-    remote_orchestrator.client.notify_change(
-        id=remote_orchestrator.environment, update=False
-    )
+    recompile_environment(remote_orchestrator.client, remote_orchestrator.environment)
 
     # The real test starts here
     # The vlan-pool file is removed from the model so that the orchestrator doesn't try to

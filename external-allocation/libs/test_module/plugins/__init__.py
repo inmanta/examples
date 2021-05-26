@@ -16,6 +16,7 @@
     Contact: code@inmanta.com
 """
 import json
+import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
@@ -27,6 +28,8 @@ from inmanta import config
 from inmanta.agent.handler import CRUDHandler, HandlerContext, ResourcePurged, provider
 from inmanta.plugins import plugin
 from inmanta.resources import PurgeableResource, resource
+
+LOGGER = logging.getLogger(__name__)
 
 
 @plugin
@@ -169,6 +172,50 @@ class ExternalVlanAllocator(Allocator):
         }
 
 
+class ExternalVlanAllocatorWrapper(Allocator):
+    def __init__(self, *allocators: List[ExternalVlanAllocator]) -> None:
+        super().__init__()
+        self.allocators = allocators
+
+    def get_attributes(self) -> List[str]:
+        return [
+            attribute
+            for allocator in self.allocators
+            for attribute in allocator.get_attributes()
+        ]
+
+    def allocate_for(
+        self,
+        ctx: AllocationContext,
+        instance: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        allocation_keys = list()
+        allocated_attributes = dict()
+        error = None
+        for allocator in self.allocators:
+            try:
+                allocation_result = allocator.allocate_for(ctx, instance)
+                allocation_keys.append(allocation_result.get(allocator.key_attribute))
+                allocated_attributes.update(allocation_result)
+            except Exception as e:
+                LOGGER.warning(
+                    "An error occurred, this would cause a partial allocation for this "
+                    "service so we clean other allocations"
+                )
+                error = e
+                break
+
+        if error is None:
+            return allocated_attributes
+
+        # If an error occurred, we first free all the allocated vlans then raise it.
+        vlan_pool = VlanPool(vlan_pool_file(ctx.env))
+        for key in allocation_keys:
+            vlan_pool.free_vlan(key)
+
+        raise error
+
+
 @resource("test_module::VlanDeallocation", agent="agent", id_attribute="allocation_key")
 class VlanDeallocationResource(PurgeableResource):
     fields = ("allocation_key",)
@@ -195,12 +242,14 @@ class VlanDeallocation(CRUDHandler):
 
 AllocationSpec(
     "vlan_allocator",
-    ExternalVlanAllocator(
-        vlan_attribute="north_vlan_id",
-        key_attribute="north_vlan_allocation_key",
-    ),
-    ExternalVlanAllocator(
-        vlan_attribute="south_vlan_id",
-        key_attribute="south_vlan_allocation_key",
+    ExternalVlanAllocatorWrapper(
+        ExternalVlanAllocator(
+            vlan_attribute="north_vlan_id",
+            key_attribute="north_vlan_allocation_key",
+        ),
+        ExternalVlanAllocator(
+            vlan_attribute="south_vlan_id",
+            key_attribute="south_vlan_allocation_key",
+        ),
     ),
 )

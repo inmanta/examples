@@ -205,7 +205,7 @@ class ExternalVlanAllocatorWrapper(Allocator):
 
                 # We force the update of the service, so that when it is deleted, the allocations
                 # that did succeed can be de-allocated
-                client = SyncClient("client")
+                client = SyncClient("compiler")
                 client.lsm_services_update_attributes(
                     tid=ctx.env,
                     service_entity=ctx.service_entity_name,

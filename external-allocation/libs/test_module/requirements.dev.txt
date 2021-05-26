@@ -1,0 +1,3 @@
+inmanta-dev-dependencies[module,extension]==1.32.0
+pytest
+pytest-inmanta-lsm>=1.1.0

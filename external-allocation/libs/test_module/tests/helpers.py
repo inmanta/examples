@@ -79,4 +79,4 @@ def recompile_environment(sync_client: SyncClient, tid: str) -> dict:
 
         time.sleep(2)
         version_data = get_last_version_data(sync_client, tid)
-        version = version_data["version"]
+        version = version_data["version"] if version_data is not None else 0

@@ -10,8 +10,8 @@ To learn LSM, the first thing to look at is the documentation: [here](https://do
 
 This repo has the following additional examples.
 
-1. `lsm-external-allocation`: example on how to allocate and de-allocate attributes from an external inventory
-2. `lsm-from-inventory-[a,b]`: example on how to load all attributes of a service from an external inventory
+1. [lsm-external-allocation](lsm-external-allocation/README.md): example on how to allocate and de-allocate attributes from an external inventory
+2. [lsm-from-inventory-](lsm-from-inventory-a/README.md): example on how to load all attributes of a service from an external inventory
 
 ## LSM, external inventory, which example is suitable for which inventory?
 

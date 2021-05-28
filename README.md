@@ -6,7 +6,7 @@ Example modelling code
 
 LSM means `Lifecycle and Service Management`, which is not part of the opensource orchestrator.
 
-To learn LSM, the first thing to look at is the documentation: [here](https://docs.inmanta.com/inmanta-service-orchestrator/4/moduleguides/lsm/index.html#). For LSM with allocation: [here]https://docs.inmanta.com/inmanta-service-orchestrator/4/moduleguides/lsm/allocation/allocation.html)
+To learn LSM, the first thing to look at is the documentation: [here](https://docs.inmanta.com/inmanta-service-orchestrator/4/moduleguides/lsm/index.html#). For LSM with allocation: [here](https://docs.inmanta.com/inmanta-service-orchestrator/4/moduleguides/lsm/allocation/allocation.html)
 
 This repo has the following additional examples.
 

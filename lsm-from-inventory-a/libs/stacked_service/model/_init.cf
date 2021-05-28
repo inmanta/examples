@@ -1,0 +1,53 @@
+import lsm
+import lsm::fsm
+
+entity InnerService extends lsm::ServiceBase:
+    """ The service, of which we fetch all attributes from the inventory """
+
+    string parameter_a
+end
+
+entity OuterService extends lsm::ServiceEntity:
+    """ The wrapper for the service, that only contains a reference."""
+    string customer_ref
+
+    dict? inner_data
+    lsm::attribute_modifier inner_data__modifier="r"
+end
+
+OuterService._inner_service [1] -- InnerService
+
+
+binding = lsm::ServiceEntityBinding(
+    service_entity="stacked_service::OuterService",
+    lifecycle=lsm::fsm::simple,
+    service_entity_name="service",
+    allocation_spec="allocate_OuterService",
+)
+
+for assignment in lsm::all(binding):
+    # unroll the service
+    OuterService(
+        instance_id=assignment["id"],
+        entity_binding=binding,
+        **assignment["attributes"]
+    )
+end
+
+
+implementation make_inner for OuterService:
+    # unroll the inner service
+    self._inner_service = InnerService(
+        parent=self, # use lsm::ServiceBase facilties to hook into LSM
+        **inner_data
+    )
+end
+
+
+implementation service for InnerService:
+    # The actual service
+    std::print("it's me {{parameter_a}}")
+end
+
+implement OuterService using parents, make_inner
+implement InnerService using parents, service

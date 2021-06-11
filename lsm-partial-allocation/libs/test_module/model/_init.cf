@@ -1,0 +1,72 @@
+import lsm
+import lsm::fsm
+
+entity VlanService extends lsm::ServiceEntity:
+    string name
+    lsm::attribute_modifier name__modifier = "rw"
+
+    int? north_vlan_id
+    lsm::attribute_modifier north_vlan_id__modifier = "r"
+
+    int? south_vlan_id
+    lsm::attribute_modifier south_vlan_id__modifier = "r"
+end
+
+implement VlanService using parents
+implement VlanService using de_allocate when lsm::has_current_state(self, "deallocating")
+
+entity VlanDeallocation extends std::PurgeableResource:
+    """
+    This simple entity should only be created with purged=true.
+    Its handler will deallocate the vlan hold by the key specified in :attr allocation_key:
+    The specified agent should have access to the file where all used vlan are stored.  In
+        this case, this is the internal agent, as the allocation needs to have access to this
+        file as well.  This is a limitation of this simple example, not of the allocation
+        and deallocation mechanism.
+    """
+    int vlan_id
+    string agent = "internal"
+end
+index VlanDeallocation(vlan_id)
+
+implement VlanDeallocation using std::none
+
+implementation de_allocate for VlanService:
+
+    if self.north_vlan_id != null:
+        self.resources += VlanDeallocation(
+            vlan_id=self.north_vlan_id,
+            purged=true,
+            send_event=true,
+            requires=self.requires,
+            provides=self.provides,
+        )
+    end
+
+    if self.south_vlan_id != null:
+        self.resources += VlanDeallocation(
+            vlan_id=self.south_vlan_id,
+            purged=true,
+            send_event=true,
+            requires=self.requires,
+            provides=self.provides,
+        )
+    end
+end
+
+vlan_service_binding = lsm::ServiceEntityBinding(
+    service_entity="test_module::VlanService",
+    lifecycle=lsm::fsm::simple_with_deallocation,
+    allocation_spec="vlan_allocator",
+    service_entity_name="vlan_service",
+    service_identity="name",
+    service_identity_display_name="Vlan Service",
+)
+
+for assignment in lsm::all(vlan_service_binding):
+    VlanService(
+        instance_id=assignment["id"],
+        **assignment["attributes"],
+        entity_binding=vlan_service_binding,
+    )
+end

@@ -13,6 +13,7 @@ This repo has the following additional examples.
 1. [lsm-external-allocation](lsm-external-allocation/README.md): example on how to allocate and de-allocate attributes from an external inventory
 2. [lsm-from-inventory-a](lsm-from-inventory-a/README.md): example on how to load all attributes of a service from an external inventory
 3. [lsm-from-inventory-b](lsm-from-inventory-b/README.md): another example on how to load all attributes of a service from an external inventory
+4. [lsm-partial-allocation](lsm-partial-allocation/README.md): shows a use case of the AllocatorWrapper from the lsm module.  This example is relevant for services which need multiple allocations that might fail, and the service needs to know the succeeded allocated values for the de-allocation.  Without the AllocatorWrapper, the successfully allocated values would be lost if a failure in an upcoming allocation on the same service is raised.
 
 ## LSM, external inventory, which example is suitable for which inventory?
 

@@ -1,0 +1,69 @@
+# import the Cisco module
+import ciscoxr
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = ciscoxr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define an interface and change its administrative state to "DOWN"
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
+    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
+)
+
+# Define another interface and change its administrative state to "UP"
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
+    shutdown=false,                             # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/2
+)
+
+# Define another interface and add a description
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
+    description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/3
+)
+
+# Define the bandwidth for GigabitEthernet0/0/0/4
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
+    bandwidth=1000,                             # change description for GigabitEthernet0/0/0/3
+)
+
+# Defining the MTU:
+#
+# Approach A - Coupling MTU configuration with the interface
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/5",    # Name of the intended interface
+    mtu=ciscoxr::Mtu(                           # Instanciate Mtu entity from the ciscoxr module
+        mtu = 9000                              # change the MTU for GigabitEthernet0/0/0/5
+    )
+)
+
+# Approach B - Separating MTU configuration from the interface
+interface6=ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/6",    # Name of the intended interface
+)
+
+ciscoxr::Mtu(
+    interface=interface6,
+    mtu=9000,
+)
+

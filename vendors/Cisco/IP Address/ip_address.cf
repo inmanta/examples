@@ -1,0 +1,73 @@
+# import the Cisco module as an alias for easier access
+import ciscoxr as c
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define an interface and assign a primary IP address to it
+#
+# Approach A - De-coupling IP address configuration with the interface
+interface1 = c::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
+    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
+)
+
+c::Primary(
+    interface=interface1,                       # Interface name as we defined above
+    address="128.66.0.1",                       # IP address of the interface
+    netmask="255.255.255.0"                     # Netmask of an interface
+)
+
+# Approach B - Coupling IP address configuration with the interface
+
+interface2 = c::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
+    primary=c::Primary(
+        interface=interface2,                   # Interface name as we defined above
+        address="128.66.1.1",                   # IP address of the interface
+        netmask="255.255.255.0"                 # Netmask of an interface
+    )
+)
+
+# Define an interface and assign a secondary IP address to it
+#
+# Approach A - De-coupling IP address configuration with the interface
+interface3= c::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
+    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
+)
+
+c::Secondary(
+    interface=interface3,                       # Interface name as we defined above
+    address="128.66.3.1",                       # IP address of the interface
+    netmask="255.255.255.0"                     # Netmask of an interface
+)
+
+# Approach B - Coupling IP address configuration with the interface
+
+interface4 = c::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
+    secondary=c::Secondary(
+        interface=interface4,                   # Interface name as we defined above
+        address="128.66.4.1",                   # IP address of the interface
+        netmask="255.255.255.0"                 # Netmask of an interface
+    )
+)
+

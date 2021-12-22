@@ -4,7 +4,9 @@ This repository illustrates how to configure services on different vendors using
 
 ## Prerequisites
 
-The OS of choice for demonstrating these examples is `Ubuntu`.
+The OS of choice for demonstrating these examples is `Ubuntu`. Make sure to setup a project using [this guide](https://docs.inmanta.com/community/latest/quickstart.html) before running the examples.
+You need to have an access token in order to pull down the modules that are shown here.
+All these examples should be placed into `main.cf` file at the root of your project directory.
 
 ### Install `Inmanta`
 
@@ -19,3 +21,15 @@ Please refer to [this guide](https://docs.inmanta.com/community/latest/install/1
 ## Supported Features
 
 TODO: List supported features for each vendor here...
+
+* Cisco
+  * Change operational state of an interface
+  * Set a primary and secondary IP address
+  * Set a description for interface
+  * Change interface bandwidth
+  * Change interface MTU
+  * ...
+* Juniper
+  * ...
+* Nokia
+  * ...

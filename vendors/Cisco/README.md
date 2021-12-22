@@ -19,3 +19,5 @@ Delete the deployed LAB:
 ```sh
 sudo clab destroy -t topology.yml
 ```
+
+> Please make sure to enable `NETCONF` on your Cisco router before using the examples

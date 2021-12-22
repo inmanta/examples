@@ -1,7 +1,7 @@
-name: CBCI
+name: Inmanta
 mgmt:
-  bridge: cbcibridge
-  network: cbci_mgmt
+  bridge: inmantabridge
+  network: inmanta_mgmt
   ipv4_subnet: 10.11.12.0/24
 topology:
   nodes:
@@ -12,13 +12,13 @@ topology:
       ports:
         - 22010:22
         - 21830:830
-  #   juniper-router:
-  #     kind: vr-vmx
-  #     image: vrnetlab/vr-vmx:18.3R1.9
-  #     mgmt_ipv4: 10.11.12.20
-  #     ports:
-  #       - 22020:22
-  #       - 22830:830
+    #   juniper-router:
+    #     kind: vr-vmx
+    #     image: vrnetlab/vr-vmx:18.3R1.9
+    #     mgmt_ipv4: 10.11.12.20
+    #     ports:
+    #       - 22020:22
+    #       - 22830:830
     nokia-router:
       kind: vr-sros
       image: vrnetlab/vr-sros:20.10.R1

@@ -1,10 +1,10 @@
 # Vendor Configuration Examples
 
-This repository illustrates how to configure services on different vendors using the `Inmanta` langauge.
+This repository illustrates how to configure services on different vendors using the `Inmanta` language.
 
 ## Prerequisites
 
-The OS of our choice for demonstrating these examples is a `Ubuntu`.
+The OS of choice for demonstrating these examples is `Ubuntu`.
 
 ### Install `Inmanta`
 

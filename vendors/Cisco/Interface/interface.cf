@@ -20,28 +20,28 @@ router = ciscoxr::Device(
 # Define an interface and change its administrative state to "DOWN"
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
-    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
+    interface_name="GigabitEthernet0/0/0/0",    # Name of the intended interface
+    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/0
 )
 
 # Define another interface and change its administrative state to "UP"
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
-    shutdown=false,                             # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/2
+    interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
+    shutdown=false,                             # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
 )
 
 # Define another interface and add a description
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
-    description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/3
+    interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
+    description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/2
 )
 
-# Define the bandwidth for GigabitEthernet0/0/0/4
+# Define the bandwidth for GigabitEthernet0/0/0/3
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
+    interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
     bandwidth=1000,                             # change description for GigabitEthernet0/0/0/3
 )
 
@@ -50,16 +50,16 @@ ciscoxr::Interface(
 # Approach A - Coupling MTU configuration with the interface
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/5",    # Name of the intended interface
+    interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
     mtu=ciscoxr::Mtu(                           # Instanciate Mtu entity from the ciscoxr module
-        mtu = 9000                              # change the MTU for GigabitEthernet0/0/0/5
+        mtu = 9000                              # change the MTU for GigabitEthernet0/0/0/4
     )
 )
 
 # Approach B - Separating MTU configuration from the interface
 interface6=ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/6",    # Name of the intended interface
+    interface_name="GigabitEthernet0/0/0/5",    # Name of the intended interface
 )
 
 ciscoxr::Mtu(

@@ -1,0 +1,48 @@
+# import the Cisco module as an alias for easier access
+import ciscoxr as c
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define a dot1q sub-interface
+#
+# Approach A - De-coupling a sub-interface configuration with a vlan configuration
+
+interface=c::Interface(
+    device=router,                                  # Router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/1.100",    # Name of the intended interface
+    shutdown=false,                                 # Administrative state of the interface - In this case, we set it up
+    interface_mode_non_physical="default",          # Using default encapsulation
+)
+
+c::SubInterface(
+    interface=interface,                            # Interface is the instance we defined above
+    vlan_type="vlan-type-dot1q",                    # Set van type dot1q
+    first_tag=100,                                  # Set vlan 100
+    )
+
+# Approach B - Coupling a sub-interface configuration with a vlan configuration
+
+c::Interface(
+    device=router,                                  # Router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/1.100",    # Name of the intended interface
+    shutdown=false,                                 # Administrative state of the interface - In this case, we set it up
+    interface_mode_non_physical="default",          # Using default encapsulation
+    subinterface = c::SubInterface(
+        vlan_type="vlan-type-dot1q",                # Set van type dot1q
+        first_tag=100,                              # Set vlan 100
+        )
+    )

@@ -1,0 +1,102 @@
+# import the Cisco, Cisco staticroute and Cisco services module as an alias for easier access
+import ciscoxr as c
+import ciscoxr_services as cs
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+# Define an L2VPN
+#
+# Approach A - De-coupling L2VPN configuration
+
+l2vpn=cs::L2vpn(                            # Instantiate L2VPN
+    device=router,                          # Link the defined router to device field
+    enable=true,                            # Enable the VPN
+)
+
+pw_class=cs::Pseudowire_class(              # Instantiate a pseudowire class
+    device=router,                          # Link the defined router to device field
+    l2vpn=l2vpn,                            # Link the defined L2VPN to l2vpn field
+    enable=true,                            # Enable the pseudowire class
+    name="wire_class",                      # Specify a name for pseudowire class
+)
+
+mpls_encap=cs::Mpls_encapsulation (         # Instantiate an MPLS entity
+    pseudowire_class=pw_class,              # Link the defined pseudowire class to the pseudowire_class field
+    enable=true,                            # Enable the MPLS entity
+    transport_mode="ethernet"               # Set the transport mode to `ethernet`
+)
+
+xconnect_group=cs::Xconnect_group(          # Instantiate xconnect group
+    l2vpn=l2vpn,                            # Link the defined L2VPN to l2vpn field
+    name="cisco_xgroup",                    # Specify a name for xconnect group
+)
+
+p2p_xconnect=cs::P2p_xconnect(              # Instantiate P2P for xconnect
+    xconnect_group=xconnect_group,          # Link the defined xconnect group to the xconnect field
+    name="cisco_p2pgroup"                   # Specify a name for p2p xconnect
+)
+
+attachment_circuit=cs::Attachment_circuit(  # Instantiate an attachment circuit
+    p2p_xconnects=p2p_xconnect,             # Link the defined p2p_xconnect to the p2p_xconnect field
+    name="GigabitEthernet0/0/0/8.201",      # Specify the interface for attachment circuit
+    enable=true,                            # Enable the attachment circuit
+)
+
+pseudowire=cs::Pseudowire(                  # Instantiate a Pseudowire entity
+    p2p_xconnect=p2p_xconnect,              # Link the defined p2p_xconnect to the p2p_xconnect field
+    pseudowire_id=201,                      # Specify the pseudowire ID
+)
+
+neighbor=cs::Neighbor(                      # Instantiate Neighbor entity
+    pseudowire=pseudowire,                  # Link the defined pseudowire to the pseudowire field
+    neighbor="1.1.1.1",                     # Specify the neighbor IP address
+    class="wire_class"                      # Link the defined pseudowire class to the class field
+)
+
+
+# Approach B - Coupling L2VPN configuration
+
+l2vpn=cs::L2vpn(                                                # Instantiate L2VPN
+    device=router,                                              # Link the defined router to device field
+    enable=true,                                                # Enable the VPN
+    pseudowire_class=cs::Pseudowire_class(                      # Instantiate a pseudowire class
+        enable=true,                                            # Enable the pseudowire class
+        name="wire_class",                                      # Specify a name for pseudowire class
+        mpls_encapsulation=cs::Mpls_encapsulation(              # Instantiate an MPLS entity
+            enable=true,                                        # Enable the MPLS entity
+            transport_mode="ethernet"                           # Set the transport mode to `ethernet`
+        ),
+    ),
+    xconnect_group=cs::Xconnect_group(                          # Instantiate xconnect group
+        name="cisco_xgroup",                                    # Specify a name for xconnect group
+        p2p_xconnect=cs::P2p_xconnect(                          # Instantiate P2P for xconnect
+            name="cisco_p2pgroup",                              # Specify a name for p2p xconnect
+            attachment_circuit=cs::Attachment_circuit(          # Instantiate an attachment circuit
+                name="GigabitEthernet0/0/0/8.201",              # Specify the interface for attachment circuit
+                enable=true,
+            ),                                                  # Enable the attachment circuit
+            pseudowire=cs::Pseudowire(                          # Instantiate a Pseudowire entity
+                pseudowire_id=201,                              # Specify the pseudowire ID
+                neighbor=cs::Neighbor(                          # Instantiate Neighbor entity
+                    neighbor="1.1.1.1",                         # Specify the neighbor IP address
+                    class="wire_class"                          # Link the defined pseudowire class to the class field
+                )
+            )
+        )
+    )
+)

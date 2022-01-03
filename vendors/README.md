@@ -35,8 +35,14 @@ TODO: List supported features for each vendor here...
   * Set a VRF
   * Set a VFR with address-families
   * Set a policy for an interface
+  * Set a statitc route
+  * Set a VRF statitc route
   * ...
 * Juniper
   * ...
 * Nokia
   * ...
+
+## Notes
+
+In the vendor examples, there are two forms of configuration snippets; coupled and decoupled, providing the same result.

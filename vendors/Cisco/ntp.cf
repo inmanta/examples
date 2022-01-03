@@ -17,21 +17,21 @@ router = c::Device(
     password=password,
 )
 
-# Define a ntp vrf and assign a ntp peer to it
+# Define an NTP VRF and assign a NTP peer to it
 #
-# Approach A - De-coupling ntp vrf configuration with ntp peer
+# Approach A - De-coupling NTP VRF configuration with NTP peer
 
 ntp_default=c::Ntp(
     device=router,                      # Router is the instance we defined above
-    vrf_name="default",                 # We use default vrf
+    vrf_name="default",                 # We use the default VRF
     )
 
 c::Ntp_peer(
-    ntp=ntp_default,                    # Vrf for ntp  is the instance we defined above
-    address_ipv4="128.66.0.1",          # The ip address of a ntp peer
-    peer_type="server",                 # The type of the ntp peer
-    source_interface="Loopback0",       # The source interface for the ntp connection
-    preferred_peer=true,                # Preferre peer
+    ntp=ntp_default,                    # VRF for NTP  is the instance we defined above
+    address_ipv4="128.66.0.1",          # The IP address of a NTP peer
+    peer_type="server",                 # The type of the NTP peer
+    source_interface="Loopback0",       # The source interface for the NTP connection
+    preferred_peer=true,                # Preferred peer
     )
 
 
@@ -39,12 +39,12 @@ c::Ntp_peer(
 
 c::Ntp(
     device=router,                      # Router is the instance we defined above
-    vrf_name="default",                 # We use default vrf
+    vrf_name="default",                 # We use the default VRF
     ntp_peer=c::Ntp_peer(
-        address_ipv4="128.66.0.1",      # The ip address of a ntp peer
-        peer_type="server",             # The type of the ntp peer
-        source_interface="Loopback0",   # The source interface for the ntp connection
-        preferred_peer=true,            # Preferre peer
+        address_ipv4="128.66.0.1",      # The ip address of a NTP peer
+        peer_type="server",             # The type of the NTP peer
+        source_interface="Loopback0",   # The source interface for the NTP connection
+        preferred_peer=true,            # Preferred peer
         )
     )
 

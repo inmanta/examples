@@ -18,29 +18,29 @@ router = c::Device(
     password=password,
 )
 
-# Define a vrf
+# Define a VRF
 cs::Vrf(
     device = router,             # Router is the instance we defined above
     vrf_name = "TEST",           # VRF name
-    description = "TEST_VRF",    # VRF desciprion
-    )
+    description = "TEST_VRF",    # VRF description
+)
 
 
-# Define a vrf and address-families
+# Define a VRF and address-families
 vrf = cs::Vrf(
     device = router,              # Router is the instance we defined above
     vrf_name = "TEST2",           # VRF name
-    description = "TEST_VRF2",    # VRF desciprion
-    )
+    description = "TEST_VRF2",    # VRF description
+)
 
 cs::Address_family(
     vrf = vrf,                    # vrf is the instance we defined above
     af_name = "ipv4",             # set ipv4 address-family
     saf_name = "unicast",         # set type
-    )
+)
 
 cs::Address_family(
     vrf = vrf,                    # vrf is the instance we defined above
     af_name = "ipv6",             # set ipv6 address-family
     saf_name = "unicast",         # set type
-    )
+)

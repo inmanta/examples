@@ -23,4 +23,4 @@ c::Timezone(
     time_zone_name="LOCAL",   # Name of the timezone
     hour_offset=2,            # Hour offset
     minute_offset=30,         # Minute offset
-    )
+)

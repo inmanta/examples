@@ -1,4 +1,4 @@
-# import the Cisco module and Cisco Services::interface as c and as an alias for easier access
+# import the Cisco module as c and Cisco Services::interface as cs_int alias for easier access
 import ciscoxr as c
 import ciscoxr_services::interface as cs_int
 

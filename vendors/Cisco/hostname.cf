@@ -19,6 +19,6 @@ router = c::Device(
 
 # Define a hostname
 c::Hostname(
-    device=router,
+    device=router,            # Router is the instance we defined above
     hostname="MAIN_ROUTER",   # Hostname
     )

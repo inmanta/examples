@@ -24,22 +24,22 @@ router = c::Device(
 # Approach A - De-coupling policy-map configuration
 
 policyMaps = pm::Policy_maps(               # Instantiate policy maps entity
-    device = router                         # Link it the defined router to device field
+    device = router                         # Link it to the defined router to device field
 )
 
 policyMap = pm::Policy_map(                 # Instantiate policy map entity
     type = "qos",                           # Set the type
     name = "QoSPolMap",                     # Specify a name for the policy map
-    policy_maps = policyMaps                # Link it the defined policy maps entity
+    policy_maps = policyMaps                # Link it to the defined policy maps entity
 )
 
 policyMapRule = pm::Policy_map_rule(        # Instantiate policy map rule entity
     class_type = "qos",                     # Set the class type
-    policy_map = policyMap                  # Link it the defined policy map entity
+    policy_map = policyMap                  # Link it to the defined policy map entity
 )
 
 police = pm::Police(                        # Instantiate Police entity
-    policy_map_rule = policyMapRule         # Link it the defined policy map rule
+    policy_map_rule = policyMapRule         # Link it to the defined policy map rule
 )
 
 rate = pm::Rate(                            # Instantiate Rate entity
@@ -52,7 +52,7 @@ rate = pm::Rate(                            # Instantiate Rate entity
 # Approach B - Coupling policy-map configuration
 
 policyMaps = pm::Policy_maps(                        # Instantiate policy maps entity
-    device = router,                                 # Link it the defined router to device field
+    device = router,                                 # Link it to the defined router to device field
         policy_map = pm::Policy_map(                 # Instantiate policy map entity
         type = "qos",                                # Set the type
         name = "QoSPolMap2",                         # Specify a name for the policy map

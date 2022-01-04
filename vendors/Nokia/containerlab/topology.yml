@@ -5,21 +5,7 @@ mgmt:
   ipv4_subnet: 10.11.12.0/24
 topology:
   nodes:
-    cisco-router:
-      kind: vr-xrv
-      image: containerlab/vr-xrv:6.3.1
-      mgmt_ipv4: 10.11.12.10
-      ports:
-        - 22010:22
-        - 21830:830
-    juniper-router:
-      kind: vr-vmx
-      image: vrnetlab/vr-vmx:18.3R1.9
-      mgmt_ipv4: 10.11.12.20
-      ports:
-        - 22020:22
-        - 22830:830
-    nokia-router:
+    nokia-router-a:
       kind: vr-sros
       image: vrnetlab/vr-sros:20.10.R1
       license: ./nokia/sros-20.7.R1.qcow2.license
@@ -27,11 +13,20 @@ topology:
       mgmt_ipv4: 10.11.12.30
       ports:
         - 22030:22
-        - 23830:830
+        - 20830:830
+    nokia-router-b:
+      kind: vr-sros
+      image: vrnetlab/vr-sros:20.10.R1
+      license: ./nokia/sros-20.7.R1.qcow2.license
+      startup-config: ./nokia/startup.cfg
+      mgmt_ipv4: 10.11.12.31
+      ports:
+        - 22031:22
+        - 21830:830
   links:
-    - endpoints: ["cisco-router:eth1", "juniper-router:eth1"]
-    - endpoints: ["cisco-router:eth2", "juniper-router:eth2"]
-    - endpoints: ["cisco-router:eth3", "nokia-router:eth1"]
-    - endpoints: ["cisco-router:eth4", "nokia-router:eth2"]
-    - endpoints: ["juniper-router:eth3", "nokia-router:eth3"]
-    - endpoints: ["juniper-router:eth4", "nokia-router:eth4"]
+    - endpoints: ["nokia-router-a:eth1", "nokia-router-b:eth1"]
+    - endpoints: ["nokia-router-a:eth2", "nokia-router-b:eth2"]
+    - endpoints: ["nokia-router-a:eth3", "nokia-router-b:eth3"]
+    - endpoints: ["nokia-router-a:eth4", "nokia-router-b:eth4"]
+    - endpoints: ["nokia-router-a:eth5", "nokia-router-b:eth5"]
+    - endpoints: ["nokia-router-a:eth6", "nokia-router-b:eth6"]

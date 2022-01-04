@@ -20,8 +20,6 @@ Please refer to [this guide](https://docs.inmanta.com/community/latest/install/1
 
 ## Supported Features
 
-TODO: List supported features for each vendor here...
-
 * Cisco
   * Change operational state of an interface
   * Set a primary and secondary IP address
@@ -37,6 +35,10 @@ TODO: List supported features for each vendor here...
   * Set a policy for an interface
   * Set a statitc route
   * Set a VRF statitc route
+  * L2VPN
+  * L2VPN-EVPN
+  * VRF
+  * Policy map
   * ...
 * Juniper
   * ...
@@ -45,4 +47,5 @@ TODO: List supported features for each vendor here...
 
 ## Notes
 
-In the vendor examples, there are two forms of configuration snippets; coupled and decoupled, providing the same result.
+* In the vendor examples, usually there are two forms of configuration snippets; `coupled` and `de-coupled`, leading to the same result on devices.
+* Not all the modules that are shown in the examples are free. Those modules require an access token to get downloaded. This access token, alongside the `GIT` repository will have to be added to the `project.yml` file under each project.

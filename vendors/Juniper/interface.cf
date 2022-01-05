@@ -1,0 +1,77 @@
+# import the Juniper module
+import juniper as j
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 22830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Setting an IP address:
+#
+# Approach A - De-coupling IP address configuration
+
+interface1 = j::Interface(          # Instantiate interface entity
+    device=router,                  # Link the defined router
+    interface_name="ge-0/0/1",      # Specify interface name
+)
+
+unit1 = j::Unit(                    # Instantiate unit entity
+    interface=interface1,           # Link the defined interface
+    name=0,                         # Specify unit name
+)
+
+family_inet1 = j::Family_inet(      # Instaniate IPv4 family entity
+    unit=unit1,                     # Link the defined unit
+)
+
+address = j::Address_inet(          # Instantiate the IPv4 address entity
+    family_inet=family_inet1,       # Link the defined IPv4 family
+    name="192.168.0.1/30",          # Specify the IP address
+)
+
+
+# Approach B - Coupling IP address configuration
+
+interface2 = j::Interface(          # Instantiate interface entity
+    device=router,                  # Link the defined router
+    interface_name="ge-0/0/2",      # Specify interface name
+)
+
+unit1 = j::Unit(                    # Instantiate unit entity
+    interface=interface2,           # Link the defined interface
+    name=0,                         # Specify unit name
+)
+
+family_inet1 = j::Family_inet(      # Instaniate IPv4 family entity
+    unit=unit1,                     # Link the defined unit
+)
+
+address = j::Address_inet(          # Instantiate the IPv4 address entity
+    family_inet=family_inet1,       # Link the defined IPv4 family
+    name="192.168.0.5/30",          # Specify the IP address
+)
+
+
+#####################################
+interface3 = j::Interface(              # Instantiate interface entity
+    device=router,                      # router is the instance we defined above
+    interface_name="ge-0/0/0",          # Name of the intended interface
+    flexible_vlan_tagging=false,        # Enable/Disable flexible VLAN tagging
+    vlan_tagging=true,                  # Enable VLAN tagging
+    encapsulation="vlan-ccc",           # Specify encapsulation
+    speed="10m",                        # Specify speed
+    mtu=9000,                           # Specify MTU
+    gigether_opt_auto_neg=true,         # Enable auto negotiation
+)
+

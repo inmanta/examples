@@ -7,7 +7,7 @@ This repository illustrates how to configure services on different vendors using
 * The `OS` of choice for demonstrating these examples is `Ubuntu` but any Linux version should be fine.
 * Install the Inmanta software [using this guide](https://docs.inmanta.com/community/latest/install/1-install-server.html#install-the-software).
 * Make sure to setup a project using [this guide](https://docs.inmanta.com/community/latest/model_developers/configurationmodel.html) before running the examples.
-* You need to have an `access token` in order to pull down the modules that are provided.
+* You need to have an `access token` in order to pull down the modules that are provided in the examples.
 * All these examples should be placed into `main.cf` file at the root of your project directory.
 
 ## Notes

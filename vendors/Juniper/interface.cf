@@ -18,8 +18,6 @@ router = j::Device(
 )
 
 # Setting an IP address:
-#
-# Approach A - De-coupling IP address configuration
 
 interface1 = j::Interface(          # Instantiate interface entity
     device=router,                  # Link the defined router
@@ -38,28 +36,6 @@ family_inet1 = j::Family_inet(      # Instaniate IPv4 family entity
 address = j::Address_inet(          # Instantiate the IPv4 address entity
     family_inet=family_inet1,       # Link the defined IPv4 family
     name="192.168.0.1/30",          # Specify the IP address
-)
-
-
-# Approach B - Coupling IP address configuration
-
-interface2 = j::Interface(          # Instantiate interface entity
-    device=router,                  # Link the defined router
-    interface_name="ge-0/0/2",      # Specify interface name
-)
-
-unit1 = j::Unit(                    # Instantiate unit entity
-    interface=interface2,           # Link the defined interface
-    name=0,                         # Specify unit name
-)
-
-family_inet1 = j::Family_inet(      # Instaniate IPv4 family entity
-    unit=unit1,                     # Link the defined unit
-)
-
-address = j::Address_inet(          # Instantiate the IPv4 address entity
-    family_inet=family_inet1,       # Link the defined IPv4 family
-    name="192.168.0.5/30",          # Specify the IP address
 )
 
 

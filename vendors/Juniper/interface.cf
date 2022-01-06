@@ -1,4 +1,4 @@
-# import the Juniper module
+# import the Juniper module as an alias
 import juniper as j
 
 # You can define the device information here for easier management
@@ -42,7 +42,7 @@ address = j::Address_inet(          # Instantiate the IPv4 address entity
 j::Interface(                           # Instantiate interface entity
     device=router,                      # router is the instance we defined above
     interface_name="ge-0/0/20",         # Name of the intended interface
-    speed="10m",                        # Specify speed
+    speed="100m",                       # Specify speed
     mtu=9000,                           # Specify MTU
     gigether_opt_auto_neg=true,         # Enable auto negotiation
 )

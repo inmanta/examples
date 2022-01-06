@@ -1,0 +1,81 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 22830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Use LACP to configure port aggregation for ports GigabitEthernet 3 and 4
+interface1 = j::Interface(                  # Instatiate interface entity for the first interface
+    device=router,                          # Link the defined router
+    interface_name="ge-0/0/3",              # Specify the interface name
+)
+
+interface2 = j::Interface(                  # Instatiate interface entity for the second interface
+    device=router,                          # Link the defined router
+    interface_name="ge-0/0/4",              # Specify the interface name
+)
+
+interface_list = [interface1, interface2]   # Add interfaces to a list
+
+for interface in interface_list:            # Iterate through the interface list
+    ieee_8023ad = j::Ieee_8023ad(           # Instantiate IEEE 802.3ad entity
+        bundle="ae16",                      # Specify a name for the bundle
+        ether_options = j::Ether_options(   # Instantiate Ether options entity
+            interface=interface,            # Feed the interface the interface field
+        )
+    )
+end
+
+interface_lacp = j::Interface(                      # Instatiate interface entity for LACP
+    device=router,                                  # Link the defined router
+    interface_name = "ae16",                        # Specify the interface name
+    description = "Portchannel 16",                 # Specify the interface description
+    flexible_vlan_tagging = true,                   # Support for no tagging, or single and double 802.1q VLAN tagging
+    mtu = 9000,                                     # Set the MTU
+    encapsulation = "flexible-ethernet-services",   # Specify the encapsulation type
+    gigether_opt_auto_neg = false,                  # Gigabit Ethernet interface-specific options auto-negotioation
+    speed = "10g",                                  # Interface speed
+)
+
+aeo = j::Aggregated_ether_options(                  # Instantiate aggregated ether options entity
+    interface = interface_lacp,                     # Link the defined interface_lacp
+    minimum_links = 2,                              # Specify the allowed minimum number of interfaces
+)
+
+lacp = j::Lacp(                                     # Instantiate LACP entity
+    aggregated_ether_options = aeo,                 # Link the defined aggregated ether options entity
+    active = true,                                  # Activate it
+    periodic = "fast"                               # Specify the timer interval for periodic transmission of LACP packets
+)
+
+unit1 = j::Unit(                                    # Instantiate Unit entity
+    interface=interface_lacp,                       # Link the defined interface_lacp
+    name=1234,                                      # Specify unit number
+    vlan_id=700,                                    # Specify VLAN ID (optional)
+    description = "my description",                 # Specify description
+    input_vlan_map_pop=false,                       # Specify input vlan map pop (optional)
+    output_vlan_map_push=false                      # Specify output vlan map push (optional)
+)
+
+addressv4 = j::Address_inet(                        # Instantiate address IPv4 entity
+    family_inet=j::Family_inet(unit=unit1),         # Instantiate IPv4 family inet entity
+    name="192.168.0.10/30",                         # Assign IPv4 address
+)
+
+addressv6 = j::Address_inet6(                       # Instantiate address IPv6 entity
+    family_inet6=j::Family_inet6(unit=unit1),       # Instantiate IPv4 family inet entity
+    name="2001:db00::1/24",                         # Assign IPv6 address
+)

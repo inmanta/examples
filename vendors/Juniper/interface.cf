@@ -18,7 +18,6 @@ router = j::Device(
 )
 
 # Setting an IP address:
-
 interface1 = j::Interface(          # Instantiate interface entity
     device=router,                  # Link the defined router
     interface_name="ge-0/0/1",      # Specify interface name
@@ -39,15 +38,11 @@ address = j::Address_inet(          # Instantiate the IPv4 address entity
 )
 
 
-#####################################
-interface3 = j::Interface(              # Instantiate interface entity
+# Set speed, MTU and auto-negotiation for interface
+j::Interface(                           # Instantiate interface entity
     device=router,                      # router is the instance we defined above
-    interface_name="ge-0/0/0",          # Name of the intended interface
-    flexible_vlan_tagging=false,        # Enable/Disable flexible VLAN tagging
-    vlan_tagging=true,                  # Enable VLAN tagging
-    encapsulation="vlan-ccc",           # Specify encapsulation
+    interface_name="ge-0/0/20",         # Name of the intended interface
     speed="10m",                        # Specify speed
     mtu=9000,                           # Specify MTU
     gigether_opt_auto_neg=true,         # Enable auto negotiation
 )
-

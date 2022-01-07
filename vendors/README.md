@@ -114,10 +114,10 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
 * [x] VXLAN
 * [x] Link aggregation
   * [x] LACP
-* [] Ethernet switching
+* [x] Ethernet switching
+* [x] IRB
 * [] Unit interface
 * [] Policy options/statements
-* [] IRB
 * [] Unit interface EVPN
 
 ### Juniper services

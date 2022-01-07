@@ -18,12 +18,12 @@ router=j::Device(
 )
 
 # Use LACP to configure port aggregation for ports GigabitEthernet 3 and 4
-interface1=j::Interface(                  # Instatiate interface entity for the first interface
+interface1=j::Interface(                  # Instantiate interface entity for the first interface
     device=router,                        # Link the defined router
     interface_name="ge-0/0/3",            # Specify the interface name
 )
 
-interface2=j::Interface(                  # Instatiate interface entity for the second interface
+interface2=j::Interface(                  # Instantiate interface entity for the second interface
     device=router,                        # Link the defined router
     interface_name="ge-0/0/4",            # Specify the interface name
 )
@@ -39,7 +39,7 @@ for interface in interface_list:          # Iterate through the interface list
     )
 end
 
-interface_lacp=j::Interface(                      # Instatiate interface entity for LACP
+interface_lacp=j::Interface(                      # Instantiate interface entity for LACP
     device=router,                                # Link the defined router
     interface_name="ae16",                        # Specify the interface name
     description="Portchannel 16",                 # Specify the interface description

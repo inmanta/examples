@@ -21,6 +21,7 @@ router = j::Device(
 interface1 = j::Interface(          # Instantiate interface entity
     device=router,                  # Link the defined router
     interface_name="ge-0/0/1",      # Specify interface name
+    description="DESC",             # Specify description
 )
 
 unit1 = j::Unit(                    # Instantiate unit entity

@@ -74,27 +74,88 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
 
 ## Supported Features
 
-* Cisco
-  * Change operational state of an interface
-  * Set a primary and secondary IP address
-  * Set a description for interface
-  * Change interface bandwidth
-  * Change interface MTU
-  * Set a timezone
-  * Set a ntp peer
-  * Set a hostname
-  * Set a dot1q sub-interface
-  * Set a VRF
-  * Set a VFR with address-families
-  * Set a policy for an interface
-  * Set a statitc route
-  * Set a VRF statitc route
-  * L2VPN
-  * L2VPN-EVPN
-  * VRF
-  * Policy map
-  * ...
-* Juniper
-  * ...
-* Nokia
-  * ...
+### Cisco
+
+* [x] Hostname
+* [x] Interface
+  * [x] Set primary address
+  * [x] MTU
+  * [x] Bandwidth
+  * [x] Admin state
+  * [x] Description
+  * [x] Set secondary address
+* [x] Sub-interface
+* [x] Timezone/clock
+* [x] NTP
+* [x] VRF
+  * [x] Static route
+* [x] Static route
+* [x] L2VPN-EVPN
+* [x] BGP
+  * [x] Neighbor
+  * [x] Address families
+  * [x] VRF
+
+### Cisco Services
+
+* [x] L2VPN
+* [x] Policy-map
+* [x] VRF
+
+### Juniper
+
+* [x] Interface
+  * [x] Set primary address
+  * [x] Set primary address
+  * [x] MTU
+  * [x] Bandwidth
+
+* [x] VLAN
+* [x] VXLAN
+* [x] Link aggregation
+  * [x] LACP
+* [] Ethernet switching
+* [] Unit interface
+* [] Policy options/statements
+* [] IRB
+* [] Unit interface EVPN
+
+### Juniper services
+
+* [] Policer
+* [] Bridge domains
+* [] EVPN
+* [] Firewall
+* [] L2 Circuit
+* [] Protocols EVPN
+* [] Routing instances
+
+### Nokia
+
+* [] TACACS configuration
+  * [] configure an authorization server with a key
+  * [] configure accounting
+  * [] set servers timeout
+* [] BGP configuration
+  * [] Set a bgp group with families
+  * [] Set import policy for a group
+  * [] Set a neighbor with a group
+  * [] Change description for a neighbor
+  * [] Set backup path
+  * [] Set rapid update
+* [] Ethernet segment
+  * [] set single-active ethernet-segment
+  * [] set all-active ethernet-segment
+* [] Service EPIPE
+  * [] set epipe
+  * [] set epipe and eth-cfm
+  * [] set epipe and bgp
+* [] eth-cfm
+  * [] set eth-cfm
+* [] Policy option
+  * [] Set policy options with community
+  * [] Set policy option with allow/deny statement
+* [] Service VPRN
+  * [] set service VPRN
+  * [] set service VPRN with VRRP
+  * [] set service VPRN with static router

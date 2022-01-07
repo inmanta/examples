@@ -1,0 +1,46 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+interface1=j::Interface(                            # Instantiate interface entity
+    device=router,                                  # Link the defined router
+    interface_name="ge-0/0/9",                      # Specify interface name
+    flexible_vlan_tagging=false,                    # Enable/Disable flexible vlan tagging
+    vlan_tagging=true,                              # Enable/Disable vlan tagging
+    encapsulation="flexible-ethernet-services",     # Set the encapsulation
+    gigether_opt_auto_neg=true,                     # Enable auto negotiation
+)
+
+es1=j::EthernetSwitching(                                 # Instantiate Ethernet switching entity
+    unit=unit1,                                           # Link the defined unit
+    interface_mode="access",                              # Specify the interface mode
+    ethernet_switching_vlan=j::EthernetSwitchingVlan(     # Instantiate Ethernet switching VLAN entity
+        members=["123"],                                  # Specify a list of members
+        ethernet_switching=es1                            # Link the defined Ethernet switching entity
+    )
+)
+
+unit1=j::Unit(                    # Instantiate unit entity
+    interface=interface1,         # Link the defined interface entity
+    ethernet_switching=es1,       # Link the defined Ethernet switching entity
+    name=700,                     # Specify unit number
+    vlan_id=700,                  # Specify VLAN ID
+    encapsulation="vlan-ccc",     # Set the encapsulation
+    input_vlan_map_pop=true,      # Enable/Disable input vlan map pop
+    output_vlan_map_push=true,    # Enable/Disable output vlan map push
+)

@@ -19,28 +19,28 @@ router=j::Device(
 
 # Use LACP to configure port aggregation for ports GigabitEthernet 3 and 4
 interface1=j::Interface(                  # Instatiate interface entity for the first interface
-    device=router,                          # Link the defined router
-    interface_name="ge-0/0/3",              # Specify the interface name
+    device=router,                        # Link the defined router
+    interface_name="ge-0/0/3",            # Specify the interface name
 )
 
 interface2=j::Interface(                  # Instatiate interface entity for the second interface
-    device=router,                          # Link the defined router
-    interface_name="ge-0/0/4",              # Specify the interface name
+    device=router,                        # Link the defined router
+    interface_name="ge-0/0/4",            # Specify the interface name
 )
 
 interface_list=[interface1, interface2]   # Add interfaces to a list
 
-for interface in interface_list:            # Iterate through the interface list
+for interface in interface_list:          # Iterate through the interface list
     ieee_8023ad=j::Ieee_8023ad(           # Instantiate IEEE 802.3ad entity
-        bundle="ae16",                      # Specify a name for the bundle
+        bundle="ae16",                    # Specify a name for the bundle
         ether_options=j::Ether_options(   # Instantiate Ether options entity
-            interface=interface,            # Feed the interface the interface field
+            interface=interface,          # Feed the interface the interface field
         )
     )
 end
 
 interface_lacp=j::Interface(                      # Instatiate interface entity for LACP
-    device=router,                                  # Link the defined router
+    device=router,                                # Link the defined router
     interface_name="ae16",                        # Specify the interface name
     description="Portchannel 16",                 # Specify the interface description
     flexible_vlan_tagging=true,                   # Support for no tagging, or single and double 802.1q VLAN tagging
@@ -62,20 +62,20 @@ lacp=j::Lacp(                                     # Instantiate LACP entity
 )
 
 unit1=j::Unit(                                    # Instantiate Unit entity
-    interface=interface_lacp,                       # Link the defined interface_lacp
-    name=1234,                                      # Specify unit number
-    vlan_id=700,                                    # Specify VLAN ID (optional)
+    interface=interface_lacp,                     # Link the defined interface_lacp
+    name=1234,                                    # Specify unit number
+    vlan_id=700,                                  # Specify VLAN ID (optional)
     description="my description",                 # Specify description
-    input_vlan_map_pop=false,                       # Specify input vlan map pop (optional)
-    output_vlan_map_push=false                      # Specify output vlan map push (optional)
+    input_vlan_map_pop=false,                     # Specify input vlan map pop (optional)
+    output_vlan_map_push=false                    # Specify output vlan map push (optional)
 )
 
 addressv4=j::Address_inet(                        # Instantiate address IPv4 entity
-    family_inet=j::Family_inet(unit=unit1),         # Instantiate IPv4 family inet entity
-    name="192.168.0.10/30",                         # Assign IPv4 address
+    family_inet=j::Family_inet(unit=unit1),       # Instantiate IPv4 family inet entity
+    name="192.168.0.10/30",                       # Assign IPv4 address
 )
 
 addressv6=j::Address_inet6(                       # Instantiate address IPv6 entity
-    family_inet6=j::Family_inet6(unit=unit1),       # Instantiate IPv4 family inet entity
-    name="2001:db00::1/24",                         # Assign IPv6 address
+    family_inet6=j::Family_inet6(unit=unit1),     # Instantiate IPv4 family inet entity
+    name="2001:db00::1/24",                       # Assign IPv6 address
 )

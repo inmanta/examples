@@ -76,6 +76,6 @@ addressv4=j::Address_inet(                        # Instantiate address IPv4 ent
 )
 
 addressv6=j::Address_inet6(                       # Instantiate address IPv6 entity
-    family_inet6=j::Family_inet6(unit=unit1),     # Instantiate IPv4 family inet entity
+    family_inet6=j::Family_inet6(unit=unit1),     # Instantiate IPv6 family inet entity
     name="2001:db00::1/24",                       # Assign IPv6 address
 )

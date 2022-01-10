@@ -34,7 +34,7 @@ for interface in interface_list:          # Iterate through the interface list
     ieee_8023ad=j::Ieee_8023ad(           # Instantiate IEEE 802.3ad entity
         bundle="ae16",                    # Specify a name for the bundle
         ether_options=j::Ether_options(   # Instantiate Ether options entity
-            interface=interface,          # Feed the interface the interface field
+            interface=interface,          # Feed the interface placeholder to the interface field
         )
     )
 end

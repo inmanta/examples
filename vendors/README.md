@@ -42,23 +42,23 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
 
 1) Head to the directory in which you have created your project, open the `main.cf` file and add the following lines:
 
-  ```txt
-  import ciscoxr
+   ```txt
+   import ciscoxr
 
-  router = ciscoxr::Device(
+   router = ciscoxr::Device(
       name="router101",
       mgmt_ip="10.10.10.1",
       port=830,
       username=USERNAME,
       password=PASSWORD,
-  )
+   )
 
-  ciscoxr::Interface(
+   ciscoxr::Interface(
       device=router,
       interface_name="GigabitEthernet0/0/0/2",
       shutdown=true,
-  )
-  ```
+   )
+   ```
 
 2) Deploy the configuration:
 

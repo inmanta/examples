@@ -1,0 +1,46 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+interface = j::Interface(                           # Instantiate interface entity for the IRB interface
+    device=router,                                  # Link the defined router
+    interface_name="ge-0/0/9",                      # Specify the interface name
+    flexible_vlan_tagging=false,                    # Enable/Disable flexible VLAN tagging
+    vlan_tagging=true,                              # Enable/Disable VLAN tagging
+    gigether_opt_auto_neg=true,                     # Enable/Disable auto-negotiation
+    encapsulation="flexible-ethernet-services",     # Specify the encapsulation
+)
+
+unit = j::Unit(                             # Instantiate Unit entity
+    interface=interface,                    # Link the defined interface
+    name=700,                               # Specify the unit number
+    vlan_id=700,                            # Specify VLAN ID
+    encapsulation="vlan-ccc",               # Set the encapsulation
+    input_vlan_map_pop=true,                # Enable/Disable VLAN map pop
+    output_vlan_map_push=true,              # Enable/Disable VLAN map push
+)
+
+family_ccc = j::Family_ccc(                 # Instantiate family CCC entity
+    unit=unit,                              # Link the defined unit
+    mtu=1000                                # Specify the MTU (optional)
+)
+
+policer1 = j::Policer_ccc(                  # Instantiate policer CCC entity
+    family_ccc=family_ccc,                  # Link the defined family_ccc
+    policer_output="test_policer"           # Specify the output policer name
+)

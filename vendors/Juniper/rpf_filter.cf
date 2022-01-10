@@ -1,0 +1,67 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+filter_inet = j::Filter_inet(                           # Instantiate filter inet entity
+    family_inet=family_inet,                            # Link the defined family inet entity
+    output_list = [                                     # Define an output filter list
+        "filters.v4_out_default",
+        "filters.v4_out_vlan",
+    ],
+    filter_input_inet = j::Filter_input_inet(           # Instantiate filter input inet entity
+        filter_name = "filters.v4_in",                  # Specify name
+        filter_inet = filter_inet                       # Link the defined filter inet entity
+    )
+)
+
+family_inet = j::Family_inet(                           # Instantiate family inet entity
+    unit=unit,                                          # Link the defined unit entity
+    address_inet = j::Address_inet(                     # Instantiate address inet entity
+        family_inet=family_inet,                        # Link the defined family inet entity
+        name="192.168.0.1/30",                          # Specify the IP address and mask
+    ),
+    rpf_check_inet=j::Rpf_check_inet(                   # Instantiate RPF check inet entity
+        fail_filter = "genericv4-rpf-fail-filter",      # Name of filter applied to packets failing RPF check
+        family_inet=family_inet                         # Link the defined parent family_inet entity
+    ),
+    filter_inet = filter_inet,                          # Link the defined filter inet entity
+    inet_policer = j::Inet_policer(                     # Instantiate inet policer entity
+        arp="test_policer",                             # Specify the ARP policy name
+        family_inet=family_inet                         # Link the defined parent family_inet entity
+    )
+)
+
+unit = j::Unit(                                         # Instantiate Unit entity
+    interface=interface,                                # Link the defined interface below
+    name=20,                                            # Specify unit number
+    description="DESC",                                 # Specify description
+    family_inet=family_inet                             # Link the defined family_inet above
+    proxy_macip_advertisement=true,                     # Enable/Disable Proxy advertisement of type 2 MAC+IP route
+)
+
+interface=j::Interface(                                 # Instantiate interface entity for the IRB interface
+    device=router,                                      # Link the defined router
+    interface_name="irb",                               # Specify the interface name
+    flexible_vlan_tagging=false,                        # Enable/Disable flexible VLAN tagging
+    vlan_tagging=false,                                 # Enable/Disable VLAN tagging
+    gigether_opt_auto_neg=false,                        # Enable/Disable auto-negotiation
+    gigether_opt_loopback=false,                        # Enable/Disable Gigabit Ethernet interface-specific options loopback
+    speed=null,                                         # Sets the speed to "Auto"
+    unit=unit                                           # Link the defined unit entity
+)

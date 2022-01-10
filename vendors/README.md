@@ -116,7 +116,7 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
   * [x] LACP
 * [x] Ethernet switching
 * [x] IRB
-* [] Unit interface
+* [x] Interface RPF policies
 * [] Policy options/statements
 * [] Unit interface EVPN
 

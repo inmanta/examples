@@ -1,0 +1,48 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+interface_irb=j::Interface(                   # Instantiate interface entity for the first interface
+    device=router,                            # Link the defined router
+    interface_name="irb",                     # Specify the interface name
+    encapsulation=null,                       # Specify the encapsulation
+    gigether_opt_auto_neg=false,              # Set Gigabit Ethernet interface-specific options auto-negotiation mode
+    speed=null,                               # Sets the speed to "Auto"
+)
+
+unit=j::Unit(                                     # Instantiate Unit entity
+    interface=interface_irb,                      # Link the defined IRB interface
+    name=1234,                                    # Specify unit number
+    vlan_id=null,                                 # Specify VLAN ID (optional)
+    description="DESC",                           # Specify description
+    virtual_gateway_accept_data=true,             # Enable/Disable virtual_gateway_accept_data
+    mac="00:01:02:03:04:05",                      # Specify MAC address
+    virtual_gateway_v4_mac="00:11:23:34:45:56",   # Specify virtual gateway MAC address
+    input_vlan_map_pop=false,                     # Enable/Disable input vlan map pop (optional)
+    output_vlan_map_push=false,                   # Enable/Disable output vlan map push (optional)
+)
+
+addressv4=j::Address_inet(                    # Instantiate address IPv4 entity
+    family_inet=j::Family_inet(               # Instantiate IPv4 family inet entity
+        unit=unit,                            # Link the defined unit
+        mtu=null,                             # Set the MTU - null resorts to the default value
+    ),
+    name="192.168.0.1/24",                    # Specify the IP address
+    virtual_gateway_address="192.168.0.2",    # Specify virtual gateway address
+)

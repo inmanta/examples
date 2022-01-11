@@ -1,0 +1,209 @@
+# import the Juniper module as an alias
+import juniper as j
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# Below examples show how to define policy statements with communities and prefix list filters, altering routing decisions
+policy_options=j::PolicyOptions(          # Instantiate policy options entity
+    device=router,                        # Link the defined router
+)
+
+prefix_list=j::PrefixList(                # Instantiate prefix list entity
+    policy_options=policy_options,        # Link the defined policy options
+    name="classA",                        # Specify prefix list name
+    prefix_list_item=[                    # Populate prefix list
+        j::PrefixListItem(                # Instantiate prefix list item entity
+            name="10.0.0.0/8",            # Specify IP address
+            prefix_list=prefix_list,      # Link the defined parent prefix list entity
+        )
+    ],
+)
+
+# In order to see how a loop and conditional works in Inmanta language:
+community_name=["ISP", "NO_EXPORT"]           # Define a list of community names
+
+for name in community_name:                   # Loop through the defined list
+    if name == "ISP":                         # If the name is `ISP` we use "1234:5678" for the member
+    j::Community(                             # Instantiate community entity
+        policy_options=policy_options,        # Link the defined policy options
+        name=name,                            # Specify community name
+        members=["1234:5678"],                # Specify the members
+    )
+    else:                                     # Otherwise we use "no-export"
+    j::Community(                             # Instantiate community entity
+        policy_options=policy_options,        # Link the defined policy options
+        name=name,                            # Specify community name
+        members=["no-export"],                # Specify the members
+    )
+    end
+end
+
+prefix_list_filter=j::PrefixListFilter(    # Instantiate prefix list filter entity
+    list_name="classA",                    # Specify name
+    choice_ident="orlonger",               # Prefix list filter option
+    from=from,                             # Link the defined `from` entity below
+)
+
+from=j::TermFrom(                               # Instantiate `from` entity
+    term=term,                                  # Link the defined `term` entity
+    protocol="bgp",                             # Specify the protocol
+    prefix_list_filter=prefix_list_filter,      # Link the defined prefix list filter entity
+)
+
+policy_statement_2=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="ALLOW_classA",                        # Specify the name
+)
+
+term=j::Term(                                   # Instantiate `term` entity
+    policy_statement=policy_statement_2,        # Link the defined policy statement 2 entity
+    name="ACCEPT_classA",                       # Specify the name
+    from=j::TermFrom(                           # Instantiate `term from` entity
+        term=term,                              # Link the defined parent `term` entity
+        protocol="bgp",                         # Specify the protocol
+        prefix_list_filter=prefix_list_filter,  # Link the defined prefix list filter entity
+    ),
+    then=j::TermThen(                           # Instantiate the `term then` entity
+        accept=true,                            # Accept/Deny the traffic
+        term=term,                              # Link the defined `term` entity
+    )
+)
+
+then1=j::TermThen(                          # Instantiate `Term Then` entity
+    term=term2,                             # Link the defined term 2 entity
+    reject=true,                            # Reject the traffic
+    community=j::TermThenCommunity(         # Instantiate `term then community`
+        community_name="ISP",               # Specify the community name
+        choice_ident="add",                 # Set the community flag
+        then=then1                          # Link the defined parent `then 1` entity
+    )
+)
+
+term2=j::Term(                               # Instantiate `term` entity
+    policy_statement=policy_statement_2,     # Link the defined policy options
+    name="REJECTCommunity1",                           # Specify the name
+    then=then1                               # Link the defined `then` entity
+)
+
+term3=j::Term(                               # Instantiate `term` entity
+    name="BGPNeighbor",                               # Specify the name
+    policy_statement=policy_statement_2,     # Link the defined policy statement entity
+    from=j::TermFrom(                        # Instantiate `term from` entity
+        term=term3,                          # Link the defined parent `term` entity
+        protocol="bgp",                      # Specify the protocol
+        neighbor=["1.2.3.4"],                # Specify the neighbor list
+    )
+)
+
+from2=j::TermFrom(                          # Instantiate `from` entity
+    term=term4,                             # Link the defined `term 4` entity
+    protocol="static",                      # Specify the routing protocol method
+    community=["ISP"],                      # Specify the community name
+    route_filter=[                          # Populate the route filter
+        j::RouteFilter(                     # Instantiate route filter entity
+            address="192.168.0.0/16",       # Specify IP address and mask
+            choice_ident="orlonger",        # Route filter option
+            from=from2                      # Link the defined parent `from` entity
+        )
+    ]
+)
+
+term4=j::Term(                              # Instantiate `term` entity
+    policy_statement=policy_statement_2,    # Link the defined policy statement entity
+    name="ADV_STATIC",                      # Specify name
+    from=from2,                             # Link the defined `from` entity
+    then=then2                              # Link the defined `then` entity
+)
+
+then2=j::TermThen(                          # Instantiate `term then` entity
+    term=term4,                             # Link the defined `term` entity
+    accept=true,                            # Specify the action
+    community=[                             # Populate the community
+        j::TermThenCommunity(               # Instantiate `term then community` entity
+            then=then2,                     # Link the defined `then` entity
+            community_name="ISP",           # Specify the defined community name
+            choice_ident="delete"           # Specify community flag
+        ),
+        j::TermThenCommunity(               # Instantiate `term then community` entity
+            then=then2,                     # Link the defined `then` entity
+            community_name="NO_EXPORT",     # Specify the defined community name
+            choice_ident="add"              # Specify community flag
+        )
+    ]
+)
+
+term5=j::Term(                              # Instantiate `term` entity
+    policy_statement=policy_statement_2,    # Link the defined policy statement entity
+    name="LOCAL",                           # Specify name
+    from=j::TermFrom(                       # Instantiate `term from` entity
+        term=term5,                         # Link the defined `term` entity
+        protocol="direct",                  # Specify routing protocol
+        interface=["lo0.0"],                # Specify the interface
+    ),
+    then=j::TermThen(                       # Instantiate `then` entity
+        term=term5,                         # Link the defined `term` entity
+        accept=true                         # Accept/Deny the traffic
+    )
+)
+
+term6=j::Term(                              # Instantiate `term` entity
+    name="BGPExact",                        # Specify name
+    policy_statement=policy_statement_2,    # Link the defined policy statement entity
+    from=from3                              # Link the defined `term from` entity
+)
+
+from3=j::TermFrom(                          # Instantiate `term from` entity
+    term=term6,                             # Link the defined `term` entity
+    protocol="bgp",                         # Specify routing protocol
+    route_filter=[                          # Populate route filter
+        j::RouteFilter(                     # Instantiate route filter entity
+            address="::/0",                 # specify the address
+            choice_ident="exact",           # Specify route filter option
+            from=from3                      # Link the defined parent `from` entity
+        )
+    ]
+)
+############################################
+
+# Define a `reject` policy statement
+policy_statement_3=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="NO_ROUTES",                           # Specify the name
+    then=j::Then(                               # Instantiate `then` entity
+        reject=true,                            # Specify the action
+        policy_statement=policy_statement_3,    # Link the defined parent policy statement entity
+    ),
+)
+############################################
+
+# Define a policy statement for BGP AS path prepending
+policy_statement_4=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="PREPEND",                             # Specify the name
+    term=term_prepend,                          # Link the defined `term` entity
+)
+
+term_prepend=j::Term(                           # Instantiate `term` entity
+    policy_statement=policy_statement_4,        # Link the defined policy statement entity
+    name="prepend",                             # Specify the action name
+    then=j::TermThen(                           # Instantiate `term then` entity
+        as_path_prepend="12345",                # Soecify the prepend value
+        term=term_prepend,                      # Link the defined parent `term` entity
+    )
+)
+############################################

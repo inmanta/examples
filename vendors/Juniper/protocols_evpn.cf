@@ -1,0 +1,44 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# Configure `Protocols EVPN`
+cfg_vni_vrf_target=js::ConfigurationVNIVrfTarget(         # Instantiate `configuration vni vrf target` entity
+        export="target:7432:1234",                          # Specify export target
+        configuration_vni=cfg_vni,                          # Link the defined configuration VNI entity
+)
+
+cfg_vni=js::ConfigurationVNI(                             # Instantiate `configuration vni` entity
+        configuration_vni_options=cfg_vni_options,          # Link the defined `configuration options` entity
+        name=1234,                                          # Specify VNI name
+        configuration_vni_vrf_target=cfg_vni_vrf_target     # Link the defined `configuration vni vrf target` entity
+)
+
+cfg_vni_options=js::ConfigurationVNIOptions(              # Instantiate `configuration vni options` entity
+    configuration_evpn=evpn_vni,                            # Link the defined EVPN VNI
+    configuration_vni=cfg_vni,                            # Link the defined CFG VNI
+)
+
+evpn_vni=js::ConfigurationEVPN(                           # Instantiate `configuration EVPN` entity
+    device=router,                                          # Link the defined router
+    extended_vni_list=["1234"],                             # Specify list of VNI names
+    configuration_vni_options=cfg_vni_options             # Link the defined `configuration vni options` entity
+)

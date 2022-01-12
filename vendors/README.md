@@ -124,7 +124,7 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
 
 * [x] Bridge domains
 * [x] Firewall
-* [] L2 Circuit
+* [x] L2 Circuit
 * [] Protocols EVPN
 * [] Routing instances
 * [] EVPN

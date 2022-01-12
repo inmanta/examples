@@ -21,7 +21,7 @@ router=j::Device(
 )
 
 
-# Configure Bridge Domains and firewall/filtering
+# Configure Bridge Domains and layer 2 filtering
 firewall_family=fw::Family(                     # Instantiate firewall family entity
     device=router,                              # Link the defined router
     family_bridge=bridge                        # Link the defined bridge below

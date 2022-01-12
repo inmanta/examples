@@ -122,13 +122,12 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
 
 ### Juniper services
 
-* [] Policer
-* [] Bridge domains
-* [] EVPN
+* [x] Bridge domains
 * [] Firewall
 * [] L2 Circuit
 * [] Protocols EVPN
 * [] Routing instances
+* [] EVPN
 
 ### Nokia
 

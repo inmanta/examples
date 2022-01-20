@@ -18,14 +18,14 @@ router = ciscoxr::Device(
 )
 
 # Define an interface and change its administrative state to "DOWN"
-ciscoxr::Interface(
+ciscoxr::Interface(                             # Instantiate interface entity
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/0",    # Name of the intended interface
     shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/0
 )
 
 # Define another interface and change its administrative state to "UP"
-interface1=ciscoxr::Interface(
+interface1=ciscoxr::Interface(                  # Instantiate interface entity
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
     shutdown=false,                             # Administrative state of the interface - In this case, we are enabling GigabitEthernet0/0/0/1
@@ -45,7 +45,7 @@ c::Secondary(                                   # Instantiate secondary entity t
 )
 
 # Define another interface and add a description
-interface2=ciscoxr::Interface(
+interface2=ciscoxr::Interface(                  # Instantiate interface entity
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
     description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/2
@@ -59,24 +59,12 @@ ciscoxr::Interface(
 )
 
 # Defining the MTU:
-#
-# Approach A - Coupling MTU configuration with the interface
-ciscoxr::Interface(
+interface4=ciscoxr::Interface(                  # Instantiate interface entity
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
-    mtu=ciscoxr::Mtu(                           # Instanciate Mtu entity from the ciscoxr module
-        mtu = 9000                              # change the MTU for GigabitEthernet0/0/0/4
-    )
 )
 
-# Approach B - Separating MTU configuration from the interface
-interface6=ciscoxr::Interface(
-    device=router,                              # router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/5",    # Name of the intended interface
+ciscoxr::Mtu(                                   # Instanciate MTU entity
+    interface=interface4,                       # Link to the intended interface
+    mtu=9000,                                   # Specify the MTU value
 )
-
-ciscoxr::Mtu(
-    interface=interface6,
-    mtu=9000,
-)
-

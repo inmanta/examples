@@ -38,14 +38,14 @@ This repository illustrates how to configure services on different vendors using
 
 Having `Inmanta` installed, a project set up, and adding the required module repositories to the `project.yml` file, you can use any of the available examples under each vendor's specific directory.
 
-For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` device.
+For instance, let's see how we can shutdown an interface and set an IP address for a `Cisco IOS-XR` device.
 
-1) Head to the directory in which you have created your project, open the `main.cf` file and add the following lines from [Cisco interface example](Cisco/interface.cf):
+1) Head to the directory in which you have created your project, open the `main.cf` file and add the following lines which are taken from [Cisco XR interface example](Cisco/interface.cf):
 
    ```txt
    import ciscoxr
 
-   router = ciscoxr::Device(
+   router=ciscoxr::Device(
       name="router101",
       mgmt_ip="10.10.10.1",
       port=830,
@@ -53,10 +53,16 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
       password=PASSWORD,
    )
 
-   ciscoxr::Interface(
+   ge2=ciscoxr::Interface(
       device=router,
       interface_name="GigabitEthernet0/0/0/2",
       shutdown=true,
+   )
+
+   c::Primary(
+      interface=ge2,
+      address="172.16.10.50",
+      netmask="255.255.255.0"
    )
    ```
 
@@ -81,11 +87,11 @@ After the deployment is down, you can SSH to the device and verify the configura
 * [x] Hostname
 * [x] Interface
   * [x] Set primary address
+  * [x] Set secondary address
   * [x] MTU
   * [x] Bandwidth
   * [x] Admin state
   * [x] Description
-  * [x] Set secondary address
 * [x] Sub-interface
 * [ ] Interface VRF
 * [x] Timezone/clock

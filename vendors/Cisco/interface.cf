@@ -25,14 +25,27 @@ ciscoxr::Interface(
 )
 
 # Define another interface and change its administrative state to "UP"
-ciscoxr::Interface(
+interface1=ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
     shutdown=false,                             # Administrative state of the interface - In this case, we are enabling GigabitEthernet0/0/0/1
 )
 
+# Set a primary and secondary IP address for interface1 (GigabitEthernet0/0/0/1)
+c::Primary(                                     # Instantiate primary entity to set the primary IP address
+    interface=interface1,                       # Link the intended interface
+    address="172.16.10.50",                     # Set the IP address
+    netmask="255.255.255.0"                     # Set the netmask
+)
+
+c::Secondary(                                   # Instantiate secondary entity to set the secondary IP address
+    interface=interface1,                       # Link the intended interface
+    address="172.16.10.51",                     # Set the IP address
+    netmask="255.255.255.0"                     # Set the netmask
+)
+
 # Define another interface and add a description
-ciscoxr::Interface(
+interface2=ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
     description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/2
@@ -42,7 +55,7 @@ ciscoxr::Interface(
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
-    bandwidth=1000,                             # change description for GigabitEthernet0/0/0/3
+    bandwidth=1000,                             # The bandwidth of the interface in kbps
 )
 
 # Defining the MTU:

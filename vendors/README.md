@@ -77,7 +77,7 @@ For instance, let's see how we can shutdown an interface and set an IP address f
 * `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying anything on the device.
 * `-f main.cf` specifies the location of the main configuration file.
 
-When the deployment is done successfully, you can SSH to the device and verify its configuration.
+When the deployment is successfully done, you can SSH to the device and verify its configuration.
 
 ## Supported Platforms
 

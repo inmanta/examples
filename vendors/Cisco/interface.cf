@@ -28,7 +28,7 @@ ciscoxr::Interface(
 ciscoxr::Interface(
     device=router,                              # router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
-    shutdown=false,                             # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/1
+    shutdown=false,                             # Administrative state of the interface - In this case, we are enabling GigabitEthernet0/0/0/1
 )
 
 # Define another interface and add a description

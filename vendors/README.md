@@ -8,12 +8,12 @@ This repository illustrates how to configure services on different vendors using
 * Install the Inmanta software [using this guide](https://docs.inmanta.com/community/latest/install/1-install-server.html#install-the-software).
 * Make sure to setup a project using [this guide](https://docs.inmanta.com/community/latest/model_developers/configurationmodel.html) before running the examples.
 * You need to have an `access token` in order to pull down the modules that are provided in the examples.
-* All these examples should be placed into `main.cf` file at the root of your project directory.
 
 ## Notes
 
-* In the vendor examples, usually there are two forms of configuration snippets; `coupled` and `de-coupled`, leading to the same result on devices.
-* Not all the modules that are shown in the examples are free. Those modules require an access token to get downloaded. This access token, alongside the `GIT` repository will have to be added to the `project.yml` file under each project. For instance:
+* All these examples should be placed into `main.cf` file at the root of your project directory.
+
+* Not all the modules that are shown in the examples are free. Those modules require an `access token` to get downloaded. This `access token`, alongside the `GIT` repository URL will have to be added to the `project.yml` file under each project to successfully get the modules. For instance:
 
   ```yaml
   name: Cisco Examples
@@ -32,15 +32,15 @@ This repository illustrates how to configure services on different vendors using
 
   ```
 
-> Notice how we added the `Cisco IOS-XR` module under the repo section.
+> Notice how we added the `username`, `access token` and `Cisco IOS-XR` module under the repo section.
 
 ## Examples
 
-Having `Inmanta` installed, a project set up, and adding the required module repository to the `project.yml` file, you can use any of the available examples under each vendor's specific directory.
+Having `Inmanta` installed, a project set up, and adding the required module repositories to the `project.yml` file, you can use any of the available examples under each vendor's specific directory.
 
 For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` device.
 
-1) Head to the directory in which you have created your project, open the `main.cf` file and add the following lines:
+1) Head to the directory in which you have created your project, open the `main.cf` file and add the following lines from [Cisco interface example](Cisco/interface.cf):
 
    ```txt
    import ciscoxr
@@ -66,6 +66,8 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
     inmanta -vvv deploy -f main.cf
   ```
 
+After the deployment is down, you can SSH to the device and verify the configuration.
+
 ## Supported Platforms
 
 * [Cisco](Cisco/README.md)
@@ -85,6 +87,7 @@ For instance, let's see how we can shutdown an interface on a `Cisco IOS-XR` dev
   * [x] Description
   * [x] Set secondary address
 * [x] Sub-interface
+* [ ] Interface VRF
 * [x] Timezone/clock
 * [x] NTP
 * [x] VRF

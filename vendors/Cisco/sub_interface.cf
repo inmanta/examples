@@ -18,31 +18,33 @@ router = c::Device(
 )
 
 # Define a dot1q sub-interface
-#
-# Approach A - De-coupling a sub-interface configuration with a VLAN configuration
 
-interface=c::Interface(
+interface=c::Interface(                             # Instantiate an interface entity
     device=router,                                  # Router is the instance we defined above
     interface_name="GigabitEthernet0/0/0/1.100",    # Name of the intended interface
     shutdown=false,                                 # Administrative state of the interface - In this case, we set it to "up"
     interface_mode_non_physical="default",          # Using the default encapsulation
 )
 
-c::SubInterface(
+c::SubInterface(                                    # Instantiate a sub-interface entity
     interface=interface,                            # Interface is the instance we defined above
     vlan_type="vlan-type-dot1q",                    # Set VLAN type to dot1q
     first_tag=100,                                  # Set vlan 100
 )
 
-# Approach B - Coupling a sub-interface configuration with a VLAN configuration
 
-c::Interface(
+# In addition, you can set the outer tag type as well
+
+interface2 = c::Interface(                          # Instantiate an interface entity
     device=router,                                  # Router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/1.200",    # Name of the intended interface
-    shutdown=false,                                 # Administrative state of the interface - In this case, we set it to "up"
-    interface_mode_non_physical="default",          # Using the default encapsulation
-    subinterface = c::SubInterface(
-        vlan_type="vlan-type-dot1q",                # Set VLAN type to dot1q
-        first_tag=100,                              # Set vlan 100
-    )
+    interface_name="GigabitEthernet0/0/0/2.102",    # Name of the intended interface
+    description="outer_tag_example",                # Specify a description
+    shutdown=false,                                 # Specify the administrative state
+    interface_mode_non_physical="l2-transport",     # Set the interface operational mode
+)
+
+c::SubInterface(                                  # Instantiate a sub-interface entity
+    interface=interface2,                         # Interface is the instance we defined above
+    outer_tag_type="match-dot1q",                 # Set outer tag type
+    outer_range1_low=102,                         # Set low value of first range for outer tag match
 )

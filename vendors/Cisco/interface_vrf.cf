@@ -1,0 +1,119 @@
+# import the Cisco module and Cisco Services as c and as an alias for easier access
+import ciscoxr as c
+import ciscoxr_services as cs
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define a VRF
+interface = c::Interface(                       # Instantiate an interface entity
+    device=router,                              # Link the defined router
+    interface_name="GigabitEthernet0/0/0/8",    # Specify the interface name
+    description="VRF",                          # Specify the interface description
+    vrf="VRF100",                               # Specify the VRF name
+    shutdown=false,                             # Change the administrative state
+)
+
+primary=c::Primary(                             # Instantiate primary entity to set the primary IP address
+    interface=interface,                        # Link the intended interface
+    address="128.66.0.1",                       # Set the IP address
+    netmask="255.255.255.0"                     # Set the netmask
+)
+
+vrf = cs::Vrf(                                  # Instantiate VRF entity
+    device = router,                            # Link the defined router
+    vrf_name = "VRF100",                        # Specify the VRF name
+    description = "TEST_VRF",                   # Add a description
+)
+
+# IPv4 address family
+af = cs::Address_family(                        # Instantiate an IPv4 address family
+    vrf = vrf,                                  # Link the defined vrf
+    af_name = "ipv4",                           # Set the address family name
+    saf_name = "unicast",                       # Specify the sub-address family name
+)
+
+irts = cs::Import_route_targets(                # Instantiate import route targets entity
+    address_family = af,                        # Link the defined IPv4 address family
+)
+
+irt = cs::Import_route_target(                  # Instantiate import route target entity
+    type = "as",                                # Specify the type
+    import_route_targets = irts,                # Link the defined IPv4 import route targets entity
+)
+
+ia = cs::Import_as_or_four_byte_as(             # Instantiate `import AS or four byte AS` entity
+    import_route_target = irt,                  # Link the defined import route target
+    as_xx = 0,                                  # Specify the AS xx value
+    as_number = 65000,                          # Specify the AS number
+    as_index = 11,                              # Specify the AS index
+)
+
+erts = cs::Export_route_targets(                # Instantiate import route targets entity
+    address_family = af,                        # Link the defined IPv4 address family
+)
+
+ert = cs::Export_route_target(                  # Instantiate export route target entity
+    type = "as",                                # Specify the type
+    export_route_targets = erts,                # Link the defined IPv4 export route targets entity
+)
+
+ea = cs::Export_as_or_four_byte_as(             # Instantiate `export AS or four byte AS` entity
+    export_route_target = ert,                  # Link the defined export route target
+    as_xx = 0,                                  # Specify the AS xx value
+    as_number = 65000,                          # Specify the AS number
+    as_index = 11,                              # Specify the AS index
+)
+
+
+# IPv6 address family
+af2 = cs::Address_family(                       # Instantiate an IPv6 address family
+    vrf = vrf,                                  # Link the defined vrf
+    af_name = "ipv6",                           # Set the address family name
+    saf_name = "unicast",                       # Specify the sub-address family name
+)
+
+irts2 = cs::Import_route_targets(               # Instantiate export route targets entity
+    address_family = af2,                       # Link the defined IPv6 address family
+)
+
+irt2 = cs::Import_route_target(                 # Instantiate import route target entity
+    type = "as",                                # Specify the type
+    import_route_targets = irts2,               # Link the defined IPv6 import route targets entity
+)
+
+ia2 = cs::Import_as_or_four_byte_as(            # Instantiate `import AS or four byte AS` entity
+    import_route_target = irt2,                 # Link the defined import route target
+    as_xx = 0,                                  # Specify the AS xx value
+    as_number = 65000,                          # Specify the AS number
+    as_index = 12,                              # Specify the AS index
+)
+
+erts2 = cs::Export_route_targets(               # Instantiate import route targets entity
+    address_family = af2,                       # Link the defined IPv6 address family
+)
+
+ert2 = cs::Export_route_target(                 # Instantiate export route target entity
+    type = "as",                                # Specify the type
+    export_route_targets = erts2,               # Link the defined IPv6 export route targets entity
+)
+
+ea2 = cs::Export_as_or_four_byte_as(            # Instantiate `export AS or four byte AS` entity
+    export_route_target = ert2,                 # Link the defined export route target
+    as_xx = 0,                                  # Specify the AS xx value
+    as_number = 65000,                          # Specify the AS number
+    as_index = 12,                              # Specify the AS index
+)

@@ -1,0 +1,59 @@
+# import the nokia module
+import Nokia
+
+# You can define the device information here for easier management
+HOSTNAME = "router"
+MGMT_IP = "192.168.2.20"
+PORT = 22830
+USERNAME = "admin"
+PASSWORD = "admin"
+
+
+server_timeout = 4
+authorization = True
+record_type = "start-stop"
+index = 1
+address = "10.10.10.10"
+secret = "mDSHbc+wXLFnpcJJU+uljBPX5Q=="
+user_template_name = "tacplus-default"
+netconf = True
+
+# Construct the router instance using the imported module name and feed it the information above
+router = nokia::Device(
+    name=HOSTNAME,
+    mgmt_ip=MGMT_IP,
+    port=PORT,
+    username=USERNAME,
+    password=PASSWORD,
+)
+
+# Define a tacacs server
+security = nokiasr::Security(                   # Instantiate security entity
+    device = router,                            # Link the defined router
+)
+
+aaa = nokiasr::AAA(                             # Instantiate AAA entity
+    security = security,                        # Link the defined security entity
+)
+
+remote_servers = nokiasr::Remote_servers(       # Instantiate remote_server entity
+    aaa = aaa,                                  # Link the defined aaa entity
+)
+
+tacplus = nokiasr::Tacplus(                     # Instantiate tacplus entity
+    remote_servers = remote_servers,            # Link the defined remote_server entity
+    server_timeout = 4,                         # set server timeout
+    authorization = true,                       # set authorization to true
+)
+
+accounting = nokiasr::Accounting(               # Instantiate accouting entity
+    tacplus = tacplus,                          # Link the defined tacplus entity
+    record_type = "start-stop"                  # set record-type
+)
+
+server = nokiasr::Server(                       # Instantiate server entity
+    tacplus = tacplus,                          # Link the defined tacplus entity
+    index_server = 1,                           # set index of a server
+    address = "1.1.1.1",                        # set an ip address
+    secret = "mDSHbc+wXLFnpcJJU+uljBPX5Q==",    # ser password
+)

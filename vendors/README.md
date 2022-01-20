@@ -72,7 +72,12 @@ For instance, let's see how we can shutdown an interface and set an IP address f
     inmanta -vvv deploy -f main.cf
   ```
 
-After the deployment is down, you can SSH to the device and verify the configuration.
+* `inmanta` will be the name of the executable after successful installation.
+* `-vvv` determines the verbosity level.
+* `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying anything on the device.
+* `-f main.cf` specifies the location of the main configuration file.
+
+After the deployment is done, you can SSH to the device and verify its configuration.
 
 ## Supported Platforms
 

@@ -29,7 +29,7 @@ interface=c::Interface(                             # Instantiate an interface e
 c::SubInterface(                                    # Instantiate a sub-interface entity
     interface=interface,                            # Interface is the instance we defined above
     vlan_type="vlan-type-dot1q",                    # Set VLAN type to dot1q
-    first_tag=100,                                  # Set vlan 100
+    first_tag=100,                                  # Specify the VLAN
 )
 
 
@@ -43,8 +43,8 @@ interface2 = c::Interface(                          # Instantiate an interface e
     interface_mode_non_physical="l2-transport",     # Set the interface operational mode
 )
 
-c::SubInterface(                                  # Instantiate a sub-interface entity
-    interface=interface2,                         # Interface is the instance we defined above
-    outer_tag_type="match-dot1q",                 # Set outer tag type
-    outer_range1_low=102,                         # Set low value of first range for outer tag match
+c::SubInterface(                                    # Instantiate a sub-interface entity
+    interface=interface2,                           # Interface is the instance we defined above
+    outer_tag_type="match-dot1q",                   # Set outer tag type
+    outer_range1_low=102,                           # Set low value of first range for outer tag match
 )

@@ -19,6 +19,7 @@ router = c::Device(
 )
 
 
+# Configure BGP with VRF
 bgp = c::BGP(                       # Instantiate BGP entity
     device=router,                  # Link it to the defined router to device field
 )

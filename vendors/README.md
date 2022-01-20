@@ -98,7 +98,7 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [x] Admin state
   * [x] Description
 * [x] Sub-interface
-* [ ] Interface VRF
+* [x] Interface VRF
 * [x] Timezone/clock
 * [x] NTP
 * [x] VRF

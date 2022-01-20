@@ -145,10 +145,10 @@ When the deployment is successfully done, you can SSH to the device and verify i
 
 ### Nokia
 
-* [] TACACS configuration
-  * [] configure an authorization server with a key
-  * [] configure accounting
-  * [] set servers timeout
+* [x] TACACS configuration
+  * [x] configure an authorization server with a key
+  * [x] configure accounting
+  * [x] set servers timeout
 * [] BGP configuration
   * [] Set a bgp group with families
   * [] Set import policy for a group

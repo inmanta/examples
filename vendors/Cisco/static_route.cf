@@ -20,14 +20,14 @@ router = c::Device(
 )
 
 # Define an static route and assign a next hop route to it
-#
-# Approach A - De-coupling static route configuration with next hop route
 
 defaultvrf = sr::Default_vrf(               # Instantiate the default VRF
     device=router,                          # Link the router we defined above to the device field
+    address_family=addressfamily,           # Link the defined address family
 )
 
 addressfamily = sr::Address_family(         # Instantiate address family
+    device=router,                          # Link the defined router
     route=defaultvrf                        # Link the default VRF we used above to the route field
 )
 
@@ -57,27 +57,3 @@ vrfnexthopaddr = sr::Vrf_next_hop_address(  # Instantiate VRF next hop address
     vrf_next_hop_table=vrfnexthoptable,     # Link the `vrfnexthoptable` to the vrf_next_hop_table field
     next_hop_address="10.10.10.10"          # Assign the next hop address
 )
-
-# Approach B - Coupling static route configuration with next hop route
-
-defaultvrf = sr::Default_vrf(                                               # Instantiate the default VRF
-    device=router,                                                          # Link the router we defined above to the device field
-    address_family = sr::Address_family(                                    # Instantiate address family
-        vrfipv4=sr::Vrfipv4(                                                # Instantiate the VRF for IPv4
-            vrf_unicast=sr::Vrf_unicast(                                    # Instantiate VRF unicast
-                prefixes = sr::Vrf_prefix(                                  # Instantiate VRF prefix
-                    prefix="10.11.12.13",                                   # Provide the intended prefix
-                    prefix_length=32,                                       # Provide the prefix length
-                    vrf_route = sr::Vrf_route(                              # Instantiate VRF route
-                        vrf_next_hop_table = sr::Vrf_next_hop_table(        # Instantiate the VRF next hop
-                            next_hop_address = sr::Vrf_next_hop_address(    # Instantiate VRF next hop address
-                                next_hop_address="10.10.10.10"              # Assign the next hop address
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    )
-)
-

@@ -3,14 +3,14 @@ import ciscoxr as c
 import ciscoxr_services as cs
 
 # You can define the device information here for easier management
-hostname = "router"      # Device hostname
-mgmt_ip = "192.168.2.20" # Device management IP address
-port = 21830             # Device NETCONF port
-username = "admin"       # Device username
-password = "admin"       # Device password
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=21830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
 
 # Construct the router instance using the imported module name and feed it the information above
-router = c::Device(
+router=c::Device(
     name=hostname,
     mgmt_ip=mgmt_ip,
     port=port,
@@ -20,7 +20,8 @@ router = c::Device(
 )
 
 
-interface_evpn = c::Interface(                      # Instantiate Interface entity
+# Configure the EVPN interface
+interface_evpn=c::Interface(                        # Instantiate Interface entity
     device=router,                                  # Link the defined router
     interface_name="GigabitEthernet0/0/0/5.20",     # Specify the interface name and its tag
     description="EVPN interface",                   # Set a description
@@ -29,60 +30,100 @@ interface_evpn = c::Interface(                      # Instantiate Interface enti
     interface_mode_non_physical="l2-transport",     # Set the transport mode
 )
 
+# Configure L2VPN
+l2vpn=cs::L2vpn(                                    # Instantiate L2VPN entity
+    device=router,                                  # Link the defined router
+    bridge_domain_groups=bridge_domain_groups,      # Link the defined bridge domain groups
+    enable=true,                                    # Enable it
+)
 
-l2vpn=cs::L2vpn(                                                                # Instantiate L2VPN entity
-    device=router,                                                              # Link the defined router
-    enable=true,                                                                # Enable it
-    bridge_domain_groups = cs::Bridge_domain_groups(                            # Instantiate a bridge domain groups
-        bridge_domain_group = cs::Bridge_domain_group(                          # Instantiate a bridge domain group
-            name = "bridgeGroup",                                               # Specify a name
-            bridge_domains = cs::Bridge_domains(                                # Instantiate bridge domains entity
-                bridge_domain = cs::Bridge_domain(                              # Instantiate a bridge domain entity
-                    name = "BDomain",                                           # Specify bridge domain's name
-                    bd_attachment_circuits = cs::Bd_attachment_circuits(        # Instantiate attachment circuits entity
-                        bd_attachment_circuit = cs::Bd_attachment_circuit(      # Instantiate attachment circuit entity
-                            name = "GigabitEthernet0/0/0/5.20"                  # Specify the name of attachment circuit
-                        )
-                    ),
-                    bridge_domain_evis = cs::Bridge_domain_evis(                # Instantiate bridge domain EVIs entity
-                        bridge_domain_evi = cs::Bridge_domain_evi(              # Instantiate bridge domain EVI entity
-                            eviid = 1234,                                       # Specify the EVI ID
-                        )
-                    )
-                )
-            )
-        )
+bridge_domain_groups=cs::Bridge_domain_groups(      # Instantiate bridge domain groups
+    l2vpn=l2vpn,                                    # Link the defined L2VPN entity
+    bridge_domain_group=bridge_domain_group         # Link the defined bridge domain group
+)
+
+bridge_domain_group=cs::Bridge_domain_group(        # Instantiate bridge domain group entity
+    bridge_domain_groups=bridge_domain_groups,      # Link the defined bridge domain groups
+    bridge_domains=bridge_domains,                  # Link the defined bridge domains
+    name="bridgeGroup",                             # Specify the name
+)
+
+
+bridge_domains=cs::Bridge_domains(                  # Instantiate bridge domains entity
+    bridge_domain_group=bridge_domain_group,        # Link the defined bridge domain group
+    bridge_domain=bridge_domain                     # Link the defined bridge domain
+)
+
+bridge_domain=cs::Bridge_domain(                    # Instantiate a bridge domain entity
+    bridge_domains=bridge_domains,                  # Link the defined bridge domains entity
+    bd_attachment_circuits=bd_attachment_circuits,  # Link the defined bridge domain attachment circuit entity
+    bridge_domain_evis=bridge_domain_evis,          # Link the defined bridge domain EVIs entity
+    name="BDomain",                                 # Specify bridge domain's name
+)
+
+bd_attachment_circuits=cs::Bd_attachment_circuits(      # Instantiate bridge domain attachment circuits
+    bridge_domain=bridge_domain,                        # Link the defined bridge domain
+    bd_attachment_circuit=cs::Bd_attachment_circuit(    # Instantiate bridge domain attachment circuit
+        bd_attachment_circuits=bd_attachment_circuits,  # Link the defined bridge domain attachment circuits entity
+        name="GigabitEthernet0/0/0/5.20",               # Specify the intended interface
+    )
+)
+
+bridge_domain_evis=cs::Bridge_domain_evis(          # Instantiate bridge domain EVIs entity
+    bridge_domain=bridge_domain,                    # Link the defined bridge domain
+    bridge_domain_evi=cs::Bridge_domain_evi(        # Instantiate bridge domain EVI entity
+        bridge_domain_evis=bridge_domain_evis,      # Link the defined parent bridge domain EVIs entity
+        eviid=1234,                                 # Specify the EVI ID
     )
 )
 
 
-evpn = cs::EVPN(                                                                    # Instantiate EVPN entity
-    device=router,                                                                  # Link the defined router
-    enable=true,                                                                    # Enable it
-    evpn_tables = cs::EVPN_tables(                                                  # Instantiate EVPN tables entity
-        evpnevis = cs::EVPNEVIS(                                                    # Instantiate an EVPN Instances entity
-            evpnevi = cs::EVPNEVI(                                                  # Instantiate an EVPN Instance entity
-                eviid = 1234,                                                       # Specify the EVI ID
-                evpnnev_ibgp_auto_discovery = cs::EVPNnev_ibgp_auto_discovery(      # Instantiate EVPN iBGP auto discovery entity
-                    evpn_route_distinguisher = cs::EVPN_route_distinguisher(        # Instantiate EVPN route distinguisher/RD
-                        type = "two-byte-as",                                       # Specify the type
-                        as_number = 200,                                            # Specify the AS number
-                        as_index = 201,                                             # Specify the AS index
-                    ),
-                    evpn_route_targets = cs::EVPN_route_targets(                    # Instantiate EVPN route target/RT
-                        evpn_route_target_as = cs::EVPN_route_target_as(            # Instantiate route target AS
-                            format = "two-byte-as",                                 # Specify the format
-                            role = "both",                                          # Specify the role
-                            as_number = 200,                                        # Specify the AS number
-                            as_index = 201,                                         # Specify the AS index
-                            stitching = "no-stitching"                              # Specify stitching
-                        )
-                    )
-                ),
-                evpn_advertise_mac = cs::EVPN_advertise_mac(                        # Instantiate EVPN advertise MAC
-                    enable = true                                                   # Enable it
-                )
-            )
-        )
+# Configure EVPN
+evpn=cs::EVPN(                      # Instantiate EVPN entity
+    device=router,                  # Link the defined router
+    evpn_tables=evpn_tables,        # Link the defined EVPN tables
+    enable=true,                    # Enable it
+)
+
+evpn_tables=cs::EVPN_tables(        # Instantiate EVPN tables entity
+    evpn=evpn,                      # Link the defined EVPN entity
+    evpnevis=evpnevis,              # Link the defined EVPN EVIs entity
+)
+
+evpnevis=cs::EVPNEVIS(              # Instantiate EVPN EVIs entity
+    evpn_tables=evpn_tables,        # Link the defined EVPN tables
+    evpnevi=evpnevi,                # Link the defined EVPN EVI
+)
+
+evpnevi=cs::EVPNEVI(                                            # Instantiate an EVPN Instance entity
+    evpnevis= evpnevis,                                         # Link the defined EVPN EVIs entity
+    evpnnev_ibgp_auto_discovery=evpnnev_ibgp_auto_discovery,    # Link the defined EVPN EVI iBGP auto discovery entity
+    eviid=1234,                                                 # Specify the EVI ID
+    evpn_advertise_mac=cs::EVPN_advertise_mac(                  # Instantiate EVPN advertise MAC
+        evpnevi=evpnevi,                                        # Link the defined EVPN EVI
+        enable=true                                             # Enable it
+    )
+)
+
+evpnnev_ibgp_auto_discovery=cs::EVPNnev_ibgp_auto_discovery(        # Instantiate EVPN iBGP auto discovery entity
+    evpnevi=evpnevi,                                                # Link the defined EVPN EVI
+    evpn_route_targets=evpn_route_targets,                          # Link the defined EVPN route targets
+    evpn_route_distinguisher=cs::EVPN_route_distinguisher(          # Instantiate EVPN route distinguisher/RD
+        evpnnev_ibgp_auto_discovery=evpnnev_ibgp_auto_discovery,    # Link the parent EVPN iBGP auto discovery entity
+        type="two-byte-as",                                         # Specify the type
+        as_number=200,                                              # Specify the AS number
+        as_index=201,                                               # Specify the AS index
+    ),
+)
+
+evpn_route_targets=cs::EVPN_route_targets(                          # Instantiate EVPN route targets/RT
+    evpnnev_ibgp_auto_discovery=evpnnev_ibgp_auto_discovery,        # Link the EVPN iBGP auto discovery entity
+    evpn_route_target_as=cs::EVPN_route_target_as(                  # Instantiate route target AS
+        evpns_route_targets=evpn_route_targets,                     # Link the defined EVPN route targets
+        format="two-byte-as",                                       # Specify the format
+        role="both",                                                # Specify the role
+        as_number=200,                                              # Specify the AS number
+        as_index=201,                                               # Specify the AS index
+        stitching="no-stitching"                                    # Specify stitching
     )
 )

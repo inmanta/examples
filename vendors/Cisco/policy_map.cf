@@ -19,9 +19,7 @@ router = c::Device(
     auto_agent=true,
 )
 
-# Define a policy-map
-#
-# Approach A - De-coupling policy-map configuration
+# Define a QoS policy-map
 
 policyMaps = pm::Policy_maps(               # Instantiate policy maps entity
     device = router                         # Link it to the defined router to device field
@@ -46,24 +44,4 @@ rate = pm::Rate(                            # Instantiate Rate entity
     value = 200,                            # Specify a value
     units = "kbps",                         # Specify a unit
     police = police                         # Link it to the defined police entity
-)
-
-
-# Approach B - Coupling policy-map configuration
-
-policyMaps = pm::Policy_maps(                        # Instantiate policy maps entity
-    device = router,                                 # Link it to the defined router to device field
-        policy_map = pm::Policy_map(                 # Instantiate policy map entity
-        type = "qos",                                # Set the type
-        name = "QoSPolMap2",                         # Specify a name for the policy map
-        policy_map_rule = pm::Policy_map_rule(       # Instantiate policy map rule entity
-            class_type = "qos",                      # Set the class type
-            police = pm::Police(                     # Instantiate Police entity
-                rate = pm::Rate(                     # Instantiate Rate entity
-                    value = 300,                     # Specify a value
-                    units = "mbps",                  # Specify a unit
-                )
-            )
-        )
-    )
 )

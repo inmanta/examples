@@ -18,13 +18,6 @@ router = c::Device(
     password=password,
 )
 
-# Define a VRF
-cs::Vrf(
-    device = router,             # Router is the instance we defined above
-    vrf_name = "TEST",           # VRF name
-    description = "TEST_VRF",    # VRF description
-)
-
 
 # Define a VRF and address-families
 vrf = cs::Vrf(
@@ -44,3 +37,5 @@ cs::Address_family(
     af_name = "ipv6",             # set ipv6 address-family
     saf_name = "unicast",         # set type
 )
+
+# For a more complete example you can check the `interface_vrf.cf` file.

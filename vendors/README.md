@@ -149,6 +149,8 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [x] configure an authorization server with a key
   * [x] configure accounting
   * [x] set servers timeout
+* [x] SNMP configuration
+  * [x] configure snmp group, comminity, view
 * [] BGP configuration
   * [] Set a bgp group with families
   * [] Set import policy for a group

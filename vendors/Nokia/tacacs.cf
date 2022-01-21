@@ -1,30 +1,22 @@
 # import the nokia module
-import Nokia
+import nokiasr
 
 # You can define the device information here for easier management
-HOSTNAME = "router"
-MGMT_IP = "192.168.2.20"
-PORT = 22830
-USERNAME = "admin"
-PASSWORD = "admin"
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
 
-
-server_timeout = 4
-authorization = True
-record_type = "start-stop"
-index = 1
-address = "10.10.10.10"
-secret = "mDSHbc+wXLFnpcJJU+uljBPX5Q=="
-user_template_name = "tacplus-default"
-netconf = True
 
 # Construct the router instance using the imported module name and feed it the information above
-router = nokia::Device(
-    name=HOSTNAME,
-    mgmt_ip=MGMT_IP,
-    port=PORT,
-    username=USERNAME,
-    password=PASSWORD,
+router=nokiasr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
 )
 
 # Define a tacacs server
@@ -51,9 +43,21 @@ accounting = nokiasr::Accounting(               # Instantiate accouting entity
     record_type = "start-stop"                  # set record-type
 )
 
-server = nokiasr::Server(                       # Instantiate server entity
+nokiasr::Server(                                # Instantiate server entity
     tacplus = tacplus,                          # Link the defined tacplus entity
     index_server = 1,                           # set index of a server
     address = "1.1.1.1",                        # set an ip address
     secret = "mDSHbc+wXLFnpcJJU+uljBPX5Q==",    # ser password
+)
+
+
+# Define user template
+user_template = nokiasr::User_template(         # Instantiate user template entity
+    aaa = aaa,                                  # Link the defined aaa entity
+    user_template_name = "tacplus-default",     # set the name
+)
+
+nokiasr::Access_context(                        # Instantiate user template entity
+    user_template = user_template,              # Link the defined user templte entity
+    netconf = true,                             # set netconf to true
 )

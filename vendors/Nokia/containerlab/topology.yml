@@ -9,7 +9,7 @@ topology:
       kind: vr-sros
       image: vrnetlab/vr-sros:20.10.R1
       license: ./nokia/sros-20.7.R1.qcow2.license
-      startup-config: ./nokia/startup.cfg
+      startup-config: ./startup_nokia_router_a.cfg
       mgmt_ipv4: 10.11.12.30
       ports:
         - 22030:22
@@ -18,7 +18,7 @@ topology:
       kind: vr-sros
       image: vrnetlab/vr-sros:20.10.R1
       license: ./nokia/sros-20.7.R1.qcow2.license
-      startup-config: ./nokia/startup.cfg
+      startup-config: ./startup_nokia_router_b.cfg
       mgmt_ipv4: 10.11.12.31
       ports:
         - 22031:22

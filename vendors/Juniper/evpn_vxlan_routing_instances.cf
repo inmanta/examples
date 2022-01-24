@@ -1,0 +1,137 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+import juniper_services::firewall as fw
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# EVPN configuration for routing instances
+#
+# irb interface configuration to be later used in EVPN routing instances
+interface_irb = j::Interface(               # Instantiate interface entity
+    device=router,                          # Link the defined router
+    interface_name="irb",                   # Specify the interface name
+)
+
+unit20 = j::Unit(                           # Instantiate Unit entity
+    interface=interface_irb,                # Link the defined interface
+    name=20,                                # Specify unit ID
+    description="Desc",                     # Specify the description
+    proxy_macip_advertisement=true,         # Enable/Disable proxy mac-ip advertisement
+    virtual_gateway_accept_data=true,       # Enable/Disable accepting packets destined for virtual gateway address
+)
+
+family_inet1 = j::Family_inet(              # Instantiate family inet entity
+    unit=unit20,                            # Link the defined unit
+)
+
+address = j::Address_inet(                  # Instantiate address inet entity
+    family_inet=family_inet1,               # Link the defined family inet
+    name="192.168.0.1/30",                  # Specify the IP address
+)
+
+rpf_check = j::Rpf_check_inet(                      # Instantiate RPF check inet entity
+    family_inet=family_inet1,                       # Link the defined family inet
+    fail_filter = "genericv4-rpf-fail-filter",      # Specify the generic fail filter
+)
+
+filter_inet = j::Filter_inet(                                           # Instantiate filter inet entity
+    family_inet=family_inet1,                                           # Link the defined family inet
+    output_list = ["filters.v4_out_default","filters.v4_out_vlan"]      # Specify output_list
+)
+
+filter_input_inter = j::Filter_input_inet(          # Instantiate filter inet entity
+    filter_inet = filter_inet,                      # Link the defined filter inet entity
+    filter_name = "filters.v4_in"                   # Specify filter name
+)
+
+
+# loopback interface configuration to be later used in EVPN routing instances
+# interface_lo = j::Interface(                        # Instantiate interface entity
+#     device=router,                                  # Link the defined router
+#     interface_name="lo0",                           # Specify the interface name
+# )
+
+# unit0 = j::Unit(                                    # Instantiate Unit entity
+#     interface=interface_lo,                         # Link the defined interface
+#     name=0,                                         # Specify unit ID
+#     description="Desc",                             # Specify the description
+#     proxy_macip_advertisement=true,                 # Enable/Disable proxy mac-ip advertisement
+#     virtual_gateway_accept_data=true,               # Enable/Disable accepting packets destined for virtual gateway address
+# )
+
+# family_inet2 = j::Family_inet(                      # Instantiate family inet entity
+#     unit=unit0,                                     # Link the defined unit
+# )
+
+# address2 = j::Address_inet(                         # Instantiate address inet entity
+#     family_inet=family_inet2,                       # Link the defined family inet
+#     name="10.0.0.10/32",                            # Specify the IP address
+# )
+
+
+# EVPN section
+routing_instances = js::RoutingInstances(           # Instantiate routing instances entity
+    device = router,                                # Link the defined router
+)
+
+instance = js::Instance(                            # Instantiate routing routing instance entity
+    routing_instances = routing_instances,          # Link the defined routing instances
+    name = "EVPN1",                                 # Specify a name
+    instance_type = "virtual-switch",               # Specify the type
+)
+
+js::VTEPSourceInterface(                            # Instantiate VTEP source interface entity
+    instance = instance,                            # Link the defined instance entity
+    interface_name = "lo0.0",                       # Specify the interface
+)
+
+js::RouteDistinguisher(                             # Instantiate route distinguisher entity
+    instance = instance,                            # Link the defined instance entity
+    rd_type = "20:20",                              # Specify RD type
+)
+
+js::VrfTarget(                                      # Instantiate VRF target entity
+    instance = instance,                            # Link the defined instance entity
+    community = "target:20:20",                     # Specify the community
+)
+
+protocols = js::Protocols(                          # Instantiate protocols entity
+    instance = instance,                            # Link the defined instance entity
+    evpn = js::EVPN(                                # Instantiate EVPN entity
+        protocols=protocols,                        # Link the defined parent protocols entity
+        encapsulation = "vxlan",                    # Specify the encapsulation
+        extended_vni_list = [20],                   # Specify VNI ID list that are to be EVPN extended
+    )
+)
+
+bd = js::BridgeDomains(                             # Instantiate bridge domains entity
+    instance = instance,                            # Link the defined instance entity
+)
+
+domain = js::Domain(                                # Instantiate domain entity
+    bridge_domains = bd,                            # Link the defined bridge domains
+    name = "20",                                    # Specify the name
+    vlan_id = "20",                                 # Specify VLAN ID
+    routing_interface = "irb.20",                   # Specify the routing interface
+    vxlan = js::VXLAN(                              # Instantiate VXLAN entity
+        domain = domain,                            # Link the defined parent domain
+        vni = 20,                                   # Specify VNI ID
+        ingress_node_replication = true             # Enable ingress node replication
+    )
+)

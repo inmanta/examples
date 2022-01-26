@@ -82,3 +82,11 @@ evpn_int = js::EVPNInterface(                           # Instantiate EVPN inter
         remote = 12346,                                 # Specify remote ID
     )
 )
+
+
+# Additionally, you can control the MAC table size for EVPN
+mac_table_size = js::MacTableSize(          # Instantiate MAC table size entity
+    evpn = evpn,                            # Link the defined EVPN entity
+    limit = 12345,                          # Specify the size
+    packet_action = "drop"                  # Specify the action
+)

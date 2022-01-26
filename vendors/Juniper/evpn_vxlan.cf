@@ -1,7 +1,6 @@
 # import the Juniper module as an alias
 import juniper as j
 import juniper_services as js
-import juniper_services::firewall as fw
 
 
 # You can define the device information here for easier management
@@ -26,6 +25,8 @@ router=j::Device(
 interface_irb = j::Interface(               # Instantiate interface entity
     device=router,                          # Link the defined router
     interface_name="irb",                   # Specify the interface name
+    gigether_opt_auto_neg=false,            # Enable/Disable auto-negotiation
+    speed=null,                             # Specify the speed, null for default/auto
 )
 
 unit20 = j::Unit(                           # Instantiate Unit entity
@@ -45,6 +46,7 @@ address = j::Address_inet(                  # Instantiate address inet entity
     name="192.168.0.1/30",                  # Specify the IP address
 )
 
+# Optional
 rpf_check = j::Rpf_check_inet(                      # Instantiate RPF check inet entity
     family_inet=family_inet1,                       # Link the defined family inet
     fail_filter = "genericv4-rpf-fail-filter",      # Specify the generic fail filter
@@ -59,30 +61,6 @@ filter_input_inter = j::Filter_input_inet(          # Instantiate filter inet en
     filter_inet = filter_inet,                      # Link the defined filter inet entity
     filter_name = "filters.v4_in"                   # Specify filter name
 )
-
-
-# loopback interface configuration to be later used in EVPN routing instances
-# interface_lo = j::Interface(                        # Instantiate interface entity
-#     device=router,                                  # Link the defined router
-#     interface_name="lo0",                           # Specify the interface name
-# )
-
-# unit0 = j::Unit(                                    # Instantiate Unit entity
-#     interface=interface_lo,                         # Link the defined interface
-#     name=0,                                         # Specify unit ID
-#     description="Desc",                             # Specify the description
-#     proxy_macip_advertisement=true,                 # Enable/Disable proxy mac-ip advertisement
-#     virtual_gateway_accept_data=true,               # Enable/Disable accepting packets destined for virtual gateway address
-# )
-
-# family_inet2 = j::Family_inet(                      # Instantiate family inet entity
-#     unit=unit0,                                     # Link the defined unit
-# )
-
-# address2 = j::Address_inet(                         # Instantiate address inet entity
-#     family_inet=family_inet2,                       # Link the defined family inet
-#     name="10.0.0.10/32",                            # Specify the IP address
-# )
 
 
 # EVPN section

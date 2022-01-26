@@ -1,0 +1,51 @@
+# import the nokia module
+import nokiasr
+import import nokiasr_eth_cfm
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
+
+
+# Construct the router instance using the imported module name and feed it the information above
+device=nokiasr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+
+# Configuring ETH-CFM parametries.
+eth_cfm = nokiasr_eth_cfm::EthCFM(                                # Instantiate EthCFM entity
+        device=device,                                            # Link the defined router
+    )
+
+domain = nokiasr_eth_cfm::Domain(                                 # Instantiate domain entity
+    eth_cfm=eth_cfm,                                              # Link the defined ethcfm
+    md_admin_name="300",                                          # set md_admin_name
+    level=3,                                                      # set level
+    name="test_network",                                          # set name
+)
+
+association = nokiasr_eth_cfm::Association(                       # Instantiate association entity
+    domain=domain,                                                # Link the defined domain
+    ma_admin_name="1500",                                         # set ma_admin_name
+    string_value="test",                                          # set string value
+    ccm_interval="1s",                                            # set ccm interval
+    auto_mep_discovery=true                                       # set auto mep discovery
+)
+
+bridge_identifier = nokiasr_eth_cfm::BridgeIdentifier(            # Instantiate bridgeidentifier entity
+    association=association,                                      # Link the defined association
+    bridge_name="test",                                           # set bridge name
+    mhf_creation="default",                                       # set mhf_creation
+    id_permission="chassis"                                       # set ip permission
+)
+
+

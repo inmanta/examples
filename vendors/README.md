@@ -140,8 +140,9 @@ When the deployment is successfully done, you can SSH to the device and verify i
 * [x] Firewall
 * [x] L2 Circuit
 * [x] Protocols EVPN
-* [] Routing instances
-* [] EVPN
+* [x] Routing instances
+* [x] EVPN
+* [x] VPWS
 
 ### Nokia
 

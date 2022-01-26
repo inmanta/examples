@@ -1,0 +1,92 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# EVPN configuration for routing instances
+# NOTE: This example requires LDP based MPLS to be configured on the device to work correctly.
+#######################################################################################
+
+int1 = j::Interface(                                    # Instantiate interface entity
+    device = router,                                    # Link the defined router
+    interface_name = "ge-0/0/1",                        # Specify the interface name
+    flexible_vlan_tagging = true,                       # Enable flexible vlan tagging
+    encapsulation = "flexible-ethernet-services",       # Specify the encapsulation
+    unit = unit,                                        # Link the defined unit entity
+)
+
+int2 = js::Interface(                                   # Instantiate interface entity
+    instance = instance,                                # Link the defined instance entity
+    name = "ge-0/0/1.10"                                # Specify the interface name
+)
+
+unit = j::Unit(                                         # Instantiate Unit entity
+    interface = int1,                                   # Link the defined interface
+    name = 10,                                          # Specify unit ID
+    encapsulation = "vlan-ccc",                         # Specify the encapsulation
+    vlan_id = 10,                                       # Specify the VLAN ID
+)
+
+routing_instances = js::RoutingInstances(               # Instantiate routing instances entity
+    device = router,                                    # Link the defined router
+)
+
+instance = js::Instance(                                # Instantiate routing routing instance entity
+    routing_instances = routing_instances,              # Link the defined routing instances
+    name = "EVPNVPWS",                                  # Specify a name
+    instance_type = "evpn-vpws",                        # Specify the type
+)
+
+js::RouteDistinguisher(                                 # Instantiate route distinguisher entity
+    instance = instance,                                # Link the defined instance entity
+    rd_type = "100:100",                                # Specify RD type
+)
+
+js::VrfTarget(                                          # Instantiate VRF target entity
+    instance = instance,                                # Link the defined instance entity
+    community = "target:100:1",                         # Specify the community
+)
+
+evpn = js::EVPN(                                        # Instantiate EVPN entity
+    interfaces = evpn_int,                              # Link the defined EVPN interface entity
+    protocols = protocols                               # Link the defined protocols entity
+)
+
+protocols = js::Protocols(                              # Instantiate protocols entity
+    instance = instance,                                # Link the defined instance entity
+    evpn =  evpn                                        # Link the defined EVPN entity
+)
+
+evpn_int = js::EVPNInterface(                           # Instantiate EVPN interface entity
+    evpn = evpn,                                        # Link the defined EVPN entity
+    name = "ge-0/0/1.10",                               # Specify the interface name
+    vpws_service_id = js::VPWSServiceId(                # Instantiate VPWS service ID entity
+        interface = evpn_int,                           # Link the defined EVPN interface
+        local = 12345,                                  # Specify local ID
+        remote = 12346,                                 # Specify remote ID
+    )
+)
+
+
+# Additionally, you can control the MAC table size for EVPN
+mac_table_size = js::MacTableSize(          # Instantiate MAC table size entity
+    evpn = evpn,                            # Link the defined EVPN entity
+    limit = 12345,                          # Specify the size
+    packet_action = "drop"                  # Specify the action
+)

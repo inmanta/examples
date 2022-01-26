@@ -151,13 +151,12 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [x] set servers timeout
 * [x] SNMP configuration
   * [x] configure snmp group, comminity, view
-* [] BGP configuration
-  * [] Set a bgp group with families
-  * [] Set import policy for a group
-  * [] Set a neighbor with a group
-  * [] Change description for a neighbor
-  * [] Set backup path
-  * [] Set rapid update
+* [x] BGP configuration
+  * [x] Set a bgp group with families
+  * [x] Set a neighbor with a group
+  * [x] Change description for a neighbor
+  * [x] Set backup path
+  * [x] Set rapid update
 * [] Ethernet segment
   * [] set single-active ethernet-segment
   * [] set all-active ethernet-segment

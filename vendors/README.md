@@ -165,8 +165,8 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [] set epipe
   * [] set epipe and eth-cfm
   * [] set epipe and bgp
-* [] eth-cfm
-  * [] set eth-cfm
+* [x] eth-cfm
+  * [x] set eth-cfm
 * [] Policy option
   * [] Set policy options with community
   * [] Set policy option with allow/deny statement

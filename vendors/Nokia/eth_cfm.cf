@@ -1,6 +1,6 @@
 # import the nokia module
 import nokiasr
-import import nokiasr_eth_cfm
+import nokiasr_eth_cfm
 
 # You can define the device information here for easier management
 hostname="router"      # Device hostname

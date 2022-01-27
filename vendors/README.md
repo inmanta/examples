@@ -158,8 +158,10 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [x] Change description for a neighbor
   * [x] Set backup path
   * [x] Set rapid update
+* [x] Client configuration
+  * [x] Set a name and an id of a client
 * [] Ethernet segment
-  * [] set single-active ethernet-segment
+  * [x] set single-active ethernet-segment
   * [] set all-active ethernet-segment
 * [] Service EPIPE
   * [] set epipe

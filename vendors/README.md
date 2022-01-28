@@ -162,7 +162,7 @@ When the deployment is successfully done, you can SSH to the device and verify i
   * [x] Set a name and an id of a client
 * [] Ethernet segment
   * [x] set single-active ethernet-segment
-  * [] set all-active ethernet-segment
+  * [x] set all-active ethernet-segment
 * [] Service EPIPE
   * [] set epipe
   * [] set epipe and eth-cfm

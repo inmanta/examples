@@ -77,3 +77,57 @@ nokiasr_services::BGP(                                                # Instanti
     )
 )
 
+
+# Configuring ethernet segment all-active.
+## Approach A
+bgp = nokiasr_services::BGP(                                          # Instantiate EthCFM entity
+    device = device,                                                  # Link the defined router
+)
+
+evpn = nokiasr_services::EVPN(                                        # Instantiate EVPN entity
+    bgp = bgp,                                                        # Link the defined bgp
+)
+
+ethernet_segment = nokiasr_services::Ethernet_segment(                # Instantiate Ethernet Segment entity
+    evpn = evpn,                                                      # Link the defined evpn
+    ethernet_segment_name="HUBS",                                     # set ethernet segment name
+    esi="0x00000000456012900000",                                     # set esi
+    multi_homing_mode="all-active",                                   # set multi homed mode
+    admin_state = "enable",                                           # set admin state to enable
+)
+
+df_election = nokiasr_services::DF_election(                          # Instantiate DF election entity
+    ethernet_segment = ethernet_segment,                              # Link the defined ethernet_segment
+    es_activation_timer = 3,                                          # set es timer
+)
+
+association = nokiasr_services::Association (                         # Instantiate association election entity
+    ethernet_segment = ethernet_segment,                              # Link the defined ethernet_segment
+)
+
+lag = nokiasr_services::Lag(                                          # Instantiate lag entity
+    association = association,                                        # Link the defined assiciation
+    lag_id = 1,                                                       # set lag id
+)
+
+
+## Approach B
+nokiasr_services::BGP(                                                # Instantiate EthCFM entity
+    device=device,                                                    # Link the defined router
+    evpn = nokiasr_services::EVPN(                                    # Instantiate EVPN entity
+        ethernet_segment = nokiasr_services::Ethernet_segment(        # Instantiate Ethernet Segment entity
+            ethernet_segment_name="HUBS",                             # set ethernet segment name
+            esi="0x00000000456012300000",                             # set esi
+            multi_homing_mode="single-active",                        # set multi homed mode
+            df_election = nokiasr_services::DF_election(              # Instantiate DF election entity
+                es_activation_timer = 3,                              # set es timer
+            ),
+            association = nokiasr_services::Association (             # Instantiate association election entity
+                lag = nokiasr_services::Lag(                          # Instantiate lag entity
+                    lag_id = 1,                                       # set lag id
+                ),
+            ),
+            admin_state = "enable"                                    # set admin state to enable
+        )
+    )
+)

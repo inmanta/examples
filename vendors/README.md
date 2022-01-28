@@ -68,6 +68,8 @@ For instance, let's see how we can shutdown an interface and set an IP address f
 
 2) Deploy the configuration:
 
+    Configuration deployment is possible via `deploy` and `export` flags. The main difference is, `export` option will send your configuration model to the `Service Orchestrator` from where, you can view the deployment steps in the GUI. If you have followed the [installation guide](https://docs.inmanta.com/community/latest/install/1-install-server.html) the dashboard should be at your disposal.
+
   ```bash
     inmanta -vvv deploy -f main.cf
   ```
@@ -77,7 +79,7 @@ For instance, let's see how we can shutdown an interface and set an IP address f
 * `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying anything on the device.
 * `-f main.cf` specifies the location of the main configuration file.
 
-When the deployment is successfully done, you can SSH to the device and verify its configuration.
+When the deployment is successfully done, you can `SSH` to the device and verify its configuration.
 
 ## Supported Platforms
 

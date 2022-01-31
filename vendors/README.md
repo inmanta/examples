@@ -171,9 +171,9 @@ When the deployment is successfully done, you can `SSH` to the device and verify
   * [] set epipe and bgp
 * [x] eth-cfm
   * [x] set eth-cfm
-* [] Policy option
-  * [] Set policy options with community
-  * [] Set policy option with allow/deny statement
+* [x] Policy option
+  * [x] Set policy options with community
+  * [x] Set policy option with allow/deny statement
 * [] Service VPRN
   * [] set service VPRN
   * [] set service VPRN with VRRP

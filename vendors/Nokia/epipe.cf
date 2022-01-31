@@ -1,0 +1,51 @@
+# import the required modules as an alias
+import nokiasr
+import nokiasr_service_epipe
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
+
+
+# Construct the router instance using the imported module name and feed it the information above
+device=nokiasr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+#Define epipe
+epipe=nokiasr_service_epipe::Epipe(               # Instantiate epipe entity
+    device=device,                                # Link the defined router
+    service_name="epipe-test",                    # set service name
+    admin_state="enable",                         # set admin status
+    service_id=678,                               # set service id
+    customer="test",                              # set customer id
+    service_mtu=1500,                             # set mtu
+)
+
+spoke_sdp=nokiasr_service_epipe::SpokeSDP(        # Instantiate sdp entity
+    epipe=epipe,                                  # Link the epipe
+    sdp_bind_id="1:1",                            # set sdp id
+    admin_state="enable",                         # set admin state
+    hash_label=true,                              # set hash label
+)
+
+pw_status=nokiasr_service_epipe::PWStatus(        # Instantiate pw status entity
+    spoke_sdp=spoke_sdp,                          # Link the spoke sdp
+    signaling=true,                               # set signaling
+)
+
+sap = nokiasr_service_epipe::SAP(                 # Instantiate sap entity
+    epipe=epipe,                                  # Link the epipe
+    sap_id="1/1/c3/1:1.1",                        # set interface
+    admin_state="enable",                         # set admin status
+    description="test",                           # set description
+)

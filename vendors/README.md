@@ -78,10 +78,19 @@ For instance, let's see how we can shutdown an interface and set an IP address f
       inmanta -vvv deploy -f main.cf
     ```
 
-* `inmanta` will be the name of the executable after successful installation.
-* `-vvv` determines the verbosity level.
-* `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying any configuration on the device.
-* `-f main.cf` specifies the location of the main configuration file.
+   * `inmanta` will be the name of the executable after successful installation.
+   * `-vvv` determines the verbosity level.
+   * `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying any configuration on the device.
+   * `-f main.cf` specifies the location of the main configuration file.
+
+    In case of deployment using the `export` switch, the model does not *need* to be named `main.cf`:
+
+    ```bash
+      inmanta -vvv export -e d3b2e897-0121-4124-863e-47b6c78ebc35 -f ip_address.cf
+    ```
+
+    * `export` pushes the model to the `Service Orchestrator`.
+    * `-e` provides the `environment` ID. This can be derived from the `Service Orchestrator` Web Console.
 
 When the deployment is successfully done, you can `SSH` to the device and verify its configuration.
 

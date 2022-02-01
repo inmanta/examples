@@ -66,17 +66,21 @@ For instance, let's see how we can shutdown an interface and set an IP address f
    )
    ```
 
+   > Note: Modules will get downloaded when you save the file. If not, please make sure your `project.yml` file is correctly configured.
+
 2) Deploy the configuration:
 
-    Configuration deployment is possible via `deploy` and `export` flags. The main difference is, `export` option will send your configuration model to the `Service Orchestrator` from where, you can view the deployment steps in the GUI. If you have followed the [installation guide](https://docs.inmanta.com/community/latest/install/1-install-server.html) the dashboard should be at your disposal.
+    Configuration deployment is possible via `deploy` and `export` switches. The main difference is, `export` option will send your configuration model to the `Service Orchestrator` from where, you can view the deployment steps in the GUI. If you have followed the [installation guide](https://docs.inmanta.com/community/latest/install/1-install-server.html) the dashboard should be at your disposal. Additionally, we also provide a Docker container for `Service Orchestrator` which is publicly available but it needs a license to function which you can contact us to that end.
 
-  ```bash
-    inmanta -vvv deploy -f main.cf
-  ```
+    Let's deploy this example using the `deploy` switch:
+
+    ```bash
+      inmanta -vvv deploy -f main.cf
+    ```
 
 * `inmanta` will be the name of the executable after successful installation.
 * `-vvv` determines the verbosity level.
-* `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying anything on the device.
+* `deploy` is the intended action. You can use `compile` to sanity check your configuration without applying any configuration on the device.
 * `-f main.cf` specifies the location of the main configuration file.
 
 When the deployment is successfully done, you can `SSH` to the device and verify its configuration.

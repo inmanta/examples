@@ -49,3 +49,50 @@ sap = nokiasr_service_epipe::SAP(                 # Instantiate sap entity
     admin_state="enable",                         # set admin status
     description="test",                           # set description
 )
+
+
+
+#Define epipe and bgp
+epipe = nokiasr_service_epipe::Epipe(                              # Instantiate epipe entity
+    device=device,                                                 # Link the defined router
+    service_name="epipe-test-test",                                # set service name
+    admin_state="enable",                                          # set admin status
+    service_id=679,                                                # set customer id
+    customer="test",                                               # set customer id
+)
+
+bgp = nokiasr_service_epipe::Bgp(                                  # Instantiate bgp entity
+    epipe=epipe,                                                   # Link the defined epipe
+    bgp_instance=1,                                                # set bgp instance
+)
+
+bgp_evpn = nokiasr_service_epipe::Bgp_evpn(                        # Instantiate bgp_evpn entity
+    epipe=epipe,                                                   # Link the defined epipe
+    evi=1,                                                         # set evi
+)
+
+nokiasr_service_epipe::Local_attachment_circuit(                   # Instantiate local_attachment_circuit entity
+    bgp_evpn=bgp_evpn,                                             # Link the defined bgp_evpn
+    name="A",                                                      # set name
+    eth_tag=1,                                                     # set eth tag
+)
+
+nokiasr_service_epipe::Remote_attachment_circuit(                  # Instantiate remote_attachment_circuit entity
+    bgp_evpn=bgp_evpn,                                             # Link the defined bgp_evpn
+    name="B",                                                      # set name
+    eth_tag=1,                                                     # set eth tag
+)
+
+mpls = nokiasr_service_epipe::Mpls(                                # Instantiate mpls entity
+    bgp_evpn=bgp_evpn,                                             # Link the defined bgp_evpn
+    admin_state="enable",                                          # set admin state
+    bgp_instance=1,                                                # set bgp instance
+    ecmp=2,                                                        # set ecmp
+    entropy_label=false,                                           # set entropy label
+)
+
+auto_bind_tunnel = nokiasr_service_epipe::Auto_bind_tunnel(        # Instantiate auto_bind_tunnel entity
+    mpls=mpls,                                                     # Link the defined mpls
+    resolution="filter",                                           # set resolution
+    enforce_strict_tunnel_tagging=true,                            # set enforce strict tunnel
+)

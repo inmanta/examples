@@ -50,7 +50,49 @@ sap = nokiasr_service_epipe::SAP(                 # Instantiate sap entity
     description="test",                           # set description
 )
 
+#Define epipe and eth-cfm
+epipe=nokiasr_service_epipe::Epipe(               # Instantiate epipe entity
+    device=device,                                # Link the defined router
+    service_name="epipe-test",                    # set service name
+    admin_state="enable",                         # set admin status
+    service_id=678,                               # set service id
+    customer="test",                              # set customer id
+    service_mtu=1500,                             # set mtu
+)
 
+spoke_sdp=nokiasr_service_epipe::SpokeSDP(        # Instantiate sdp entity
+    epipe=epipe,                                  # Link the epipe
+    sdp_bind_id="1:1",                            # set sdp id
+    admin_state="enable",                         # set admin state
+    hash_label=true,                              # set hash label
+)
+
+pw_status=nokiasr_service_epipe::PWStatus(        # Instantiate pw status entity
+    spoke_sdp=spoke_sdp,                          # Link the spoke sdp
+    signaling=true,                               # set signaling
+)
+
+sap = nokiasr_service_epipe::SAP(                 # Instantiate sap entity
+    epipe=epipe,                                  # Link the epipe
+    sap_id="1/1/c3/1:1.1",                        # set interface
+    admin_state="enable",                         # set admin status
+    description="test",                           # set description
+)
+
+eth_cfm = nokiasr_service_epipe::EthCFM(          # Instantiate eth-cfm entity
+    sap=sap,                                      # Link to defined sap
+)
+
+mep = nokiasr_service_epipe::MEP(                 # Instantiate mep entity
+    cfm=eth_cfm,                                  # Link to defined eth_cfm
+    md_admin_name="6774",                         # set md admin name
+    ma_admin_name="1500",                         # set ma admin name
+    mep_id=1012,                                  # set mep id
+    admin_state="enable",                         # set admin state
+    direction="up",                               # set direction
+    mac_address="d0:0d:1e:00:02:27",              # set mac address
+    ccm=true,                                     # set ccm
+)
 
 #Define epipe and bgp
 epipe = nokiasr_service_epipe::Epipe(                              # Instantiate epipe entity

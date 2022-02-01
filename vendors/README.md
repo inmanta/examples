@@ -167,8 +167,8 @@ When the deployment is successfully done, you can `SSH` to the device and verify
   * [x] set all-active ethernet-segment
 * [] Service EPIPE
   * [x] set epipe
-  * [] set epipe and eth-cfm
-  * [] set epipe and bgp
+  * [x] set epipe and eth-cfm
+  * [x] set epipe and bgp
 * [x] eth-cfm
   * [x] set eth-cfm
 * [x] Policy option

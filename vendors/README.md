@@ -187,7 +187,7 @@ When the deployment is successfully done, you can `SSH` to the device and verify
 * [x] Policy option
   * [x] Set policy options with community
   * [x] Set policy option with allow/deny statement
-* [] Service VPRN
-  * [] set service VPRN
-  * [] set service VPRN with VRRP
-  * [] set service VPRN with static router
+* [x] Service VPRN
+  * [x] set service VPRN
+  * [x] set service VPRN with VRRP
+  * [x] set service VPRN with static router

@@ -42,23 +42,3 @@ cs_int::Service_policy(
     direction="output",                              # Direction of the policy
     service_policy_name="test"                       # Name of the policy
 )
-
-
-# Approach B - Coupling configuration
-
-c::Interface(
-    device=router,                                   # Router is the instance we defined above
-    interface_name="GigabitEthernet0/0/0/2.101",     # Interface name
-    description="to_router",                         # Interface  description
-    active="act",                                    # Interface presents
-    shutdown=false,                                  # No shutdown
-    interface_mode_non_physical="l2-transport",      # The interface is for a vpn connection
-    subinterface=c::SubInterface(
-        outer_tag_type="match-dot1q",                # Tag type
-        outer_range1_low=101,                        # Tag
-    ),
-    service_policy =cs_int::Service_policy(
-        direction="output",                          # Direction of the policy
-        service_policy_name="test"                   # Name of the policy
-    )
-)

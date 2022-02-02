@@ -24,7 +24,7 @@ device=nokiasr::Device(
 # Configuring ETH-CFM parametries.
 eth_cfm = nokiasr_eth_cfm::EthCFM(                                # Instantiate EthCFM entity
         device=device,                                            # Link the defined router
-    )
+)
 
 domain = nokiasr_eth_cfm::Domain(                                 # Instantiate domain entity
     eth_cfm=eth_cfm,                                              # Link the defined ethcfm
@@ -47,5 +47,3 @@ bridge_identifier = nokiasr_eth_cfm::BridgeIdentifier(            # Instantiate 
     mhf_creation="default",                                       # set mhf_creation
     id_permission="chassis"                                       # set ip permission
 )
-
-

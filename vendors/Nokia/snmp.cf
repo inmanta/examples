@@ -20,13 +20,14 @@ router=nokiasr::Device(
 )
 
 # Define snmp group, community, snmp.
-
 security = nokiasr::Security(                                # Instantiate security entity
     device = router,                                         # Link the defined router
 )
+
 snmp = nokiasr::SNMP(                                        # Instantiate snmp entity
     security=security,                                       # Link the defined security
 )
+
 access = nokiasr::Access(                                    # Instantiate access entity
     snmp = snmp,                                             # Link the defined snmp
     group = "test",                                          # set group
@@ -37,12 +38,14 @@ access = nokiasr::Access(                                    # Instantiate acces
     write = "iso",                                           # set write
     notify = "iso",                                          # set notify
 )
+
 community = nokiasr::Community(                              # Instantiate community entity
     snmp = snmp,                                             # Link the defined snmp
     community_string = "H6/RTLhPmhOD2ni/4WCGGyK2zvzZA28=",   # set community
     access_permissions = "r",                                # set access permisson
     version = "both",                                        # set version
 )
+
 view = nokiasr::View(                                        # Instantiate view entity
     snmp = snmp,                                             # Link the defined snmp
     view_name = "packetdesign",                              # set view name

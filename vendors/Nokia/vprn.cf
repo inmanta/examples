@@ -82,3 +82,152 @@ nokiasr_service_vprn::interface::Primary(                                     # 
 )
 
 
+#Define vprn and vrrp
+vprn = nokiasr_service_vprn::VPRN(                                            # Instantiate epipe entity
+    device=device,                                                            # Link the defined router
+    admin_state="enable",                                                     # set admin state
+    service_name="123",                                                       # set service name
+    service_id=123,                                                           # set service id
+    customer="test",                                                          # set customer
+    description="FOR_TEST_CUSTOMER",                                          # set description
+    autonomous_system=5678,                                                   # set as
+    ecmp=2,                                                                   # set ecmp
+    route_distinguisher="1:1",                                                # set rd
+    export_inactive_bgp=true,                                                 # set export inactive to true
+)
+
+abt = nokiasr_service_vprn::AutoBindTunnel(                                   # Instantiate auto bind tunnel entity
+    vprn=vprn,                                                                # Link the defined vprn
+    resolution="filter",                                                      # set resolution
+)
+
+resolution_filter=nokiasr_service_vprn::ResolutionFilter(                     # Instantiate resulution filter entity
+    auto_bind_tunnel=abt,                                                     # Link the defined abt
+    ldp=true,                                                                 # set ldp to tue
+    rsvp=true,                                                                # set rsvp to tue
+)
+
+nokiasr_service_vprn::BGPVPNBackup(                                           # Instantiate bgp vpn backup entity
+    vprn=vprn,                                                                # Link the defined vprn
+    ipv4=true,                                                                # set ipv4 to true
+)
+
+interface=nokiasr_service_vprn::interface::Interface(                         # Instantiate interface entity
+    vprn=vprn,                                                                # Link the defined vprn
+    interface_name="vprn_interface_1",                                        # set interface name
+    description="vprn_interface_1w",                                          # set interface description
+    admin_state="enable",                                                     # set admin state
+    ip_mtu=1500,                                                              # set ip mtu
+)
+
+ipv4=nokiasr_service_vprn::interface::IPv4(                                   # Instantiate vprn entity
+    interface=interface,                                                      # Link the defined interface
+)
+
+icmp=nokiasr_service_vprn::interface::ICMP(                                   # Instantiate icmp entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+)
+
+redirects=nokiasr_service_vprn::interface::Redirects(                         # Instantiate redirect entity
+    icmp=icmp,                                                                # Link the defined icmp
+    admin_state="disable"                                                     # set admin state
+)
+
+nokiasr_service_vprn::interface::Primary(                                     # Instantiate interface entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+    address="20.21.22.23",                                                    # set ipv4 address
+    prefix_length=24,                                                         # set prefix length
+)
+
+nokiasr_service_vprn::interface::VRRP(                                        # Instantiate vrrp entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+    virtual_router_id=1,                                                      # virtual router id
+    backup=["20.21.22.24"],                                                   # set ip address
+    message_interval=3,                                                       # set interval
+    init_delay=600,                                                           # set init delay
+    ping_reply=true,                                                          # set ping reply
+    priority=150,                                                             # set priority
+)
+
+
+#Define vprn, vrrp and static route
+vprn = nokiasr_service_vprn::VPRN(                                            # Instantiate epipe entity
+    device=device,                                                            # Link the defined router
+    admin_state="enable",                                                     # set admin state
+    service_name="123",                                                       # set service name
+    service_id=123,                                                           # set service id
+    customer="test",                                                          # set customer
+    description="FOR_TEST_CUSTOMER",                                          # set description
+    autonomous_system=5678,                                                   # set as
+    ecmp=2,                                                                   # set ecmp
+    route_distinguisher="1:1",                                                # set rd
+    export_inactive_bgp=true,                                                 # set export inactive to true
+)
+
+abt = nokiasr_service_vprn::AutoBindTunnel(                                   # Instantiate auto bind tunnel entity
+    vprn=vprn,                                                                # Link the defined vprn
+    resolution="filter",                                                      # set resolution
+)
+
+resolution_filter=nokiasr_service_vprn::ResolutionFilter(                     # Instantiate resulution filter entity
+    auto_bind_tunnel=abt,                                                     # Link the defined abt
+    ldp=true,                                                                 # set ldp to tue
+    rsvp=true,                                                                # set rsvp to tue
+)
+
+nokiasr_service_vprn::BGPVPNBackup(                                           # Instantiate bgp vpn backup entity
+    vprn=vprn,                                                                # Link the defined vprn
+    ipv4=true,                                                                # set ipv4 to true
+)
+
+interface=nokiasr_service_vprn::interface::Interface(                         # Instantiate interface entity
+    vprn=vprn,                                                                # Link the defined vprn
+    interface_name="vprn_interface_1",                                        # set interface name
+    description="vprn_interface_1w",                                          # set interface description
+    admin_state="enable",                                                     # set admin state
+    ip_mtu=1500,                                                              # set ip mtu
+)
+
+ipv4=nokiasr_service_vprn::interface::IPv4(                                   # Instantiate vprn entity
+    interface=interface,                                                      # Link the defined interface
+)
+
+icmp=nokiasr_service_vprn::interface::ICMP(                                   # Instantiate icmp entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+)
+
+redirects=nokiasr_service_vprn::interface::Redirects(                         # Instantiate redirect entity
+    icmp=icmp,                                                                # Link the defined icmp
+    admin_state="disable"                                                     # set admin state
+)
+
+nokiasr_service_vprn::interface::Primary(                                     # Instantiate interface entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+    address="20.21.22.23",                                                    # set ipv4 address
+    prefix_length=24,                                                         # set prefix length
+)
+
+nokiasr_service_vprn::interface::VRRP(                                        # Instantiate vrrp entity
+    ipv4=ipv4,                                                                # Link the defined ipv4
+    virtual_router_id=1,                                                      # virtual router id
+    backup=["20.21.22.24"],                                                   # set ip address
+    message_interval=3,                                                       # set interval
+    init_delay=600,                                                           # set init delay
+    ping_reply=true,                                                          # set ping reply
+    priority=150,                                                             # set priority
+)
+
+nokiasr_service_vprn::StaticRoutes(                                           # Instantiate static route entity
+    vprn=vprn,                                                                # Link the defined vprn
+    route=[                                                                   # list of routes
+        nokiasr_service_vprn::Route(                                          # Instantiate route entity
+            ip_prefix="70.71.72.0/24",                                        # set ip prefix
+            route_type="unicast",                                             # set route type
+            next_hop=nokiasr_service_vprn::NextHop(                           # Instantiate static route entity
+                ip_address="20.21.22.25",                                     # set ip next hop
+                admin_state="enable",                                         # set admin state
+                description="to_DC"                                           # set description
+            )
+        )
+    ],
+)

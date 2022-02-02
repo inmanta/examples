@@ -175,7 +175,7 @@ When the deployment is successfully done, you can `SSH` to the device and verify
   * [x] Set rapid update
 * [x] Client configuration
   * [x] Set a name and an id of a client
-* [] Ethernet segment
+* [x] Ethernet segment
   * [x] set single-active ethernet-segment
   * [x] set all-active ethernet-segment
 * [x] Service EPIPE

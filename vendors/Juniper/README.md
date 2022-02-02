@@ -38,7 +38,7 @@ ssh admin@clab-CBCI-juniper-router-a
 ssh admin@clab-CBCI-juniper-router-b
 ```
 
-> Please make sure to copy and paste the provided `startup config` files onto your respective routers before using the examples.
+> Please make sure to copy and paste the provided `startup config` files onto your respective routers before using the examples. For more information, check [this guide](https://kb.juniper.net/InfoCenter/index?page=content&id=KB10817).
 
 View the current state:
 

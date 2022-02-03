@@ -1,6 +1,6 @@
 # Juniper Module
 
-The provided examples in the `*.cf` files can be applied on a `Juniper JunOS MX` router using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml) and the `startup config` files for [juniper-router-a](containerlab/startup_juniper_router_a.xr) and [juniper-router-b](containerlab/startup_juniper_router_b.xr). It is needless to mention that you need to have a `Juniper JunOS MX` container image present on the host machine running `containerlab` and having it tagged similar to the topology file; in this case: `vrnetlab/vr-vmx:18.3R1.9`.
+The provided examples in the `*.cf` files can be applied on `Juniper JunOS MX` devices either on a router that you have and by changing the IP address, hostname, etc... in the examples or by using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml) and the `startup config` files for [juniper-router-a](containerlab/startup_juniper_router_a.xr) and [juniper-router-b](containerlab/startup_juniper_router_b.xr). It is needless to mention that you need to have a `Juniper JunOS MX` container image present on the host machine running `containerlab` and having it tagged similar to the topology file; in this case: `vrnetlab/vr-vmx:18.3R1.9`.
 
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have. We can provide access to it if you contact us.
 
@@ -22,6 +22,8 @@ vrnetlab/vr-vmx                                               18.3R1.9   91e0035
 inmanta                                                       dev        7e787600e8b1   2 weeks ago    881MB
 postgres                                                      13        7e787600e8a1   2 weeks ago    205MB
 ```
+
+If you do not see an output as depicted, it means you do not have those docker images present and need to acquire them from the vendor.
 
 > Note: `inmanta`  and `postgres` Docker images are optional and only required if you want to use the `Service Orchestrator`. The license files should be placed under `inmanta/server` directory.
 

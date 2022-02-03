@@ -20,7 +20,7 @@ router = c::Device(
 
 # Define a VRF
 interface = c::Interface(                       # Instantiate an interface entity
-    device=router,                              # Link the defined router
+    device=router,                              # Link to the router this interface is on 
     interface_name="GigabitEthernet0/0/0/8",    # Specify the interface name
     description="VRF",                          # Specify the interface description
     vrf="VRF100",                               # Specify the VRF name

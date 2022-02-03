@@ -1,6 +1,6 @@
 # Nokia Module
 
-The provided examples in the `*.cf` files can be applied on a router using [containerlab](https://containerlab.srlinux.dev/) using the provided [topology file](containerlab/topology.yml). It is needless to say that you need to have `Cisco XR`, `Nokia SROS` and `Juniper MX` container images present on the host machine running `containerlab` and having them tagged similar to the topology file.
+The provided examples in the `*.cf` files can be applied on a router using [containerlab](https://containerlab.srlinux.dev/) using the provided [topology file](containerlab/topology.yml).You need to obtain `Cisco XR`, `Nokia SROS` or `Juniper MX` container images from their respective vendors. The images must be present on the host machine running `containerlab` and having them tagged similar to the topology file.
 
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have. We can provide access to it if you contact us.
 

@@ -1,6 +1,11 @@
 # Juniper Module
 
-The provided examples in the `*.cf` files can be applied on `Juniper JunOS MX` devices either on a router that you have and by changing the IP address, hostname, etc... in the examples or by using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml) and the `startup config` files for [juniper-router-a](containerlab/startup_juniper_router_a.xr) and [juniper-router-b](containerlab/startup_juniper_router_b.xr). It is needless to mention that you need to have a `Juniper JunOS MX` container image present on the host machine running `containerlab` and having it tagged similar to the topology file; in this case: `vrnetlab/vr-vmx:18.3R1.9`.
+The provided examples in the `*.cf` files can be applied on `Juniper JunOS MX` devices either on:
+
+* On a router that you already have and by changing the IP address, port, etc... in the examples
+* Using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml) and the `startup config` files for [juniper-router-a](containerlab/startup_juniper_router_a.xr) and [juniper-router-b](containerlab/startup_juniper_router_b.xr)
+
+In case of choosing the `containerlab` option, it is worthwhile to mention that you need to have a `Juniper JunOS MX` image or docker image present on the host machine running `containerlab` and having it tagged similar to the topology file; in this case: `vrnetlab/vr-vmx:18.3R1.9`. In order to convert your image to a Docker image, please check [this guide](https://containerlab.srlinux.dev/manual/vrnetlab/).
 
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have. We can provide access to it if you contact us.
 

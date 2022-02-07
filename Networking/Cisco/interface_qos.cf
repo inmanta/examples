@@ -1,0 +1,41 @@
+# import the Cisco module as c and Cisco Services::interface as cs_int alias for easier access
+import ciscoxr as c
+import ciscoxr_services::interface as cs_int
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Assign an interface policy to an interface
+interface1 = c::Interface(
+    device=router,                                   # Router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/3.101",     # Interface name
+    description="to_router",                         # Interface  description
+    active="act",                                    # Interface presents
+    shutdown=false,                                  # No shutdown
+    interface_mode_non_physical="l2-transport",      # The interface is for a vpn connection
+)
+
+c::SubInterface(
+    interface=interface1,                            # Interafce is the instance we defined above
+    outer_tag_type="match-dot1q",                    # Tag type
+    outer_range1_low=101,                            # Tag
+)
+
+cs_int::Service_policy(
+    interface=interface1,                            # Interafce is the instance we defined above
+    direction="output",                              # Direction of the policy
+    service_policy_name="test"                       # Name of the policy
+)

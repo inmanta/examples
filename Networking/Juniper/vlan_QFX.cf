@@ -1,0 +1,26 @@
+# import the Juniper module
+import juniper as j
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 22830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    family="qfx",        # Specify OS family - In this case we define QFX that supports VLAN configuration
+)
+
+
+vlan=j::Vlan(           # Instantiate VLAN entity
+    device=router,      # Link the defined router
+    name="IT",          # Specify the VLAN name
+    vlan_id="2",        # Specify the VLAN ID
+)

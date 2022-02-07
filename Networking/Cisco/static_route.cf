@@ -1,0 +1,59 @@
+# import the Cisco and Cisco staticroute module as an alias for easier access
+import ciscoxr as c
+import ciscoxr::staticroute as sr
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+# Define an static route and assign a next hop route to it
+
+defaultvrf = sr::Default_vrf(               # Instantiate the default VRF
+    device=router,                          # Link the router we defined above to the device field
+    address_family=addressfamily,           # Link the defined address family
+)
+
+addressfamily = sr::Address_family(         # Instantiate address family
+    device=router,                          # Link the defined router
+    route=defaultvrf                        # Link the default VRF we used above to the route field
+)
+
+vrfipv4 = sr::Vrfipv4(                      # Instantiate the VRF for IPv4
+    address_family=addressfamily            # Link the address family to the address_family field
+)
+
+vrfunicast = sr::Vrf_unicast(               # Instantiate VRF unicast
+    vrfipv4=vrfipv4                         # Link the defined VRF to the vrfipv4 field
+)
+
+vrfprefix = sr::Vrf_prefix(                 # Instantiate VRF prefix
+    prefix="10.11.12.13",                   # Provide the intended prefix
+    prefix_length=32,                       # Provide the prefix length
+    vrf_unicast=vrfunicast,                 # Link the defined `vrfunicast` to the vrf_unicast field
+)
+
+vrfroute = sr::Vrf_route(                   # Instantiate VRF route
+    vrf_prefix=vrfprefix                    # Link the defined `vrfprefix` to the vrf_prefix field
+)
+
+vrfnexthoptable = sr::Vrf_next_hop_table(   # Instantiate the VRF next hop
+    vrf_route=vrfroute                      # Link the defined `vrfroute` to the vrf_route field
+)
+
+vrfnexthopaddr = sr::Vrf_next_hop_address(  # Instantiate VRF next hop address
+    vrf_next_hop_table=vrfnexthoptable,     # Link the `vrfnexthoptable` to the vrf_next_hop_table field
+    next_hop_address="10.10.10.10"          # Assign the next hop address
+)

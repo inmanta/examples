@@ -1,0 +1,36 @@
+# import the Cisco module as an alias for easier access
+import ciscoxr as c
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define an NTP VRF and assign an NTP peer to it
+
+ntp=c::Ntp(
+    device=router,                          # Router is the instance we defined above
+    vrf_name="default",                     # Specify the VRF name
+)
+
+ntp_peer=c::Ntp_peer(                       # Instantiate NTP peer entity
+    ntp=ntp,                                # Link the defined NTP entity
+    address_ipv4="128.66.0.1",              # The ip address of a NTP peer
+    ntp_peer_type_v4=c::Ntp_peer_type_v4(   # Instantiate an IPv4 NTP peer type
+        peer_type="server",                 # Specify the peer type
+        source_interface="Loopback0",       # The source interface for the NTP connection
+        preferred_peer=true,                # Whether it is the preferred peer
+        ntp_peer=ntp_peer                   # Link the defined NTP peer
+    )
+)

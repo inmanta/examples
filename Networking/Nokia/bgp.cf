@@ -1,0 +1,162 @@
+# import the nokia module
+import nokiasr
+import nokiasr::router
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
+
+
+# Construct the router instance using the imported module name and feed it the information above
+device=nokiasr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+
+# Changing BGP parametries.
+
+## Approach A
+router = nokiasr::router::Router(                           # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+)
+
+bgp = nokiasr::router::BGP(                                 # Instantiate bgp entity
+    router = router,                                        # Link the defined router
+)
+
+nokiasr::router::Rapid_update(                              # Instantiate rapid_update entity
+        bgp=bgp,                                            # Link the defined bgp
+        evpn=true,                                          # set evpn to true
+)
+
+nokiasr::router::Backup_path(                               # Instantiate backup_path entity
+        bgp=bgp,                                            # Link the defined bgp
+        ipv4=true,                                          # set ipv4 to true
+        ipv6=true,                                          # set ipv6 to true
+        label_ipv6=true,                                    # set label_ipv6 to true
+)
+
+
+
+## Approach B
+router = nokiasr::router::Router(                           # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+)
+
+nokiasr::router::BGP(                                       # Instantiate bgp entity
+    router = router,                                        # Link the defined router
+    rapid_update = nokiasr::router::Rapid_update(           # Instantiate rapid_update entity
+        evpn=true,                                          # set evpn to true
+    ),
+    backup_path = nokiasr::router::Backup_path(             # Instantiate backup_path entity
+        ipv4=true,                                          # set ipv4 to true
+        ipv6=true,                                          # set ipv6 to true
+        label_ipv6=true,                                    # set label_ipv6 to true
+    )
+)
+
+
+# Configure bgp group
+
+## Approach A
+router = nokiasr::router::Router(                           # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+)
+
+bgp = nokiasr::router::BGP(                                 # Instantiate bgp entity
+    router = router,                                        # Link the defined router
+)
+
+group = nokiasr::router::Group(                             # Instantiate group entity
+    bgp = bgp,                                              # Link the defined bgp
+    group_name = "spokes",                                  # Set group name
+)
+
+nokiasr::router::Family(                                    # Instantiate group entity
+    group=group,                                            # Link the defined bgp
+    vpn_ipv4 = true,                                        # Set vpn_ipv4 to true
+    vpn_ipv6 = true,                                        # Set vpn_ipv6 to true
+    evpn = true,                                            # Set evpn to true
+)
+
+
+## Approach B
+nokiasr::router::Router(                                    # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+    bgp = nokiasr::router::BGP(                             # Instantiate bgp entity
+        group = nokiasr::router::Group(                     # Instantiate group entity
+            group_name = "spokes",                          # Set group name
+            family = nokiasr::router::Family(               # Instantiate group entity
+                vpn_ipv4 = true,                            # Set vpn_ipv4 to true
+                vpn_ipv6 = true,                            # Set vpn_ipv6 to true
+                evpn = true,                                # Set evpn to true
+            )
+        )
+    )
+)
+
+
+# Configure a bgp neighbor and a bgp group
+
+## Approach A
+router = nokiasr::router::Router(                           # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+)
+
+bgp = nokiasr::router::BGP(                                 # Instantiate bgp entity
+    router = router,                                        # Link the defined router
+)
+
+group = nokiasr::router::Group(                             # Instantiate group entity
+    bgp = bgp,                                              # Link the defined bgp
+    group_name = "hubs",                                    # Set group name
+)
+
+nokiasr::router::Family(                                    # Instantiate group entity
+    group=group,                                            # Link the defined bgp
+    vpn_ipv4 = true,                                        # Set vpn_ipv4 to true
+    vpn_ipv6 = true,                                        # Set vpn_ipv6 to true
+    evpn = true,                                            # Set evpn to true
+)
+
+nokiasr::router::Neighbor(                                  # Instantiate group entity
+    bgp = bgp,                                              # Link the defined bgp
+    ip_address = "1.2.3.4",                                 # set an ip address of a neighbor
+    description = "main_hubs",                              # set a description
+    group = "hubs",                                         # set the group of the neighbor
+)
+
+
+## Approach B
+nokiasr::router::Router(                                    # Instantiate router entity
+    device=device,                                          # Link the defined router
+    router_name = "Base",                                   # Using Base router
+    bgp = nokiasr::router::BGP(                             # Instantiate bgp entity
+        group = nokiasr::router::Group(                     # Instantiate group entity
+            group_name = "hubs",                            # Set group name
+            family = nokiasr::router::Family(               # Instantiate group entity
+                vpn_ipv4 = true,                            # Set vpn_ipv4 to true
+                vpn_ipv6 = true,                            # Set vpn_ipv6 to true
+                evpn = true,                                # Set evpn to true
+            )
+        ),
+        neighbor = nokiasr::router::Neighbor(               # Instantiate group entity
+            ip_address = "1.2.3.4",                         # set ip address of neighbor
+            description = "main_hubs",                      # set description
+            group = "hubs",                                 # set group of neighbor
+        )
+    )
+)

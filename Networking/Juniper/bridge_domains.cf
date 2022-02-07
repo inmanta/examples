@@ -1,0 +1,89 @@
+# import the required modules as an alias
+import juniper as j
+import juniper_services as js
+import juniper_services::firewall as fw
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# Configure Bridge Domains and layer 2 filtering
+firewall_family=fw::Family(                     # Instantiate firewall family entity
+    device=router,                              # Link the defined router
+    family_bridge=bridge                        # Link the defined bridge below
+)
+
+bridge=fw::Family_bridge(                       # Instantiate family bridge entity
+    bridge_filter=filter,                       # Link the defined bridge filter below
+    family=firewall_family                      # Link the defined firewall family above
+)
+
+filter=fw::Bridge_filter(                       # Instantiate bridge filter entity
+    family_bridge=bridge,                       # Link the defined family bridge
+    name="storm-control-vlan-1234",             # Specify a name
+    bridge_term=[                               # Populate bridge term
+        term,                                   # Link the defined `term` below
+    ]
+)
+
+
+# Configure filtering for unknown unicast traffic type
+term=fw::Bridge_term(                           # Instantiate bridge term entity
+    bridge_filter=filter,                       # Link the defined filter
+    name="unk-unicast",                         # Specify a name
+    bridge_termfrom=fw::Bridge_termFrom(        # Instantiate `bridge term from` entity
+        traffic_type="unknown-unicast",         # Specify traffic type
+        bridge_term=term,                       # Link the defined parent `term` entity
+    ),
+    bridge_termthen=fw::Bridge_termThen(        # Instantiate `bridge term from then` entity
+        policer="bridge_policer",               # Specify policy name
+        bridge_term=term,                       # Link the defined parent `term` entity
+    ),
+)
+
+routing_instances=js::RoutingInstances(         # Instantiate routing instance entity
+    device=router,                              # Link the defined router
+)
+
+instance=js::Instance(                          # Instantiate child routing instance entity
+    routing_instances=routing_instances,        # Link the defined main routing instance entity
+    name="BRIDGEDOMAINS",                       # Specify a name
+    instance_type="virtual-switch",             # Specify instance type
+)
+
+flood=js::Flood(                                # Instantiate `flood` entity
+    input="storm-control-vlan-1234",            # Specify policy name
+    forwarding_options=forwarding_option,       # Link the defined forwarding option entity
+)
+
+forwarding_option=js::ForwardingOptions(        # Instantiate forwarding options entity
+    domain=domain,                              # Link the defined domain entity
+    flood=flood                                 # Link the defined flood entity
+)
+
+domain=js::Domain(                              # Instantiate domain entity
+    bridge_domains=bridge_domain,               # Link the defined bridge domain
+    name="v1234",                               # Specify VLAN name
+    vlan_id="1234",                             # Specify VLAN ID
+    routing_interface="irb.1234",               # Specify the IRB tag
+    forwarding_options=forwarding_option        # Link the defined forwarding option entity
+)
+
+bridge_domain=js::BridgeDomains(                # Instantiate bridge domains entity
+    instance=instance,                          # Link the defined instance domain entity
+    domain=domain                               # Link the defined domain domain entity
+)

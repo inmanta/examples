@@ -1,0 +1,105 @@
+# import the Cisco module as an alias for easier access
+import ciscoxr as c
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+
+# Configure BGP with VRF
+bgp = c::BGP(                       # Instantiate BGP entity
+    device=router,                  # Link it to the defined router to device field
+)
+
+instance = c::Instance(             # Instantiate a routing instance
+    instance_name = "default",      # Specify a name for the instance
+    bgp = bgp,                      # Link the defined BGP entity to the bgp field
+)
+
+instance_as = c::Instance_as(       # Instantiate an autonomous system number entity
+    instance = instance,            # Link it to the defined routing instance
+    as_number = 0                   # Specify AS number format, in this case the traditional 2-bytes
+)
+
+four_byte_as = c::Four_byte_as(     # Instantiate Four_byte_as entity, this will contain your AS number
+    instance_as = instance_as,      # Link it to the defined instance_as
+    as_number = 65000,              # Specify the AS number
+)
+
+default_vrf = c::Default_vrf(       # Instantiate a default VRF entity
+    four_byte_as = four_byte_as,    # Link the AS number entity to it
+)
+
+global = c::Global(                 # Instantiate Global routing entity
+    default_vrf = default_vrf,      # Link the default VRF to it
+    nsr = true,                     # Enable the NSR/non-stop routing support
+    router_id = "10.1.1.1",         # Specify the router ID
+    graceful_restart = true,        # Enable graceful restart
+)
+
+global_afs = c::Global_afs(         # Instantiate global address families
+    global = global,                # Link the defined global routing entity to it
+)
+
+global_af_vpnv4_unicast = c::Global_af_vpnv4_unicast(   # Instantiate global vpnv4 unicast address family
+    global_afs = global_afs,                            # Link the global address families to the global_afs field
+    enable = true,                                      # Enable it
+)
+
+vrfs = c::VRFS(                     # Instantiate VRFs entity
+    four_byte_as = four_byte_as,    # Link the defined Four_byte_as entity
+    vrf = vrf                       # Link the defined VRF
+)
+
+vrf = c::VRF(                       # Instantiate VRF entity
+    vrf_global = vrf_global,        # Link the defined VRF global
+    vrfs=vrfs,                      # Link the defined VRFs entity
+    vrf_name = "OAM",               # Specify VRF name
+)
+
+vrf_global = c::VRF_GLOBAL(                         # Instantiate VRF global
+    vrf_global_afs = vrf_global_afs,                # Link the defined VRF global address family
+    vrf = vrf,                                      # Link the defined VRF entity
+    exists = true,                                  # Create this VRF
+    route_distinguisher = c::Route_distinguisher(   # Instantiate route distinguisher/RD
+        vrf_global = vrf_global,                    # Link the defined VRF global
+        type = "ipv4-address",                      # Specify the type
+        address = "10.10.10.10",                    # Specify the address
+        address_index = 11,                         # Specify address index
+    ),
+)
+
+vrf_global_afs = c::VRF_GLOBAL_AFS(                             # Instantiate VRF global address families
+    vrf_global = vrf_global,                                    # Link the defined VRF global
+    vrf_global_af_ipv4_unicast = vrf_global_af_ipv4_unicast     # Link the defined VRF IPv4 unicast address family
+)
+
+
+vrf_global_af_ipv4_unicast = c::VRF_GLOBAL_AF_IPV4_UNICAST(                 # Instantiate VRF global IPv4 address families
+    vrf_global_afs = vrf_global_afs,                                        # Link the defined VRF global address families
+    vrf_global_af_ipv4_unicast_ibgp = vrf_global_af_ipv4_unicast_ibgp,      # Link the defined global VRF for IPv4 unicast iBGP
+    enable = true,                                                          # Enable it
+    connected_routes = true,                                                # Redistribute connected routes
+)
+
+vrf_global_af_ipv4_unicast_ibgp = c::VRF_GLOBAL_AF_IPV4_UNICAST_IBGP(       # Instantiate VRF global IPv4 unicast iBGP
+    vrf_global_af_ipv4_unicast = vrf_global_af_ipv4_unicast,                # Link the defined VRF IPv4 unicast address family
+    paths_value = 2,                                                        # Specify maximum-paths
+    unequal_cost = false,                                                   # Disable/Enable unequal cost load sharing
+    selective = false,                                                      # Allow multipaths only from marked neighbors
+    order_by_igp_metric = false,                                            # Order candidate multipaths by IGP metric
+)
+

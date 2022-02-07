@@ -1,0 +1,47 @@
+# import the Cisco and policy_map from Cisco services module as an alias for easier access
+import ciscoxr as c
+import ciscoxr_services::policy_map as pm
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+# Define a QoS policy-map
+
+policyMaps = pm::Policy_maps(               # Instantiate policy maps entity
+    device = router                         # Link it to the defined router to device field
+)
+
+policyMap = pm::Policy_map(                 # Instantiate policy map entity
+    type = "qos",                           # Set the type
+    name = "QoSPolMap",                     # Specify a name for the policy map
+    policy_maps = policyMaps                # Link it to the defined policy maps entity
+)
+
+policyMapRule = pm::Policy_map_rule(        # Instantiate policy map rule entity
+    class_type = "qos",                     # Set the class type
+    policy_map = policyMap                  # Link it to the defined policy map entity
+)
+
+police = pm::Police(                        # Instantiate Police entity
+    policy_map_rule = policyMapRule         # Link it to the defined policy map rule
+)
+
+rate = pm::Rate(                            # Instantiate Rate entity
+    value = 200,                            # Specify a value
+    units = "kbps",                         # Specify a unit
+    police = police                         # Link it to the defined police entity
+)

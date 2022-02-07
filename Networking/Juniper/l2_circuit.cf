@@ -1,0 +1,33 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# Configure an L2 Circuit neighbor
+neighbor=js::L2circuit_neighbor(            # Instantiate L2 circuit neighbor entity
+    device=router,                          # Link the defined router
+    name="1.2.3.4"                          # Specify neighbor's IP address
+)
+
+l2_interface=js::L2circuit_interface(       # Instantiate L2 circuit interface entity
+    l2circuit_neighbor=neighbor,            # Link the defined neighbor entity
+    name="ge-0/0/2.102",                    # Specify interface with tag
+    virtual_circuit_id=102                  # Specify circuit ID
+)

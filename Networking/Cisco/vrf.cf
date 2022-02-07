@@ -1,0 +1,41 @@
+# import the Cisco module and Cisco Services as c and as an alias for easier access
+import ciscoxr as c
+import ciscoxr_services as cs
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = c::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# Define a VRF and address-families
+vrf = cs::Vrf(
+    device = router,              # Router is the instance we defined above
+    vrf_name = "TEST2",           # VRF name
+    description = "TEST_VRF2",    # VRF description
+)
+
+cs::Address_family(
+    vrf = vrf,                    # vrf is the instance we defined above
+    af_name = "ipv4",             # set ipv4 address-family
+    saf_name = "unicast",         # set type
+)
+
+cs::Address_family(
+    vrf = vrf,                    # vrf is the instance we defined above
+    af_name = "ipv6",             # set ipv6 address-family
+    saf_name = "unicast",         # set type
+)
+
+# For a more complete example you can check the `interface_vrf.cf` file.

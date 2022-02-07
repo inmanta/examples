@@ -1,0 +1,13 @@
+hostname cisco_router_b
+xml agent tty
+ iteration off
+!
+netconf agent tty
+!
+netconf-yang agent
+ ssh
+!
+ssh server v2
+ssh server vrf default
+ssh server netconf vrf default
+end

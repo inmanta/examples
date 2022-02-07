@@ -1,0 +1,63 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+import juniper_services::firewall as fw
+
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+firewall_family = fw::Family(               # Instantiate firewall family entity
+    device=router,                          # Link the defined router
+    family_inet=family_inet                 # Link the defined family inet entity
+)
+
+family_inet = fw::Family_inet(              # Instantiate family inet entity
+    family=firewall_family,                 # Link the defined firewall family entity
+    filter=filter,                          # Link the defined `filter` entity
+)
+
+filter = fw::Filter(                        # Instantiate filter entity
+    family_inet=family_inet,                # Link the defined family inet entity
+    name="fw_filter",                       # Specify filter name
+    term=[term]                             # Link the defined `term` entity
+)
+
+term = fw::Term(                            # Instantiate `term` entity
+    filter=filter,                          # Link the defined filter
+    name="initial",                         # Specify a name
+    termfrom=termfrom,                      # Link the defined `term from` entity
+    termthen=fw::TermThen(                  # Instantiate `term then` entity
+        accept=true,                        # Specify the action
+        term=term                           # Link the parent term entity
+    )
+)
+
+termfrom = fw::TermFrom(                    # Instantiate `term from` entity
+    term=term,                              # Link the defined `term` entity
+    destination_address=[                   # Populate destination address
+        fw::Destination_address(            # Instantiate destination address entity
+            termfrom=termfrom,              # Link the defined parent `term from` entity
+            name="172.19.1.1/32"            # Specify IP address
+        ),
+        fw::Destination_address(            # Instantiate destination address entity
+            termfrom=termfrom,              # Link the defined parent `term from` entity
+            name="172.120.1.1/32"           # Specify IP address
+        )
+    ]
+)

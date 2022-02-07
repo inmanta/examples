@@ -1,0 +1,165 @@
+# import the Juniper module as an alias
+import juniper as j
+import juniper_services as js
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin@123"   # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router=j::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+
+# BGP with VRF configuration
+# NOTE: policy_options for VRF import/export need to be configured to be able to use these examples.
+# Configure the required policy-statements
+############################################
+policy_options = j::PolicyOptions(              # Instantiate policy options entity
+    device = router,                            # Link the defined router
+)
+
+# Define a `reject` policy statement
+policy_statement_1=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="NO_ROUTES",                           # Specify the name
+    then=j::Then(                               # Instantiate `then` entity
+        reject=true,                            # Specify the action
+        policy_statement=policy_statement_1,    # Link the defined parent policy statement entity
+    ),
+)
+
+# Define a policy statement for BGP AS path prepending
+policy_statement_2=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="PREPEND",                             # Specify the name
+    term=term_prepend,                          # Link the defined `term` entity
+)
+
+term_prepend=j::Term(                           # Instantiate `term` entity
+    policy_statement=policy_statement_2,        # Link the defined policy statement entity
+    name="prepend",                             # Specify the action name
+    then=j::TermThen(                           # Instantiate `term then` entity
+        as_path_prepend="12345",                # Soecify the prepend value
+        term=term_prepend,                      # Link the defined parent `term` entity
+    )
+)
+
+policy_statement_3=j::PolicyStatement(          # Instantiate policy statement entity
+    policy_options=policy_options,              # Link the defined policy options
+    name="ALLOW",                               # Specify the name
+    then=j::Then(                               # Instantiate `then` entity
+        accept=true,                            # Specify the action
+        policy_statement=policy_statement_3,    # Link the defined parent policy statement entity
+    ),
+)
+############################################
+
+
+routing_instances = js::RoutingInstances(               # Instantiate routing instances entity
+    device = router,                                    # Link the defined router
+)
+
+instance = js::Instance(                                # Instantiate instance entity
+    routing_instances = routing_instances,              # Link the defined routing instances
+    name = "BGPVRF",                                    # Specify the VRF name
+    instance_type = "vrf",                              # Specify the type
+    vrf_import = ["NO_ROUTES"],                         # Specify the import policy name
+    vrf_export = ["NO_ROUTES"],                         # Specify the export policy name
+)
+
+js::RouteDistinguisher(                                 # Instantiate route distinguisher entity
+    instance = instance,                                # Link the defined instance entity
+    rd_type = "65535:1",                                # Specify the route distinguisher
+)
+
+js::VrfTarget(                                          # Instantiate VRF target entity
+    instance = instance,                                # Link the defined instance entity
+    community = "target:65440:12345",                   # Specify the community
+)
+
+js::VrfTableLabel(                                      # Instantiate VRF table entity
+    instance = instance,                                # Link the defined instance entity
+)
+
+protocols = js::Protocols(                              # Instantiate protocols entity
+    instance = instance,                                # Link the defined instance entity
+)
+
+bgp =  js::BGP(                                         # Instantiate BGP entity
+    protocols = protocols                               # Link the defined protocols entity
+)
+
+group_1 = js::Group(                                    # Instantiate group entity
+    bgp = bgp,                                          # Link the defined bgp entity
+    name = "A",                                         # Specify the name
+    type = "external",                                  # Specify the type
+    export_policy = ["PREPEND"],                        # Specify the export policy
+    multipath = true                                    # Enable/Disable multipath
+)
+
+unicast1 = js::Unicast(                                 # Instantiate unicast entity
+    loops = js::Loops(                                  # Instantiate loops entity
+        unicast = unicast1,                             # Link the defined parent unicast entity
+        loops = 2                                       # Specify the AS-Path loop count
+    )
+)
+
+family1 = js::Family(                                   # Instantiate family entity
+    group = group_1,                                    # Link the defined group entity
+    inet = js::Inet(                                    # Instantiate inet entity
+        family = family1,                               # Link the defined parent family
+        unicast = unicast1                              # Link the defined unicast entity
+    ),
+)
+
+js::BFDLivenessDetection(                               # Instantiate BFD liveness detection entity
+    group = group_1,                                    # Link the defined group entity
+    minimum_interval = 400,                             # Specify the interval
+    multiplier = 3                                      # Specify the detection time multiplier
+)
+
+group_2 = js::Group(                                    # Instantiate group entity
+    bgp = bgp,                                          # Link the defined bgp entity
+    name = "B",                                         # Specify the name
+    type = "internal",                                  # Specify the type
+    local_address = "1.2.3.4",                          # specify address of local end of BGP session
+    import_policy = ["ALLOW"],                          # Specify the import policy
+    export_policy = ["NO_ROUTES"],                      # Specify the export policy
+    authentication_key = "$9$rxcl97ws4ZDkgo"            # Provide an MD5 authentication key
+)
+
+unicast2 = js::Unicast(                                 # Instantiate unicast entity
+    add_path = js::AddPath(                             # Instantiate loops entity
+        unicast = unicast2,                             # Link the defined parent unicast entity
+        receive = true                                  # Enable/Disable receive multiple paths from peer
+    )
+)
+
+family2 = js::Family(                                   # Instantiate family entity
+    group = group_2,                                    # Link the defined group entity
+    inet = js::Inet(                                    # Instantiate inet entity
+        family = family2,                               # Link the defined parent family
+        unicast = unicast2,                             # Link the defined unicast entity
+    ),
+)
+
+js::LocalAS(                                            # Instantiate local AS entity
+    group = group_2,                                    # Link the defined group entity
+    as_number = 1234                                    # Specify the AS number
+)
+
+js::Neighbor(                                           # Instantiate Neighbor entity
+    group = group_2,                                    # Link the defined group entity
+    name = "5.6.7.8",                                   # Specify the IP address
+    description = "comment"                             # Specify comment
+)

@@ -1,0 +1,12 @@
+name: Juniper Examples
+description: Provides examples for the Juniper module
+author: Inmanta
+author_email: code@inmanta.com
+license: ASL 2.0
+copyright: 2021 Inmanta
+modulepath: libs
+downloadpath: libs
+repo:
+    - https://github.com/inmanta/
+install_mode: release
+requires:

@@ -1,0 +1,70 @@
+# import the Cisco module
+import ciscoxr
+
+# You can define the device information here for easier management
+hostname = "router"      # Device hostname
+mgmt_ip = "192.168.2.20" # Device management IP address
+port = 21830             # Device NETCONF port
+username = "admin"       # Device username
+password = "admin"       # Device password
+
+# Construct the router instance using the imported module name and feed it the information above
+router = ciscoxr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+)
+
+# Define an interface and change its administrative state to "DOWN"
+ciscoxr::Interface(                             # Instantiate interface entity
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/0",    # Name of the intended interface
+    shutdown=true,                              # administrative state of the interface - In this case, we are shutting down GigabitEthernet0/0/0/0
+)
+
+# Define another interface and change its administrative state to "UP"
+interface1=ciscoxr::Interface(                  # Instantiate interface entity
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/1",    # Name of the intended interface
+    shutdown=false,                             # Administrative state of the interface - In this case, we are enabling GigabitEthernet0/0/0/1
+)
+
+# Set a primary and secondary IP address for interface1 (GigabitEthernet0/0/0/1)
+c::Primary(                                     # Instantiate primary entity to set the primary IP address
+    interface=interface1,                       # Link the intended interface
+    address="172.16.10.50",                     # Set the IP address
+    netmask="255.255.255.0"                     # Set the netmask
+)
+
+c::Secondary(                                   # Instantiate secondary entity to set the secondary IP address
+    interface=interface1,                       # Link the intended interface
+    address="172.16.10.51",                     # Set the IP address
+    netmask="255.255.255.0"                     # Set the netmask
+)
+
+# Define another interface and add a description
+interface2=ciscoxr::Interface(                  # Instantiate interface entity
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/2",    # Name of the intended interface
+    description="Connected to Router_2",        # Add a description for GigabitEthernet0/0/0/2
+)
+
+# Define the bandwidth for GigabitEthernet0/0/0/3
+ciscoxr::Interface(
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/3",    # Name of the intended interface
+    bandwidth=1000,                             # The bandwidth of the interface in kbps
+)
+
+# Defining the MTU:
+interface4=ciscoxr::Interface(                  # Instantiate interface entity
+    device=router,                              # router is the instance we defined above
+    interface_name="GigabitEthernet0/0/0/4",    # Name of the intended interface
+)
+
+ciscoxr::Mtu(                                   # Instanciate MTU entity
+    interface=interface4,                       # Link to the intended interface
+    mtu=9000,                                   # Specify the MTU value
+)

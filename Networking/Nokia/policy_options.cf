@@ -1,0 +1,149 @@
+# import the required modules as an alias
+import nokiasr
+import nokiasr_policy_options
+import nokiasr_policy_options::policy_statement
+import nokiasr_policy_options::policy_statement::entry::action
+import nokiasr_policy_options::policy_statement::entry::from
+
+
+# You can define the device information here for easier management
+hostname="router"      # Device hostname
+mgmt_ip="192.168.2.20" # Device management IP address
+port=22830             # Device NETCONF port
+username="admin"       # Device username
+password="admin"       # Device password
+
+
+# Construct the router instance using the imported module name and feed it the information above
+device=nokiasr::Device(
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
+    auto_agent=true,
+)
+
+
+# Define policy options and communities
+policy_options = nokiasr_policy_options::PolicyOptions(                     # Instantiate policy options entity
+    device=device,                                                          # Link the defined router
+)
+
+policy_options_2 = nokiasr_policy_options::PolicyOptions(                   # Instantiate policy options entity
+    device=device,                                                          # Link the defined router
+)
+
+community_1 = nokiasr_policy_options::Community(                            # Instantiate community entity
+    policy_options=policy_options,                                          # Link the defined policy options
+    name="export-RT-k3vpn-spoke",                                           # Specify name
+)
+
+member_1 = nokiasr_policy_options::Member(                                  # Instantiate member entity
+    community=community_1,                                                  # Link the defined community
+    member="target:6774:90001",                                             # Specify value
+)
+
+community_2 = nokiasr_policy_options::Community(                            # Instantiate community entity
+    policy_options=policy_options,                                          # Link the defined policy options
+    name="import-RT-l3vpn",                                                 # Specify name
+)
+
+member_2 = nokiasr_policy_options::Member(                                  # Instantiate member entity
+    community=community_2,                                                  # Link the defined community
+    member="target:6774:90200",                                             # Specify value
+)
+
+community_3 = nokiasr_policy_options::Community(                            # Instantiate community entity
+    policy_options=policy_options,                                          # Link the defined policy options
+    name="import-RT-test-service",                                          # Specify name
+)
+
+expression_3 = nokiasr_policy_options::Expression(                          # Instantiate expression entity
+    community=community_3,                                                  # Link the defined community
+    expr="target:6774:17460 OR target:6774:90100 OR target:6774:20",        # Specify the expression
+)
+
+prefixlist_1 = nokiasr_policy_options::PrefixList(                          # Instantiate prefixList entity
+    policy_options = policy_options_2,                                      # Link the defined policy options
+    name = "subnet-10.11.12.0",                                             # Specify the name
+)
+
+prefix_1 = nokiasr_policy_options::Prefix(                                  # Instantiate prefix entity
+    prefixlist = prefixlist_1,                                              # Link the defined prefix list
+    ip_prefix  = "10.11.12.0/24",                                           # Specify IP prefix
+    start_length = 24,                                                      # Specify the start length
+    end_length = 24,                                                        # Specify the end length
+)
+
+
+# Define policy-statements
+policy_statement_1 = nokiasr_policy_options::policy_statement::PolicyStatement(                 # Instantiate policy statement entity
+    policy_options=policy_options,                                                              # Link the defined policy options
+    name="vrf-export-l3vpn-hub",                                                                # Specify the name
+    description="statement_1_description",                                                      # Specify the description
+    entry_type="numbered",                                                                      # Specify the entry_type
+    default_action=nokiasr_policy_options::policy_statement::entry::action::DefaultAction(      # Instantiate default action entity
+        action_type="reject"                                                                    # Specify action type
+    ),
+)
+
+entry_numbered = nokiasr_policy_options::policy_statement::NumberedEntry(                       # Instantiate numbered entry entity
+    policy_statement=policy_statement_1,                                                        # Link the defined policy statement
+    entry_id=10,                                                                                # Specify the ID
+    description="entry_10_description",                                                         # Specify the description
+)
+
+entry_numbered_from = nokiasr_policy_options::policy_statement::entry::from::From(              # Instantiate `from` entity
+    entry=entry_numbered,                                                                       # Link the defined numbered entry
+    community=nokiasr_policy_options::policy_statement::entry::from::Community(                 # Instantiate community entity
+        name="import-RT-l3vpn"                                                                  # Specify the name
+    ),
+    protocol=nokiasr_policy_options::policy_statement::entry::from::Protocol(                   # Instantiate protocol entity
+        name="direct"                                                                           # Specify protocol name
+    ),
+)
+
+entry_numbered_action = nokiasr_policy_options::policy_statement::entry::action::Action(        # Instantiate `action` entity
+    entry=entry_numbered,                                                                       # Link the defined numbered entity
+    action_type="accept",                                                                       # Specify the action type
+    local_preference="1",                                                                       # Specify the local preference
+    metric=nokiasr_policy_options::policy_statement::entry::action::Metric(                     # Instantiate metric entity
+        add="2"                                                                                 # Specify the amount to be added to metric
+    ),
+    as_path_prepend=nokiasr_policy_options::policy_statement::entry::action::ASPathPrepend(     # Instantiate AS path prepend entity
+        as_path="3",                                                                            # Select the AS path
+        repeat="4",                                                                             # Specify the number of times to repeat
+    ),
+    community=nokiasr_policy_options::policy_statement::entry::action::Community(               # Instantiate community entity
+        add=["export-RT-k3vpn-spoke", "import-RT-l3vpn"],                                       # Specify the communities to add
+        remove=["import-RT-test-service"]                                                       # Specify the communities to remove
+    ),
+)
+
+policy_statement_2 = nokiasr_policy_options::policy_statement::PolicyStatement(                 # Instantiate policy statement entity
+    policy_options = policy_options_2,                                                          # Link the defined policy options
+    name = "accept-10.11.12.0",                                                                 # Specify the name
+    description = "statement_2_description",                                                    # Specify the description
+    entry_type = "numbered",                                                                    # Specify the entry_type
+    default_action = nokiasr_policy_options::policy_statement::entry::action::DefaultAction(    # Instantiate default action entity
+        action_type = "accept"                                                                  # Specify action type
+    ),
+)
+
+entry_numbered_2 = nokiasr_policy_options::policy_statement::NumberedEntry(                     # Instantiate numbered entry entity
+    policy_statement=policy_statement_2,                                                        # Link the defined policy statement
+    entry_id=60,                                                                                # Specify the ID
+    description="entry_20_description",                                                         # Specify the description
+)
+
+entry_numbered_prefix_1 = nokiasr_policy_options::policy_statement::entry::from::From(          # Instantiate `from` entity
+    entry=entry_numbered_2,                                                                     # Link the defined numbered entry
+    family = ["ipv4", "label-ipv4"],                                                            # Specify family
+    prefix_list = [prefixlist_1.name],                                                          # Specify prefix list name. Notice how we are accessing the name of `prefixlist_1` object through dot notation
+)
+
+entry_numbered_action_2 = nokiasr_policy_options::policy_statement::entry::action::Action(      # Instantiate `action` entity
+    entry=entry_numbered_2,                                                                     # Link the defined numbered entry
+    action_type="accept",                                                                       # Specify the action
+)

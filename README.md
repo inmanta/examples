@@ -10,7 +10,7 @@ To learn LSM, the first thing to look at is the documentation: [here](https://do
 
 This repo has the following additional examples.
 
-1. [Network configuration examples](vendors/README.md): Collection of examples on how to configure different services on vendor devices
+1. [Network configuration examples](Networking/README.md): Collection of examples on how to configure different services on vendor devices
 2. [lsm-external-allocation](lsm-external-allocation/README.md): example on how to allocate and de-allocate attributes from an external inventory
 3. [lsm-from-inventory-a](lsm-from-inventory-a/README.md): example on how to load all attributes of a service from an external inventory
 4. [lsm-from-inventory-b](lsm-from-inventory-b/README.md): another example on how to load all attributes of a service from an external inventory

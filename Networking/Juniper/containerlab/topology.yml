@@ -8,43 +8,17 @@ topology:
     juniper-router-a:
       kind: vr-vmx
       image: vrnetlab/vr-vmx:18.3R1.9
-      mgmt_ipv4: 10.11.12.20
+      mgmt_ipv4: 10.11.12.21
       ports:
-        - 22020:22
+        - 22021:22
         - 20830:830
     juniper-router-b:
       kind: vr-vmx
       image: vrnetlab/vr-vmx:18.3R1.9
-      mgmt_ipv4: 10.11.12.21
+      mgmt_ipv4: 10.11.12.22
       ports:
-        - 22021:22
+        - 22022:22
         - 21830:830
-    inmanta-server:
-      kind: linux
-      image: inmanta:dev
-      binds:
-        - ./inmanta/server/server.cfg:/etc/inmanta/inmanta.cfg
-        - ./inmanta/server/license.cfg:/etc/inmanta/inmanta.d/license.cfg
-        - ./inmanta/server/demo.inmanta.com.license:/etc/inmanta/license/.license
-        - ./inmanta/server/demo.inmanta.com.jwe:/etc/inmanta/license/.jwe
-        - ./inmanta/server/authorized_keys:/home/centos/.ssh/authorized_keys
-        - ./inmanta/server/env:/etc/sysconfig/inmanta-server
-        - ./inmanta/agent/env:/etc/sysconfig/inmanta-agent
-      env:
-        NETCONF_DEVICE_USER: inmanta
-        NETCONF_DEVICE_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.2
-      ports:
-        - 8888:8888
-        - 2222:22
-      cmd: sh -c "/usr/bin/chmod 600 /home/centos/.ssh/authorized_keys && /usr/sbin/sshd -D &> /tmp/ssh-logs & (/bin/sleep 5 && /usr/bin/inmanta -vvv server)"
-    inmanta-db:
-      kind: linux
-      image: postgres:13
-      env:
-        POSTGRES_USER: inmanta
-        POSTGRES_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.3
   links:
     - endpoints: ["juniper-router-a:eth1", "juniper-router-b:eth1"]
     - endpoints: ["juniper-router-a:eth2", "juniper-router-b:eth2"]

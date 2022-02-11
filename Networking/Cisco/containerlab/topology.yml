@@ -8,43 +8,17 @@ topology:
     cisco-router-a:
       kind: vr-xrv
       image: containerlab/vr-xrv:6.3.1
-      mgmt_ipv4: 10.11.12.10
+      mgmt_ipv4: 10.11.12.11
       ports:
-        - 22010:22
+        - 22011:22
         - 21830:830
     cisco-router-b:
       kind: vr-xrv
       image: containerlab/vr-xrv:6.3.1
-      mgmt_ipv4: 10.11.12.11
+      mgmt_ipv4: 10.11.12.12
       ports:
-        - 22011:22
+        - 22012:22
         - 22830:830
-    inmanta-server:
-      kind: linux
-      image: inmanta:dev
-      binds:
-        - ./inmanta/server/server.cfg:/etc/inmanta/inmanta.cfg
-        - ./inmanta/server/license.cfg:/etc/inmanta/inmanta.d/license.cfg
-        - ./inmanta/server/demo.inmanta.com.license:/etc/inmanta/license/.license
-        - ./inmanta/server/demo.inmanta.com.jwe:/etc/inmanta/license/.jwe
-        - ./inmanta/server/authorized_keys:/home/centos/.ssh/authorized_keys
-        - ./inmanta/server/env:/etc/sysconfig/inmanta-server
-        - ./inmanta/agent/env:/etc/sysconfig/inmanta-agent
-      env:
-        NETCONF_DEVICE_USER: inmanta
-        NETCONF_DEVICE_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.2
-      ports:
-        - 8888:8888
-        - 2222:22
-      cmd: sh -c "/usr/bin/chmod 600 /home/centos/.ssh/authorized_keys && /usr/sbin/sshd -D &> /tmp/ssh-logs & (/bin/sleep 5 && /usr/bin/inmanta -vvv server)"
-    inmanta-db:
-      kind: linux
-      image: postgres:13
-      env:
-        POSTGRES_USER: inmanta
-        POSTGRES_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.3
   links:
     - endpoints: ["cisco-router-a:eth1", "cisco-router-b:eth1"]
     - endpoints: ["cisco-router-a:eth2", "cisco-router-b:eth2"]

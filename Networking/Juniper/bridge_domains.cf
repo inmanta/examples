@@ -18,6 +18,7 @@ router=j::Device(
     port=port,
     username=username,
     password=password,
+    auto_agent=true,
 )
 
 

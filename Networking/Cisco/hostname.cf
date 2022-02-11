@@ -15,10 +15,11 @@ router = c::Device(
     port=port,
     username=username,
     password=password,
+    auto_agent=true,
 )
 
 # Define a hostname
 c::Hostname(
     device=router,            # Router is the instance we defined above
     hostname="MAIN_ROUTER",   # Hostname
-    )
+)

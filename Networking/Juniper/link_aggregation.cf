@@ -15,6 +15,7 @@ router=j::Device(
     port=port,
     username=username,
     password=password,
+    auto_agent=true,
 )
 
 # Use LACP to configure port aggregation for ports GigabitEthernet 3 and 4

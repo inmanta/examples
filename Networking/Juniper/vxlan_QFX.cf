@@ -16,6 +16,7 @@ router = j::Device(
     username=username,
     password=password,
     family="qfx",        # Specify OS family - In this case we define QFX that supports VLAN-VXLAN configuration
+    auto_agent=true,
 )
 
 

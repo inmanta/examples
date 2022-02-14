@@ -15,6 +15,7 @@ router = c::Device(
     port=port,
     username=username,
     password=password,
+    auto_agent=true,
 )
 
 # Define an NTP VRF and assign an NTP peer to it

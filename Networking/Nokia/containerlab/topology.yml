@@ -10,45 +10,19 @@ topology:
       image: vrnetlab/vr-sros:20.10.R1
       license: ./sros-20.7.R1.qcow2.license
       startup-config: ./startup_nokia_router_a.cfg
-      mgmt_ipv4: 10.11.12.30
+      mgmt_ipv4: 10.11.12.31
       ports:
-        - 22030:22
+        - 22031:22
         - 20830:830
     nokia-router-b:
       kind: vr-sros
       image: vrnetlab/vr-sros:20.10.R1
       license: ./sros-20.7.R1.qcow2.license
       startup-config: ./startup_nokia_router_b.cfg
-      mgmt_ipv4: 10.11.12.31
+      mgmt_ipv4: 10.11.12.32
       ports:
-        - 22031:22
+        - 22032:22
         - 21830:830
-    inmanta-server:
-      kind: linux
-      image: inmanta:dev
-      binds:
-        - ./inmanta/server/server.cfg:/etc/inmanta/inmanta.cfg
-        - ./inmanta/server/license.cfg:/etc/inmanta/inmanta.d/license.cfg
-        - ./inmanta/server/demo.inmanta.com.license:/etc/inmanta/license/.license
-        - ./inmanta/server/demo.inmanta.com.jwe:/etc/inmanta/license/.jwe
-        - ./inmanta/server/authorized_keys:/home/centos/.ssh/authorized_keys
-        - ./inmanta/server/env:/etc/sysconfig/inmanta-server
-        - ./inmanta/agent/env:/etc/sysconfig/inmanta-agent
-      env:
-        NETCONF_DEVICE_USER: inmanta
-        NETCONF_DEVICE_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.2
-      ports:
-        - 8888:8888
-        - 2222:22
-      cmd: sh -c "/usr/bin/chmod 600 /home/centos/.ssh/authorized_keys && /usr/sbin/sshd -D &> /tmp/ssh-logs & (/bin/sleep 5 && /usr/bin/inmanta -vvv server)"
-    inmanta-db:
-      kind: linux
-      image: postgres:13
-      env:
-        POSTGRES_USER: inmanta
-        POSTGRES_PASSWORD: inmanta
-      mgmt_ipv4: 10.11.12.3
   links:
     - endpoints: ["nokia-router-a:eth1", "nokia-router-b:eth1"]
     - endpoints: ["nokia-router-a:eth2", "nokia-router-b:eth2"]

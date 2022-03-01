@@ -4,7 +4,7 @@ import juniper
 # You can define the device information here for easier management
 hostname = "router"
 mgmt_ip = "10.11.12.21"
-port = 22830
+port = 830
 username = "admin"
 password = "admin@123"
 

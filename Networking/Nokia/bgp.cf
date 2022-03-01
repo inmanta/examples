@@ -4,8 +4,8 @@ import nokiasr::router
 
 # You can define the device information here for easier management
 hostname="router"      # Device hostname
-mgmt_ip="192.168.2.20" # Device management IP address
-port=22830             # Device NETCONF port
+mgmt_ip="10.11.12.31"  # Device management IP address
+port=830               # Device NETCONF port
 username="admin"       # Device username
 password="admin"       # Device password
 

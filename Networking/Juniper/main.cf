@@ -2,19 +2,19 @@
 import juniper
 
 # You can define the device information here for easier management
-HOSTNAME = "router"
-MGMT_IP = "192.168.2.20"
-PORT = 22830
-USERNAME = "admin"
-PASSWORD = "admin"
+hostname = "router"
+mgmt_ip = "10.11.12.21"
+port = 830
+username = "admin"
+password = "admin@123"
 
 # Construct the router instance using the imported module name and feed it the information above
 router = juniper::Device(
-    name=HOSTNAME,
-    mgmt_ip=MGMT_IP,
-    port=PORT,
-    username=USERNAME,
-    password=PASSWORD,
+    name=hostname,
+    mgmt_ip=mgmt_ip,
+    port=port,
+    username=username,
+    password=password,
 )
 
 # Define an interface and change its administrative state to "DOWN"

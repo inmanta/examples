@@ -3,7 +3,7 @@ import juniper as j
 
 # You can define the device information here for easier management
 hostname = "router"      # Device hostname
-mgmt_ip = "192.168.2.20" # Device management IP address
+mgmt_ip = "10.11.12.21"  # Device management IP address
 port = 22830             # Device NETCONF port
 username = "admin"       # Device username
 password = "admin@123"   # Device password
@@ -43,7 +43,7 @@ address = j::Address_inet(          # Instantiate the IPv4 address entity
 # Set speed, MTU and auto-negotiation for interface
 j::Interface(                           # Instantiate interface entity
     device=router,                      # router is the instance we defined above
-    interface_name="ge-0/0/20",         # Name of the intended interface
+    interface_name="ge-0/0/2",          # Name of the intended interface
     speed="100m",                       # Specify speed
     mtu=9000,                           # Specify MTU
     gigether_opt_auto_neg=true,         # Enable auto negotiation

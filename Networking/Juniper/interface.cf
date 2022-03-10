@@ -47,4 +47,5 @@ j::Interface(                           # Instantiate interface entity
     speed="100m",                       # Specify speed
     mtu=9000,                           # Specify MTU
     gigether_opt_auto_neg=true,         # Enable auto negotiation
+    comanaged=false,                    # Only Inmanta manages the configuration
 )

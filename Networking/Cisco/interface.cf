@@ -15,6 +15,7 @@ router = ciscoxr::Device(
     port=port,
     username=username,
     password=password,
+    auto_agent=true
 )
 
 # Define an interface and change its administrative state to "DOWN"

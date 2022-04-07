@@ -8,7 +8,8 @@ Deploy a Vyos router connected to two networks
 """
 
 
-# user connection
+# Openstack connection details - Notice that they are being extracted from environment variables
+# If you do not have them `export`ed, please make sure to do so.
 provider = openstack::Provider(
     name="iaas_openstack",
     connection_url=std::get_env("OS_AUTH_URL"),

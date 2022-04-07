@@ -1,5 +1,5 @@
-name: Cisco Examples
-description: Provides examples for the Cisco module
+name: VyOS Examples
+description: Provides examples for the VyOS module
 author: Inmanta
 author_email: code@inmanta.com
 license: ASL 2.0

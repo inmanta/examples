@@ -111,3 +111,10 @@ Export the model to Inmanta server:
 ```sh
 inmanta -vvv export -f ospf.cf -e <environment_id> --server_address <server_ip_address>
 ```
+
+Create a project and an environment (`test` and `vyos` respectively):
+
+```bash
+inmanta-cli --host <orchestrator_ip> project create -n test
+inmanta-cli --host <orchestrator_ip> environment create -p test -n vyos --save
+```

@@ -86,7 +86,13 @@ Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 ```
 
-## Additional Containerlab Commands
+## Additional Commands
+
+Deploy the LAB:
+
+```sh
+sudo clab deploy -t topology.yml
+```
 
 View the current LAB state:
 
@@ -98,4 +104,10 @@ Delete the deployed LAB:
 
 ```sh
 sudo clab destroy -t topology.yml
+```
+
+Export the model to Inmanta server:
+
+```sh
+inmanta -vvv export -f ospf.cf -e <environment_id> --server_address <server_ip_address>
 ```

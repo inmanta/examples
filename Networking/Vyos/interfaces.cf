@@ -1,0 +1,29 @@
+import vyos
+
+username = "vyos"
+password = "vyos"
+mgmt_ip = "10.11.12.100"
+
+r1 = vyos::Host(
+    name="router1",
+    user=username,
+    password=password,
+    ip=mgmt_ip
+)
+
+# Configure the eth1 interface
+itf = vyos::Interface(
+    host=r1,
+    name="eth1",
+)
+
+# Configure a vlan sub-interface on interface eth1
+vif = vyos::Vif(
+    parent=itf,
+    vlan=10,
+    host=r1,
+)
+
+# Set these two adresses on the interface
+vif.addresses += vyos::Address(ip="192.168.7.3/24")
+vif.addresses += vyos::Address(ip="2a02:1810:bc04:5200::1/64")

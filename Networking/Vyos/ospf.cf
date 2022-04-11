@@ -1,0 +1,34 @@
+ import vyos
+
+username = "vyos"
+password = "vyos"
+mgmt_ip = "10.11.12.100"
+
+r1 = vyos::Host(
+    name="router1",
+    user=username,
+    password=password,
+    ip=mgmt_ip
+)
+
+
+# Configure the eth1 interface to run ospf on
+itf = vyos::Interface(
+    host=r1,
+    name="eth1",
+    address="10.15.1.1/24"
+)
+
+# Enable ospf
+ospf1 = vyos::Ospf(
+    area=0,
+    network=["10.15.1.0/24"],
+    router_id="10.15.1.1",
+    host=r1,
+)
+
+# Redistributed all connected networks
+vyos::OspfRedistribute(
+    ospf=ospf1,
+    type="connected",
+)

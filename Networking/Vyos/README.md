@@ -21,40 +21,9 @@ Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is ano
 sudo docker pull ghcr.io/inmanta/orchestrator:dev
 ```
 
-This `Docker compose` file could be used to start up all the containers:
+There is a [Docker compose file](containerlab/docker-compose.yml) inside the containerlab folder and it could be used to start up all the containers:
 
-```yaml
-version: '3'
-services:
-    postgres:
-        container_name: inmanta_db
-        image: postgres:13
-        environment:
-            POSTGRES_USER: inmanta
-            POSTGRES_PASSWORD: inmanta
-        networks:
-            inm_net:
-                ipv4_address: 172.30.0.2
-
-    inmanta-server:
-        container_name: inmanta_orchestrator
-        image: ghcr.io/inmanta/orchestrator:2022
-        ports:
-            - 8888:8888
-        networks:
-            inm_net:
-                ipv4_address: 172.30.0.3
-        command: "server --wait-for-host inmanta_db --wait-for-port 5432"
-
-networks:
-    inm_net:
-        ipam:
-            driver: default
-            config:
-                - subnet: 172.30.0.0/16
-```
-
-Start up the containers with:
+Start up the containers by going to the `containerlab` folder and by running:
 
 ```bash
 docker-compose up

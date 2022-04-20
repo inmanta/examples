@@ -7,7 +7,62 @@ The provided examples in the `*.cf` files can be applied on `VyOS` devices eithe
 
 In case of choosing the `containerlab` option, it is worthwhile to mention that you need to have a `VyOS` Docker image present on the host machine running `containerlab` and having it **tagged** similar to the topology file; in this case: `vyos/vyos:1.2.8`.
 
-Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have. We can provide access to it if you contact us.
+The `VyOS` docker image can be pulled using:
+
+```bash
+sudo docker pull vyos/vyos:1.2.8
+```
+
+## Using The Open-source Inmanta Service Orchestrator
+
+Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have and it can be pulled:
+
+```bash
+sudo docker pull ghcr.io/inmanta/orchestrator:dev
+```
+
+This `Docker compose` file could be used to start up all the containers:
+
+```yaml
+version: '3'
+services:
+    postgres:
+        container_name: inmanta_db
+        image: postgres:13
+        environment:
+            POSTGRES_USER: inmanta
+            POSTGRES_PASSWORD: inmanta
+        networks:
+            inm_net:
+                ipv4_address: 172.30.0.2
+
+    inmanta-server:
+        container_name: inmanta_orchestrator
+        image: ghcr.io/inmanta/orchestrator:2022
+        ports:
+            - 8888:8888
+        networks:
+            inm_net:
+                ipv4_address: 172.30.0.3
+        command: "server --wait-for-host inmanta_db --wait-for-port 5432"
+
+networks:
+    inm_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.30.0.0/16
+```
+
+Start up the containers with:
+
+```bash
+docker-compose up
+```
+
+This will ultimately start up a `postgres` database and the `inmanta service container`.
+
+## Starting The Containers
 
 In order to deploy the provided topology file with `containerlab` go to the containerlab folder where the topology file is present and:
 
@@ -23,15 +78,7 @@ The output should be similar to:
 vyos/vyos                         1.2.8     9efd07d6e230   5 months ago   606MB
 ```
 
-If you do not have the container, pull the VyOS image from Docker Hub:
-
-```bash
-sudo docker pull vyos/image:1.2.8
-```
-
 > **Note:** You can use other versions, just replace `1.2.8` with the version you want and also update the [topology](containerlab/topology.yml) file to use your image name.
-
-## Running The Container
 
 Head to the `containerlab` folder and then run:
 

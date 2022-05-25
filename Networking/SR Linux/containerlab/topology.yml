@@ -1,0 +1,28 @@
+name: srlinux
+mgmt:
+  bridge: inmantabridge
+  network: inmanta_mgmt
+  ipv4_subnet: 10.11.12.0/24
+topology:
+  kinds:
+    srl:
+      image: ghcr.io/nokia/srlinux
+  nodes:
+    spine:
+      kind: srl
+      type: ixrd3
+      mgmt_ipv4: 10.11.12.100
+      # startup-config: leaf1.json
+    leaf1:
+      kind: srl
+      type: ixrd2
+      mgmt_ipv4: 10.11.12.210
+      # startup-config: leaf1.json
+    leaf2:
+      kind: srl
+      type: ixrd2
+      mgmt_ipv4: 10.11.12.220
+      # startup-config: spine.json
+  links:
+    - endpoints: ["spine:e1-1", "leaf1:e1-1"]
+    - endpoints: ["spine:e1-2", "leaf2:e1-1"]

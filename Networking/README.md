@@ -100,6 +100,7 @@ When the deployment is successfully done, you can `SSH` to the device and verify
 * [Juniper](Juniper/README.md)
 * [Nokia](Nokia/README.md)
 * [VyOS](VyOS/README.md)
+* [SR Linux](SR&#32;Linux/README.md)
 
 ## Supported Features
 
@@ -192,3 +193,28 @@ When the deployment is successfully done, you can `SSH` to the device and verify
   * [x] set service VPRN
   * [x] set service VPRN with VRRP
   * [x] set service VPRN with static router
+
+### SR Linux
+
+* [x] All the aforementioned features in [Nokia](#nokia) and more
+
+### VyOS
+
+* [x] Hostname
+* [x] Interface
+  * [x] Set primary address
+  * [x] Set secondary address
+  * [x] MTU
+  * [x] Bandwidth
+  * [x] Admin state
+  * [x] Description
+* [x] Sub-interface
+* [x] Interface VRF
+* [x] Timezone/clock
+* [x] NTP
+* [x] VRF
+  * [x] Static route
+* [x] Static route
+* [x] Bridge domains
+* [x] Policy options/statements
+* [x] Firewall

@@ -23,23 +23,15 @@ Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is ano
 sudo docker pull ghcr.io/inmanta/orchestrator:dev
 ```
 
-There is a [Docker compose file](containerlab/docker-compose.yml) inside the containerlab folder and it could be used to start up the Inmanta orchestrator and its PostgresSQL database.
-
-Start up the containers by going to the `containerlab` folder and by running:
-
-```bash
-docker-compose up
-```
-
-This will ultimately start up a `postgres` database and the `inmanta service container`.
-
-## Starting The SR Linux Containers
+## Starting The Containers
 
 In order to deploy the provided topology file with `containerlab` go to the containerlab folder where the topology file is present and run:
 
 ```bash
 sudo clab deploy -t topology.yml
 ```
+
+This command will spin-up three `SR Linux` containers, an `Inmanta server` and a `PostgreSQL` container.
 
 > **Note:** It will take a few minutes to fully bootup the containers depending on your system horsepower.
 

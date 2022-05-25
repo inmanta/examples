@@ -2,26 +2,40 @@ name: srlinux
 mgmt:
   bridge: inmantabridge
   network: inmanta_mgmt
-  ipv4_subnet: 10.11.12.0/24
+  ipv4_subnet: 172.30.0.0/16
 topology:
   kinds:
     srl:
       image: ghcr.io/nokia/srlinux
   nodes:
+    inmanta-server:
+      kind: linux
+      image: ghcr.io/inmanta/orchestrator:dev
+      mgmt_ipv4: 172.30.0.3
+      ports:
+        - 8888:8888
+      cmd: "server --wait-for-host 172.30.0.2 --wait-for-port 5432"
+    postgres:
+      kind: linux
+      image: postgres:13
+      env:
+        POSTGRES_USER: inmanta
+        POSTGRES_PASSWORD: inmanta
+      mgmt_ipv4: 172.30.0.2
     spine:
       kind: srl
       type: ixrd3
-      mgmt_ipv4: 10.11.12.100
+      mgmt_ipv4: 172.30.0.100
       # startup-config: leaf1.json
     leaf1:
       kind: srl
       type: ixrd2
-      mgmt_ipv4: 10.11.12.210
+      mgmt_ipv4: 172.30.0.210
       # startup-config: leaf1.json
     leaf2:
       kind: srl
       type: ixrd2
-      mgmt_ipv4: 10.11.12.220
+      mgmt_ipv4: 172.30.0.220
       # startup-config: spine.json
   links:
     - endpoints: ["spine:e1-1", "leaf1:e1-1"]

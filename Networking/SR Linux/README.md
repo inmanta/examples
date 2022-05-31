@@ -63,7 +63,7 @@ You can connect to the containers in two ways:
    docker exec -it clab-srlinux-leaf2 sr_cli
    ```
 
-2. Using SSH:
+2. Using SSH (username and password are `admin`):
 
    ```bash
    ssh admin@clab-srlinux-spine

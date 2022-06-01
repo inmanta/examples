@@ -1,5 +1,20 @@
 # SR Linux Module
 
+Table of contents:
+
+- [SR Linux Module](#sr-linux-module)
+  - [Introduction](#introduction)
+  - [SR Linux Topology](#sr-linux-topology)
+  - [Using The Open-source Inmanta Service Orchestrator](#using-the-open-source-inmanta-service-orchestrator)
+  - [Starting The Containers](#starting-the-containers)
+  - [Connecting to the Inmanta Container](#connecting-to-the-inmanta-container)
+    - [Create a New Environment](#create-a-new-environment)
+  - [Connecting to the SR Linux Containers](#connecting-to-the-sr-linux-containers)
+  - [Applying the examples](#applying-the-examples)
+  - [Additional Commands](#additional-commands)
+
+## Introduction
+
 This repository showcases our `SR Linux` module and has a few examples to get you started with Inmanta.
 
 The provided examples in the `*.cf` files can be applied on `SR Linux` devices either on:

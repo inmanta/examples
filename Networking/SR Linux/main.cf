@@ -1,1 +1,10 @@
 import srlinux
+import srlinux::interface as srinterface
+import srlinux::interface::subinterface as srsubinterface
+import srlinux::interface::subinterface::ipv4 as sripv4
+import srlinux::network_instance as srnetinstance
+import srlinux::network_instance::protocols as srprotocols
+import srlinux::network_instance::protocols::ospf as srospf
+import srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import yang

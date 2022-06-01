@@ -1,5 +1,7 @@
 # SR Linux Module
 
+This repository showcases our `SR Linux` module and has a few examples to get you started with Inmanta.
+
 The provided examples in the `*.cf` files can be applied on `SR Linux` devices either on:
 
 * A device that you already have and by changing the IP address, port, etc... in the examples files
@@ -17,11 +19,13 @@ Furthermore, if the `SR Linux` docker image is missing on your machine, it will 
 
 ## Using The Open-source Inmanta Service Orchestrator
 
-Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have and it can be pulled by:
+Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container can be manually pulled by:
 
 ```bash
 sudo docker pull ghcr.io/inmanta/orchestrator:dev
 ```
+
+> NOTE: This container will automatically get pulled by Containerlab if you skip the command above.
 
 ## Starting The Containers
 
@@ -98,11 +102,21 @@ source ~/.virtualenvs/srlinux/bin/activate
 pip install inmanta-core
 ```
 
-And then, export the model to the server:
+And then, compile the `main.cf` file to make sure you have all the required packages:
 
 ```bash
-inmanta -vvv export -f main.cf -e <environment_id> --server_address 172.30.0.3
+inmanta compile main.cf
 ```
+
+> NOTE: If the `compile` errors out, complaining about missing packages, please contact us to get access to the packages.
+
+After that, export a model to the server. For example, `interfaces.cf`:
+
+```bash
+inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address 172.30.0.3
+```
+
+> NOTE: Please make sure to swap the `<environment_id>` with your own environment id.
 
 ## Additional Commands
 
@@ -128,6 +142,10 @@ Export the model to Inmanta server:
 
 ```sh
 inmanta -vvv export -f main.cf -e <environment_id> --server_address <server_ip_address>
+# or
+inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address <server_ip_address>
+# or
+inmanta -vvv export -f ospf.cf -e <environment_id> --server_address <server_ip_address>
 ```
 
 Create a project and an environment (`test` and `SR_Linux` respectively):
@@ -135,4 +153,14 @@ Create a project and an environment (`test` and `SR_Linux` respectively):
 ```bash
 inmanta-cli --host <orchestrator_ip> project create -n test
 inmanta-cli --host <orchestrator_ip> environment create -p test -n SR_Linux --save
+```
+
+By using the `inmanta-cli` command, you can omit the `environment id` and `server ip address` from the `inmanta export` command:
+
+```bash
+inmanta -vvv export -f main.cf
+# or
+inmanta -vvv export -f interfaces.cf
+# or
+inmanta -vvv export -f ospf.cf
 ```

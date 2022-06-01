@@ -17,6 +17,12 @@ sudo docker pull ghcr.io/nokia/srlinux
 
 Furthermore, if the `SR Linux` docker image is missing on your machine, it will be pulled by the `Containerlab` automatically.
 
+## SR Linux Topology
+
+The `SR Linux` topology alongside the IP addresses is depicted as follows:
+
+![srlinux.png](containerlab/srlinux.png)
+
 ## Using The Open-source Inmanta Service Orchestrator
 
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container can be manually pulled by:

@@ -162,18 +162,18 @@ sudo clab destroy -t topology.yml
 Export the model to Inmanta server:
 
 ```sh
-inmanta -vvv export -f main.cf -e <environment_id> --server_address <server_ip_address>
+inmanta -vvv export -f main.cf -e <environment_id> --server_address 172.30.0.3
 # or
-inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address <server_ip_address>
+inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address 172.30.0.3
 # or
-inmanta -vvv export -f ospf.cf -e <environment_id> --server_address <server_ip_address>
+inmanta -vvv export -f ospf.cf -e <environment_id> --server_address 172.30.0.3
 ```
 
 Create a project and an environment (`test` and `SR_Linux` respectively):
 
 ```bash
-inmanta-cli --host <orchestrator_ip> project create -n test
-inmanta-cli --host <orchestrator_ip> environment create -p test -n SR_Linux --save
+inmanta-cli --host 172.30.0.3 project create -n test
+inmanta-cli --host 172.30.0.3 environment create -p test -n SR_Linux --save
 ```
 
 By using the `inmanta-cli` command, you can omit the `environment id` and `server ip address` from the `inmanta export` command:

@@ -115,12 +115,27 @@ A:spine#
 
 ## Applying the examples
 
-In order to run the provided examples, you need to prepare a development environment by creating a `Python virtual environment` and installing the required packages:
+In order to run the provided examples, you need to prepare a development environment using **Python 3.9** by creating a `Python virtual environment` and installing the required packages:
+
+Check the current Python version:
+
+```bash
+$ python3 -V
+Python 3.9.10
+```
+
+Create a virtual environment and install `Inmanta`:
 
 ```bash
 python3 -m venv ~/.virtualenvs/srlinux
 source ~/.virtualenvs/srlinux/bin/activate
-pip install inmanta-core
+pip install inmanta
+```
+
+Install the project:
+
+```bash
+inmanta project install
 ```
 
 And then, compile the `main.cf` file to make sure you have all the required packages:
@@ -128,8 +143,6 @@ And then, compile the `main.cf` file to make sure you have all the required pack
 ```bash
 inmanta compile main.cf
 ```
-
-> NOTE: If the `compile` errors out, complaining about missing packages, please contact us to get access to the packages.
 
 After that, export a model to the server. For example, `interfaces.cf`:
 

@@ -1,2 +1,2 @@
 inmanta-module-srlinux
-inmanta-module-yang
+inmanta-module-yang==2.11.1

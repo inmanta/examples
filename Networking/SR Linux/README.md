@@ -22,6 +22,8 @@ The provided examples in the `*.cf` files can be applied on `SR Linux` devices e
 - A device that you already have and by changing the IP address, port, etc... in the examples files
 - Or using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml).
 
+  > Install containerlab using [this link](https://containerlab.dev/install)
+
 In case of choosing the `containerlab` option, it is worthwhile to mention that you need to have a `SR Linux` Docker image present on the host machine running `containerlab` and having it **tagged** similar to the topology file; in this case: `ghcr.io/nokia/srlinux`.
 
 The `SR Linux` docker image can be pulled using:
@@ -197,4 +199,18 @@ inmanta -vvv export -f main.cf
 inmanta -vvv export -f interfaces.cf
 # or
 inmanta -vvv export -f ospf.cf
+```
+
+Free up the taken disk space by `Docker` using:
+
+```bash
+sudo docker system prune
+```
+
+Remove the `Docker` images:
+
+```bash
+sudo docker rmi -f ghcr.io/inmanta/orchestrator:dev
+sudo docker rmi -f ghcr.io/nokia/srlinux:latest
+sudo docker rmi -f postgres:13
 ```

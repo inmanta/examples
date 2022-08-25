@@ -7,9 +7,7 @@ copyright: 2022 Inmanta
 modulepath: libs
 downloadpath: libs
 repo:
-    - type: package
-      url: https://packages.inmanta.com/public/quickstart/python/simple/
-    - type: git
-      url: https://github.com/inmanta/
+  - type: package
+    url: https://packages.inmanta.com/public/quickstart/python/simple/
 install_mode: release
 requires:

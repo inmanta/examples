@@ -48,6 +48,7 @@ topology:
       image: ghcr.io/inmanta/orchestrator:latest
       binds:
         - ./resources/inmanta.cfg:/etc/inmanta/inmanta.cfg
+      cmd: server --wait-for-host clab-training-pgmaster --wait-for-port 5432
       mgmt_ipv4: 10.0.0.102
   links:
     - endpoints: ["R1:eth1", "R2:eth1"]

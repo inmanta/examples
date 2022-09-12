@@ -1,6 +1,6 @@
 # Quickly setup the training lab
 
-## Bring the lab up
+## 1. Bring the lab up
 ```console
 guillaume@latitude-5411:~/Documents/examples/Training$ sudo clab deploy --topo topology.clab.yml 
 INFO[0000] Containerlab v0.31.1 started                 
@@ -32,10 +32,12 @@ INFO[0004] Adding containerlab host entries to /etc/hosts file
 +---+----------------------------+--------------+-------------------------------------+-------+---------+---------------+--------------+
 ```
 
-## Access the orchestrator
+## 2. Access the orchestrator
 Go to [http://10.0.0.102:8888](http://10.0.0.102:8888)
 
-## Access the routers
+## 3. Access the routers
+The routers are started with a basic config, which enables ssh and setup the credentials for the `vyos` user.  The configured password is then `vyos`.
+
 ```console
 guillaume@latitude-5411:~$ ssh vyos@clab-training-R1
 Warning: Permanently added 'clab-training-r1,10.0.0.5' (ED25519) to the list of known hosts.
@@ -49,4 +51,18 @@ individual files in /usr/share/doc/*/copyright.
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 vyos@R1:~$ 
+```
+
+## 4. Tear down the lab
+```console
+guillaume@latitude-5411:~/Documents/examples/Training$ sudo clab destroy --topo topology.clab.yml 
+INFO[0000] Parsing & checking topology file: topology.clab.yml 
+INFO[0000] Destroying lab: training                     
+INFO[0000] Removed container: clab-training-pgmaster    
+INFO[0000] Removed container: clab-training-orchestrator 
+INFO[0001] Removed container: clab-training-R3          
+INFO[0001] Removed container: clab-training-R4          
+INFO[0001] Removed container: clab-training-R2          
+INFO[0001] Removed container: clab-training-R1          
+INFO[0001] Removing containerlab host entries from /etc/hosts file
 ```

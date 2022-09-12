@@ -1,5 +1,7 @@
 # Quickly setup the training lab
 
+![](topology.svg)
+
 ## 1. Bring the lab up
 ```console
 guillaume@latitude-5411:~/Documents/examples/Training$ sudo clab deploy --topo topology.clab.yml 

@@ -12,6 +12,10 @@ topology:
       binds:
         - /lib/modules:/lib/modules
         - ./resources/R1/config:/opt/vyatta/etc/config/
+    C1:
+      kind: linux
+      image: praqma/network-multitool:latest
+      mgmt_ipv4: 10.0.0.205
     R2:
       kind: linux
       image: vyos/vyos:1.2.8
@@ -20,6 +24,10 @@ topology:
       binds:
         - /lib/modules:/lib/modules
         - ./resources/R2/config:/opt/vyatta/etc/config/
+    C2:
+      kind: linux
+      image: praqma/network-multitool:latest
+      mgmt_ipv4: 10.0.0.206
     R3:
       kind: linux
       image: vyos/vyos:1.2.8
@@ -28,6 +36,10 @@ topology:
       binds:
         - /lib/modules:/lib/modules
         - ./resources/R3/config:/opt/vyatta/etc/config/
+    C3:
+      kind: linux
+      image: praqma/network-multitool:latest
+      mgmt_ipv4: 10.0.0.207
     R4:
       kind: linux
       image: vyos/vyos:1.2.8
@@ -36,6 +48,10 @@ topology:
       binds:
         - /lib/modules:/lib/modules
         - ./resources/R4/config:/opt/vyatta/etc/config/
+    C4:
+      kind: linux
+      image: praqma/network-multitool:latest
+      mgmt_ipv4: 10.0.0.208
     pgmaster:
       kind: linux
       image: postgres:14
@@ -57,3 +73,7 @@ topology:
     - endpoints: ["R2:eth2", "R3:eth2"]
     - endpoints: ["R2:eth3", "R4:eth2"]
     - endpoints: ["R3:eth3", "R4:eth3"]
+    - endpoints: ["C1:eth1", "R1:eth4"]
+    - endpoints: ["C2:eth1", "R2:eth4"]
+    - endpoints: ["C3:eth1", "R3:eth4"]
+    - endpoints: ["C4:eth1", "R4:eth4"]

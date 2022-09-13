@@ -1,5 +1,7 @@
 # Quickly setup the training lab
 
+> :warning: This works on Ubuntu 20.04.
+
 ![](topology.svg)
 
 ## 1. Bring the lab up

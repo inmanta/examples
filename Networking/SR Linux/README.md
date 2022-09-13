@@ -143,8 +143,10 @@ inmanta project install
 And then, compile the `main.cf` file to make sure you have all the required packages:
 
 ```bash
-inmanta compile main.cf
+inmanta compile -f main.cf
 ```
+
+> When `inmanta compile` is run by itself, the implicit behavior is that it always compiles the `main.cf` file. Hence, the command above could simply be `inmanta compile`.
 
 After that, export a model to the server. For example, `interfaces.cf`:
 

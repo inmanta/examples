@@ -6,7 +6,7 @@ topology:
   nodes:
     R1:
       kind: linux
-      image: vyos/vyos:1.2.8
+      image: vyos:1.2
       mgmt_ipv4: 10.0.0.5
       cmd: /sbin/init
       binds:
@@ -18,7 +18,7 @@ topology:
       mgmt_ipv4: 10.0.0.205
     R2:
       kind: linux
-      image: vyos/vyos:1.2.8
+      image: vyos:1.2
       mgmt_ipv4: 10.0.0.6
       cmd: /sbin/init
       binds:
@@ -30,7 +30,7 @@ topology:
       mgmt_ipv4: 10.0.0.206
     R3:
       kind: linux
-      image: vyos/vyos:1.2.8
+      image: vyos:1.2
       mgmt_ipv4: 10.0.0.7
       cmd: /sbin/init
       binds:
@@ -42,7 +42,7 @@ topology:
       mgmt_ipv4: 10.0.0.207
     R4:
       kind: linux
-      image: vyos/vyos:1.2.8
+      image: vyos:1.2
       mgmt_ipv4: 10.0.0.8
       cmd: /sbin/init
       binds:

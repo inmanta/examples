@@ -1,6 +1,6 @@
 # Quickly setup the training lab
 
-> :warning: This works on Ubuntu 20.04.
+> :warning: For now, we only found this to be working on Ubuntu 20.04 hosts.  On more recent linux versions, the routers don't start, probably because of an incompatibility with the kernel of the host.
 
 ![](topology.svg)
 

@@ -16,6 +16,9 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.205
+      cmd: bash /opt/config_ip 10.0.1.2/24 eth1 10.0.1.1
+      binds:
+        - ./resources/Clients/:/opt/
     R2:
       kind: linux
       image: vyos:1.2
@@ -28,6 +31,9 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.206
+      cmd: bash /opt/config_ip 10.0.2.2/24 eth1 10.0.2.1
+      binds:
+        - ./resources/Clients/:/opt/
     R3:
       kind: linux
       image: vyos:1.2
@@ -40,6 +46,9 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.207
+      cmd: bash /opt/config_ip 10.0.3.2/24 eth1 10.0.3.1
+      binds:
+        - ./resources/Clients/:/opt/
     R4:
       kind: linux
       image: vyos:1.2
@@ -52,6 +61,9 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.208
+      cmd: bash /opt/config_ip 10.0.4.2/24 eth1 10.0.4.1
+      binds:
+        - ./resources/Clients/:/opt/
     pgmaster:
       kind: linux
       image: postgres:14

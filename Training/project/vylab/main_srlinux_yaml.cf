@@ -1,0 +1,130 @@
+import srlinux
+import srlinux::interface as srinterface
+import srlinux::interface::subinterface as srsubinterface
+import srlinux::interface::subinterface::ipv4 as sripv4
+import srlinux::network_instance as srnetinstance
+import srlinux::network_instance::protocols as srprotocols
+import srlinux::network_instance::protocols::ospf as srospf
+import srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import yang
+import yaml
+
+# TODO: 1) setup correctly the interfaces 2) setup correctly ospf
+ 
+inventory = yaml::load("/inventory_srlinux.yaml")
+
+for r in inventory["routers"]:
+
+    loopback_ip = r["loopback_ip"]
+
+    router = srlinux::GnmiDevice(
+        auto_agent = true,
+        name = r["name"], 
+        mgmt_ip = r["mgmt_ip"],
+        yang_credentials = yang::Credentials(
+            username = "admin",
+            password = "admin"
+        )
+    )
+
+    # |network instance| #
+
+    router_net_instance = srlinux::NetworkInstance(
+        device = router,
+        name = "default",
+        router_id = loopback_ip
+    )
+
+    # |ospf instance| #
+    
+    router_protocols = srnetinstance::Protocols(
+        parent_network_instance = router_net_instance,
+        ospf = router_ospf
+    )
+
+    router_ospf_instance = srospf::Instance(
+            parent_ospf = router_ospf,
+            name = "1",
+            router_id = loopback_ip,
+            admin_state = "enable",
+            version = "ospf-v2"
+    )
+
+    router_ospf = srprotocols::Ospf(
+        parent_protocols = router_protocols,
+        instance = router_ospf_instance
+    )
+
+    router_ospf_area = srospfinstance::Area(
+        parent_instance = router_ospf_instance,
+        area_id = "0.0.0.0",
+    )
+
+    # |loopback configuration| #
+
+    router_lo = srlinux::Interface(
+        device = router,
+        name = "lo1", 
+        subinterface = [router_lo_subint]
+    )
+
+    router_lo_subint = srinterface::Subinterface(
+        parent_interface = router_lo,
+        x_index = 0,
+        ipv4 = router_lo_subint_address
+    )
+
+    router_lo_subint_address = srsubinterface::Ipv4(
+        parent_subinterface = router_lo_subint,
+        address = sripv4::Address(
+            parent_ipv4 = router_lo_subint_address,
+            ip_prefix = "{{loopback_ip}}/32" 
+        )
+    )
+
+    for port in r["ports"]:
+        port_name = port["name"]
+        port_ip = port["ip"]
+
+        # |interface configuration| #
+
+        router_eth = srlinux::Interface(
+            device = router,
+            name = port_name, 
+            mtu = 9000
+        )
+
+        router_eth_subint = srinterface::Subinterface(
+            parent_interface = router_eth,
+            x_index = 0,
+            ipv4 = router_eth_subint_address
+        )
+
+        router_eth_subint_address = srsubinterface::Ipv4(
+            parent_subinterface = router_eth_subint,
+            address = sripv4::Address(
+                parent_ipv4 = router_eth_subint_address,
+                ip_prefix = port_ip 
+            )
+        )
+
+        client_port = "ethernet-1/4" # should be the interface port of the client for each router
+        # the client port is the last one, doesn't need ospf
+        if port_name != client_port:
+            # set the network-instance this interface belongs to 
+            router_net_instance_int = srnetinstance::Interface(
+                parent_network_instance = router_net_instance,
+                name = "{{port_name}}.0" 
+            )
+            
+            # |ospf interface| #
+            router_ospf_int = srospfarea::Interface(
+                parent_area = router_ospf_area,
+                interface_name = "{{port_name}}.0",
+            )
+        end
+ 
+    end
+
+end

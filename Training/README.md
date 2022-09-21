@@ -84,3 +84,10 @@ INFO[0001] Removed container: clab-training-R3
 INFO[0001] Removed container: clab-training-R2          
 INFO[0001] Removing containerlab host entries from /etc/hosts file
 ```
+
+## 5. Setup the clients
+To setup the clients interfaces and routing table once containerlab is running, use the script setup_Clients with the command "bash setup_Clients". 
+This will run the script config_ip in resources/Clients/ for each client container.
+
+## 6. Two different topologies
+There are 2 different topologies in the folder, one working with `vyos` containers and the other with `srlinux` containers and each of them has its own project in respectively project/vylab and project/srlab.

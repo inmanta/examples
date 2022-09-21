@@ -1,7 +1,5 @@
 # Files created by the running routers
-resources/R*/config/
-!resources/R*/config/.vyatta_config
-!resources/R*/config/config.boot
+resources/R*/config/archive
 
 # Files created by clab when starting the lab
 clab-*

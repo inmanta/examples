@@ -1,5 +1,9 @@
 import vyos
 
+"""
+First raw configuration of the network
+"""
+
 # r1 router config
 r1 = vyos::Host(
     name="R1",

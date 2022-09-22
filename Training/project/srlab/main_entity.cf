@@ -10,6 +10,10 @@ import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 import ip
 
+"""
+Basic entity based model with its instantiation
+"""
+
 entity Router:
     string name
     ip::ip mgmt_ip

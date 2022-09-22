@@ -13,6 +13,7 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.205
+      #cmd: bash /opt/config_ip 10.0.1.2 eth1 10.0.1.1
       binds:
         - ./resources/Clients/:/opt/
     R2:

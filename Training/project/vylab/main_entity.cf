@@ -1,6 +1,10 @@
 import vyos
 import ip
 
+"""
+Basic entity based model with its instantiation
+"""
+
 entity Router:
     string name
     ip::ip mgmt_ip

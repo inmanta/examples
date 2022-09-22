@@ -9,6 +9,10 @@ import srlinux::network_instance::protocols::ospf::instance as srospfinstance
 import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 
+"""
+First raw configuration of the network, this configuration is uncomplete because yang is really verbose.
+"""
+
 loopback_ip = "10.1.1.1"
 mgmt_ip = "10.0.0.5"
 

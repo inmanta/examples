@@ -11,28 +11,36 @@ import yang
 import ip
 
 """
-This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new OspfPeers entities.
+This model adds typedef and indexes to the model
 """
 
+# typedef 
+## router name typedef
+typedef name_r as string matching /^R[0-9]+$/
+
+# entities
+
 entity Router:
-    string name
+    name_r name
     ip::ip mgmt_ip
     ip::ip loopback_ip
 end
 
-# Ospf peering between 2 routers
+## Ospf peering between 2 routers
 entity OspfPeers: 
     ip::cidr network
     string left_port
     string right_port
 end
 
-# Ospf peer for one router
+## Ospf peer for one router
 entity OspfPeer:
     ip::cidr network
     string router_port
     int id = 1
 end
+
+# Relations
 
 Router.host [1] -- srlinux::GnmiDevice
 Router.router_net_instance [1] -- srlinux::NetworkInstance 
@@ -43,6 +51,17 @@ OspfPeers.left [1] -- Router
 OspfPeers.right [1] -- Router
 
 Router.ospf_client_peering [0:] -- OspfPeer.router [1]
+
+# indexes
+
+index Router(name)
+index Router(mgmt_ip)
+index Router(loopback_ip)
+index OspfPeers(network)
+index OspfPeer(network, id)
+index OspfPeer(router, router_port)
+
+# implementations 
 
 implementation router_config for Router:
 

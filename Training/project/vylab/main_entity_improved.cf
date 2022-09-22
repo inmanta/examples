@@ -1,6 +1,10 @@
 import vyos
 import ip
 
+"""
+This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new OspfNetwork entities.
+"""
+
 entity Router:
     string name
     ip::ip mgmt_ip

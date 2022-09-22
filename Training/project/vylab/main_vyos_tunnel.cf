@@ -1,5 +1,10 @@
 import vyos
 
+"""
+Raw configuration of the GRE Tunnel (only works in the old lab with namespaces)
+Still need to be converted into srlinux.
+"""
+
 # R1 
 r1 = vyos::Host(
     name="R1",

@@ -9,6 +9,10 @@ import srlinux::network_instance::protocols::ospf::instance as srospfinstance
 import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 import yaml
+
+"""
+Yaml based configuration.
+"""
  
 inventory = yaml::load("/inventory.yaml")
 

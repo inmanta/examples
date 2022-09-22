@@ -1,6 +1,9 @@
 import yaml
 import vyos
 
+"""
+Yaml based configuration
+"""
 
 inventory = yaml::load("/inventory.yaml")
 

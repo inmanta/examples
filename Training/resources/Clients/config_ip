@@ -6,7 +6,6 @@ border_router_ip=$3
 ip a show $host_interface
 while [ $? -eq 1 ]
 do
-	echo $? > log
 	sleep 1
         ip a show $host_interface
 done

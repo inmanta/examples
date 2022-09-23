@@ -10,7 +10,8 @@ import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 
 """
-First raw configuration of the network, this configuration is uncomplete because yang is really verbose.
+First version of the model. This example only configures the routers `R1` and all its interfaces, yang is really verbose.
+The later models will do the complete configuration.
 """
 
 loopback_ip = "10.1.1.1"
@@ -157,4 +158,76 @@ router_ospf_int2 = srospfarea::Interface(
     interface_name = "{{port_name2}}.0",
 )
 
-# TODO setup ethernet-1/3 and ethernet-1/4 for R1 and setup R2, R3 and R4.
+# ethernet-1/3
+
+port_name3 = "ethernet-1/3"
+port_ip3 = "10.1.0.13/30"
+
+router_eth3 = srlinux::Interface(
+    device = router,
+    name = port_name3, 
+    mtu = 9000
+)
+
+router_eth_subint3 = srinterface::Subinterface(
+    parent_interface = router_eth3,
+    x_index = 0,
+    ipv4 = router_eth_subint_address3
+)
+
+router_eth_subint_address3 = srsubinterface::Ipv4(
+    parent_subinterface = router_eth_subint3,
+    address = sripv4::Address(
+        parent_ipv4 = router_eth_subint_address3,
+        ip_prefix = port_ip3 
+    )
+)
+
+# set the network-instance this interface belongs to 
+router_net_instance_int3 = srnetinstance::Interface(
+    parent_network_instance = router_net_instance,
+    name = "{{port_name3}}.0" 
+)
+
+# |ospf interface| #
+router_ospf_int3 = srospfarea::Interface(
+    parent_area = router_ospf_area,
+    interface_name = "{{port_name3}}.0",
+)
+
+# ethernet-1/4
+
+port_name4 = "ethernet-1/4"
+port_ip4 = "10.0.1.1/24"
+
+router_eth4 = srlinux::Interface(
+    device = router,
+    name = port_name4, 
+    mtu = 9000
+)
+
+router_eth_subint4 = srinterface::Subinterface(
+    parent_interface = router_eth4,
+    x_index = 0,
+    ipv4 = router_eth_subint_address4
+)
+
+router_eth_subint_address4 = srsubinterface::Ipv4(
+    parent_subinterface = router_eth_subint4,
+    address = sripv4::Address(
+        parent_ipv4 = router_eth_subint_address4,
+        ip_prefix = port_ip4 
+    )
+)
+
+# set the network-instance this interface belongs to 
+router_net_instance_int4 = srnetinstance::Interface(
+    parent_network_instance = router_net_instance,
+    name = "{{port_name4}}.0" 
+)
+
+# |ospf interface| #
+router_ospf_int4 = srospfarea::Interface(
+    parent_area = router_ospf_area,
+    interface_name = "{{port_name4}}.0",
+)

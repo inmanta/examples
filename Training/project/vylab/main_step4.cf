@@ -2,7 +2,7 @@ import vyos
 import ip
 
 """
-This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new OspfNetwork entities.
+This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new PeerNetwork entities.
 """
 
 entity Router:
@@ -11,16 +11,26 @@ entity Router:
     ip::ip loopback_ip
 end
 
-entity OspfNetwork: 
+entity PeerNetwork: 
     ip::cidr network
     string left_port
     string right_port
 end
 
+entity OspfPeerInterface: 
+    ip::cidr network
+    string router_port
+    int id = 1
+end
+
 Router.host [1] -- vyos::Host
-Router.ospf_networks [0:] -- OspfNetwork.routers [2]
-OspfNetwork.left [1] -- Router
-OspfNetwork.right [1] -- Router
+
+Router.ospf_networks [0:] -- PeerNetwork.routers [2]
+PeerNetwork.left [1] -- Router
+PeerNetwork.right [1] -- Router
+
+Router.ospf_client_peering [0:] -- OspfPeerInterface.router [1]
+
 
 implementation router_config for Router:
 
@@ -56,31 +66,42 @@ implementation router_config for Router:
 
 end
 
-implement Router using router_config
-
-implementation ospf_config for OspfNetwork:
+implementation ospf_network_config for PeerNetwork:
     self.routers += self.left
     self.routers += self.right
-    
-    left_ip = ip::ipindex(self.network, 1)
-    right_ip = ip::ipindex(self.network, 2)
-    netmask = ip::ipnet(self.network, "prefixlen")
 
-    vyos::Interface(
-        host=self.left.host,
-        name=self.left_port,
-        address="{{left_ip}}/{{netmask}}"
+    peer1 = OspfPeerInterface(
+        network = self.network,
+        router_port = self.left_port,
+        id = 1,
+        router = self.left
     )
 
-    vyos::Interface(
-        host=self.right.host,
-        name=self.right_port,
-        address="{{right_ip}}/{{netmask}}"
+    peer2 = OspfPeerInterface(
+        network = self.network,
+        router_port = self.right_port,
+        id = 2,
+        router = self.right
     )
 
 end
 
-implement OspfNetwork using ospf_config
+implementation ospf_peer_config for OspfPeerInterface:
+
+    router_ip = ip::ipindex(self.network, self.id)
+    netmask = ip::ipnet(self.network, "prefixlen")
+
+    vyos::Interface(
+        host=self.router.host,
+        name=self.router_port,
+        address="{{router_ip}}/{{netmask}}"
+    )
+
+end
+
+implement Router using router_config
+implement PeerNetwork using ospf_network_config
+implement OspfPeerInterface using ospf_peer_config
 
 
 # Routers Instantiation
@@ -109,47 +130,72 @@ r4 = Router(
     loopback_ip = "10.1.1.4",
 )
 
-# Ospf Peering instantiation
+# Ospf peering instantiations
 
-ospf12 = OspfNetwork(
+## Routers peering
+
+ospf12 = PeerNetwork(
     network = "10.1.0.0/30",
     left_port = "eth1",
     right_port = "eth1",
     left = r1,
     right = r2
 )
-ospf13 = OspfNetwork(
+ospf13 = PeerNetwork(
     network = "10.1.0.4/30",
     left_port = "eth2",
     right_port = "eth1",
     left = r1,
     right = r3
 )
-ospf14 = OspfNetwork(
+ospf14 = PeerNetwork(
     network = "10.1.0.12/30",
     left_port = "eth3",
     right_port = "eth1",
     left = r1,
     right = r4
 )
-ospf23 = OspfNetwork(
+ospf23 = PeerNetwork(
     network = "10.1.0.8/30",
     left_port = "eth2",
     right_port = "eth2",
     left = r2,
     right = r3
 )
-ospf24 = OspfNetwork(
+ospf24 = PeerNetwork(
     network = "10.1.0.16/30",
     left_port = "eth3",
     right_port = "eth2",
     left = r2,
     right = r4
 )
-ospf34 = OspfNetwork(
+ospf34 = PeerNetwork(
     network = "10.1.0.20/30",
     left_port = "eth3",
     right_port = "eth3",
     left = r3,
     right = r4
+)
+
+## Clients peering
+
+ospf1c = OspfPeerInterface(
+    network = "10.0.1.0/24",
+    router_port = "eth4",
+    router = r1
+)
+ospf2c = OspfPeerInterface(
+    network = "10.0.2.0/24",
+    router_port = "eth4",
+    router = r2
+)
+ospf3c = OspfPeerInterface(
+    network = "10.0.3.0/24",
+    router_port = "eth4",
+    router = r3
+)
+ospf4c = OspfPeerInterface(
+    network = "10.0.4.0/24",
+    router_port = "eth4",
+    router = r4
 )

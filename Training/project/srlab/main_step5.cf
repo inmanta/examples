@@ -11,38 +11,57 @@ import yang
 import ip
 
 """
-This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new OspfPeers entities.
+This model adds typedef and indexes to the model
 """
 
+# typedef 
+## router name typedef
+typedef name_r as string matching /^R[0-9]+$/
+
+# entities
+
 entity Router:
-    string name
+    name_r name
     ip::ip mgmt_ip
     ip::ip loopback_ip
 end
 
-# Ospf peering between 2 routers
-entity OspfPeers: 
+## Ospf peering between 2 routers
+entity PeerNetwork: 
     ip::cidr network
     string left_port
     string right_port
 end
 
-# Ospf peer for one router
-entity OspfPeer:
+## Ospf peer for one router
+entity OspfPeerInterface:
     ip::cidr network
     string router_port
     int id = 1
 end
 
+# Relations
+
 Router.host [1] -- srlinux::GnmiDevice
 Router.router_net_instance [1] -- srlinux::NetworkInstance 
 Router.router_ospf_area [1] -- srospfinstance::Area 
 
-Router.ospf_peering [0:] -- OspfPeers.routers [2]
-OspfPeers.left [1] -- Router
-OspfPeers.right [1] -- Router
+Router.ospf_peering [0:] -- PeerNetwork.routers [2]
+PeerNetwork.left [1] -- Router
+PeerNetwork.right [1] -- Router
 
-Router.ospf_client_peering [0:] -- OspfPeer.router [1]
+Router.ospf_client_peering [0:] -- OspfPeerInterface.router [1]
+
+# indexes
+
+index Router(name)
+index Router(mgmt_ip)
+index Router(loopback_ip)
+index PeerNetwork(network)
+index OspfPeerInterface(network, id)
+index OspfPeerInterface(router, router_port)
+
+# implementations 
 
 implementation router_config for Router:
 
@@ -115,18 +134,18 @@ end
 
 implement Router using router_config
 
-implementation ospf_peers_config for OspfPeers:
+implementation ospf_peers_config for PeerNetwork:
     self.routers += self.left
     self.routers += self.right
     
-    peer1 = OspfPeer(
+    peer1 = OspfPeerInterface(
         network = self.network,
         router_port = self.left_port,
         id = 1,
         router = self.left
     )
 
-    peer2 = OspfPeer(
+    peer2 = OspfPeerInterface(
         network = self.network,
         router_port = self.right_port,
         id = 2,
@@ -135,9 +154,9 @@ implementation ospf_peers_config for OspfPeers:
 
 end
 
-implement OspfPeers using ospf_peers_config
+implement PeerNetwork using ospf_peers_config
 
-implementation ospf_peer_config for OspfPeer:
+implementation ospf_peer_config for OspfPeerInterface:
     
     router_ip = ip::ipindex(self.network, self.id)
     netmask = ip::ipnet(self.network, "prefixlen")
@@ -176,7 +195,7 @@ implementation ospf_peer_config for OspfPeer:
 
 end
 
-implement OspfPeer using ospf_peer_config
+implement OspfPeerInterface using ospf_peer_config
 
 # Routers instantiations
 
@@ -208,35 +227,35 @@ r4 = Router(
 
 ## Routers peering
 
-ospf12 = OspfPeers(
+ospf12 = PeerNetwork(
     network = "10.1.0.0/30",
     left_port = "ethernet-1/1",
     right_port = "ethernet-1/1",
     left = r1,
     right = r2
 )
-ospf13 = OspfPeers(
+ospf13 = PeerNetwork(
     network = "10.1.0.4/30",
     left_port = "ethernet-1/2",
     right_port = "ethernet-1/1",
     left = r1,
     right = r3
 )
-ospf14 = OspfPeers(
+ospf14 = PeerNetwork(
     network = "10.1.0.12/30",
     left_port = "ethernet-1/3",
     right_port = "ethernet-1/1",
     left = r1,
     right = r4
 )
-ospf23 = OspfPeers(
+ospf23 = PeerNetwork(
     network = "10.1.0.8/30",
     left_port = "ethernet-1/2",
     right_port = "ethernet-1/2",
     left = r2,
     right = r3
 )
-ospf24 = OspfPeers(
+ospf24 = PeerNetwork(
     network = "10.1.0.16/30",
     left_port = "ethernet-1/3",
     right_port = "ethernet-1/2",
@@ -244,7 +263,7 @@ ospf24 = OspfPeers(
     right = r4
 )
 
-ospf34 = OspfPeers(
+ospf34 = PeerNetwork(
     network = "10.1.0.20/30",
     left_port = "ethernet-1/3",
     right_port = "ethernet-1/3",
@@ -254,22 +273,22 @@ ospf34 = OspfPeers(
 
 ## Clients peering
 
-ospf1c = OspfPeer(
+ospf1c = OspfPeerInterface(
     network = "10.0.1.0/24",
     router_port = "ethernet-1/4",
     router = r1
 )
-ospf2c = OspfPeer(
+ospf2c = OspfPeerInterface(
     network = "10.0.2.0/24",
     router_port = "ethernet-1/4",
     router = r2
 )
-ospf3c = OspfPeer(
+ospf3c = OspfPeerInterface(
     network = "10.0.3.0/24",
     router_port = "ethernet-1/4",
     router = r3
 )
-ospf4c = OspfPeer(
+ospf4c = OspfPeerInterface(
     network = "10.0.4.0/24",
     router_port = "ethernet-1/4",
     router = r4

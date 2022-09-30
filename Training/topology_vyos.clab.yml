@@ -16,6 +16,8 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.205
+      entrypoint: /bin/bash
+      cmd: /opt/config_ip 10.0.1.2 eth1 10.0.1.1 30
       binds:
         - ./resources/Clients/:/opt/
     R2:
@@ -30,6 +32,8 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.206
+      entrypoint: /bin/bash
+      cmd: /opt/config_ip 10.0.2.2 eth1 10.0.2.1 30
       binds:
         - ./resources/Clients/:/opt/
     R3:
@@ -44,6 +48,8 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.207
+      entrypoint: /bin/bash
+      cmd: /opt/config_ip 10.0.3.2 eth1 10.0.3.1 30
       binds:
         - ./resources/Clients/:/opt/
     R4:
@@ -58,6 +64,8 @@ topology:
       kind: linux
       image: praqma/network-multitool:latest
       mgmt_ipv4: 10.0.0.208
+      entrypoint: /bin/bash
+      cmd: /opt/config_ip 10.0.4.2 eth1 10.0.4.1 30
       binds:
         - ./resources/Clients/:/opt/
     pgmaster:

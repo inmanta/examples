@@ -1,4 +1,0 @@
-sudo docker exec -ti clab-training-C1 bash /opt/config_ip 10.0.1.2/24 eth1 10.0.1.1
-sudo docker exec -ti clab-training-C2 bash /opt/config_ip 10.0.2.2/24 eth1 10.0.2.1
-sudo docker exec -ti clab-training-C3 bash /opt/config_ip 10.0.3.2/24 eth1 10.0.3.1
-sudo docker exec -ti clab-training-C4 bash /opt/config_ip 10.0.4.2/24 eth1 10.0.4.1

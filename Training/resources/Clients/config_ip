@@ -1,0 +1,49 @@
+#!/bin/bash
+host_ip=$1
+host_interface=$2
+border_router_ip=$3
+prefix=$4
+
+echo
+echo "==============================="
+echo "Starting pre-configuring client"
+echo "==============================="
+echo 
+
+echo
+echo "Waiting for interface ${host_interface} to show up"
+ip a show $host_interface
+while [ $? -eq 1 ]
+do
+	sleep 1
+        ip a show $host_interface
+done
+
+echo
+echo "Adding ${host_ip}/${prefix} to ${host_interface}"
+ip a add $host_ip/$prefix dev $host_interface
+ip a show $host_interface
+
+echo
+echo "Waiting for routing table to be accessible"
+ip route
+while [ $? -ne 0 ]
+do
+        sleep 1
+        ip route
+done
+
+echo
+echo "Updating routing table"
+ip route del default
+ip route add default via $border_router_ip dev $host_interface
+ip route
+
+echo
+echo "==============================="
+echo "Finished pre-configuring client"
+echo "==============================="
+echo 
+
+# Start the default entry point
+exec /bin/sh /docker/entrypoint.sh /usr/sbin/nginx -g "daemon off;"

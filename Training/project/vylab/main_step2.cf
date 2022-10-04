@@ -1,0 +1,48 @@
+import yaml
+import vyos
+
+"""
+Yaml based configuration
+"""
+
+inventory = yaml::load("/inventory.yaml")
+
+for r in inventory["routers"]:
+    router = vyos::Host(
+        name=r["name"],
+        user="vyos",
+        password="vyos",
+        ip=r["mgmt_ip"]
+    )
+    
+    vyos::Hostname(
+        host=router,
+        name=r["name"],
+    )
+
+    lo_ip = r["loopback_ip"]
+    vyos::Loopback(
+        host=router,
+        address="{{lo_ip}}/32"
+    )
+
+    for port in r["ports"]:
+        vyos::Interface(
+            host=router,
+            name=port["name"],
+            address=port["ip"],
+        )
+    end
+
+    ospf = vyos::Ospf(
+        area=0,
+        network=r["ospf_networks"],
+        router_id=lo_ip,
+        host=router,
+    )
+
+    vyos::OspfRedistribute(
+        ospf=ospf,
+        type="connected",
+    )
+end

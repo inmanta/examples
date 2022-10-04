@@ -1,0 +1,201 @@
+import vyos
+import ip
+
+"""
+This model improves the previous entity based model by reducing free variables and redunduncy. It changes the model view by moving the interfaces in new PeerNetwork entities.
+"""
+
+entity Router:
+    string name
+    ip::ip mgmt_ip
+    ip::ip loopback_ip
+end
+
+entity PeerNetwork: 
+    ip::cidr network
+    string left_port
+    string right_port
+end
+
+entity OspfPeerInterface: 
+    ip::cidr network
+    string router_port
+    int id = 1
+end
+
+Router.host [1] -- vyos::Host
+
+Router.ospf_networks [0:] -- PeerNetwork.routers [2]
+PeerNetwork.left [1] -- Router
+PeerNetwork.right [1] -- Router
+
+Router.ospf_client_peering [0:] -- OspfPeerInterface.router [1]
+
+
+implementation router_config for Router:
+
+    self.host = vyos::Host(
+        name=self.name,
+        user="vyos",
+        password="vyos",
+        ip=self.mgmt_ip
+    )
+    
+    vyos::Hostname(
+        host=self.host,
+        name=self.name
+    )
+
+    lo_ip = self.loopback_ip 
+    vyos::Loopback(
+        host=self.host,
+        address="{{lo_ip}}/32"
+    )
+
+    ospf = vyos::Ospf(
+        area=0,
+        network=std::select(self.ospf_networks, "network"),
+        router_id=lo_ip,
+        host=self.host
+    )
+
+    vyos::OspfRedistribute(
+        ospf=ospf,
+        type="connected",
+    )
+
+end
+
+implementation ospf_network_config for PeerNetwork:
+    self.routers += self.left
+    self.routers += self.right
+
+    peer1 = OspfPeerInterface(
+        network = self.network,
+        router_port = self.left_port,
+        id = 1,
+        router = self.left
+    )
+
+    peer2 = OspfPeerInterface(
+        network = self.network,
+        router_port = self.right_port,
+        id = 2,
+        router = self.right
+    )
+
+end
+
+implementation ospf_peer_config for OspfPeerInterface:
+
+    router_ip = ip::ipindex(self.network, self.id)
+    netmask = ip::ipnet(self.network, "prefixlen")
+
+    vyos::Interface(
+        host=self.router.host,
+        name=self.router_port,
+        address="{{router_ip}}/{{netmask}}"
+    )
+
+end
+
+implement Router using router_config
+implement PeerNetwork using ospf_network_config
+implement OspfPeerInterface using ospf_peer_config
+
+
+# Routers Instantiation
+
+r1 = Router(
+    name = "R1",
+    mgmt_ip = "10.0.0.5",
+    loopback_ip = "10.1.1.1",
+)
+
+r2 = Router(
+    name = "R2",
+    mgmt_ip = "10.0.0.6",
+    loopback_ip = "10.1.1.2",
+)
+
+r3 = Router(
+    name = "R3",
+    mgmt_ip = "10.0.0.7",
+    loopback_ip = "10.1.1.3",
+)
+
+r4 = Router(
+    name = "R4",
+    mgmt_ip = "10.0.0.8",
+    loopback_ip = "10.1.1.4",
+)
+
+# Ospf peering instantiations
+
+## Routers peering
+
+ospf12 = PeerNetwork(
+    network = "10.1.0.0/30",
+    left_port = "eth1",
+    right_port = "eth1",
+    left = r1,
+    right = r2
+)
+ospf13 = PeerNetwork(
+    network = "10.1.0.4/30",
+    left_port = "eth2",
+    right_port = "eth1",
+    left = r1,
+    right = r3
+)
+ospf14 = PeerNetwork(
+    network = "10.1.0.12/30",
+    left_port = "eth3",
+    right_port = "eth1",
+    left = r1,
+    right = r4
+)
+ospf23 = PeerNetwork(
+    network = "10.1.0.8/30",
+    left_port = "eth2",
+    right_port = "eth2",
+    left = r2,
+    right = r3
+)
+ospf24 = PeerNetwork(
+    network = "10.1.0.16/30",
+    left_port = "eth3",
+    right_port = "eth2",
+    left = r2,
+    right = r4
+)
+ospf34 = PeerNetwork(
+    network = "10.1.0.20/30",
+    left_port = "eth3",
+    right_port = "eth3",
+    left = r3,
+    right = r4
+)
+
+## Clients peering
+
+ospf1c = OspfPeerInterface(
+    network = "10.0.1.0/24",
+    router_port = "eth4",
+    router = r1
+)
+ospf2c = OspfPeerInterface(
+    network = "10.0.2.0/24",
+    router_port = "eth4",
+    router = r2
+)
+ospf3c = OspfPeerInterface(
+    network = "10.0.3.0/24",
+    router_port = "eth4",
+    router = r3
+)
+ospf4c = OspfPeerInterface(
+    network = "10.0.4.0/24",
+    router_port = "eth4",
+    router = r4
+)

@@ -1,0 +1,221 @@
+import vyos
+
+"""
+First raw configuration of the network
+"""
+
+# r1 router config
+r1 = vyos::Host(
+    name="R1",
+    user="vyos",
+    password="vyos", 
+    ip="10.0.0.5"
+)
+
+vyos::Interface(
+    host=r1,
+    name="eth1",
+    address="10.1.0.1/30"
+)
+
+vyos::Interface(
+    host=r1,
+    name="eth2",
+    address="10.1.0.5/30"
+)
+
+vyos::Interface(
+    host=r1,
+    name="eth3",
+    address="10.1.0.13/30"
+)
+
+vyos::Interface(
+    host=r1,
+    name="eth4",
+    address="10.0.1.1/24"
+)
+
+vyos::Hostname(
+    host=r1,
+    name = "R1"
+)
+
+vyos::Loopback(
+    host=r1,
+    address="10.1.1.1/32"
+)
+
+ospf1 = vyos::Ospf(
+    host=r1,
+    area=0,
+    network=["10.1.0.0/30", "10.1.0.4/30", "10.1.0.12/30"],
+    router_id="10.1.1.1"
+)
+
+vyos::OspfRedistribute(
+    ospf=ospf1,
+    type="connected"
+)
+
+# r2 router config
+r2 = vyos::Host(
+    name="R2",
+    user="vyos",
+    password="vyos", 
+    ip="10.0.0.6"
+)
+
+vyos::Interface(
+    host=r2,
+    name="eth1",
+    address="10.1.0.2/30"
+)
+
+vyos::Interface(
+    host=r2,
+    name="eth2",
+    address="10.1.0.9/30"
+)
+
+vyos::Interface(
+    host=r2,
+    name="eth3",
+    address="10.1.0.17/30"
+)
+
+vyos::Interface(
+    host=r2,
+    name="eth4",
+    address="10.0.2.1/24"
+)
+
+vyos::Hostname(
+    host=r2,
+    name = "R2"
+)
+
+vyos::Loopback(
+    host=r2,
+    address="10.1.1.2/32"
+)
+
+ospf2 = vyos::Ospf(
+    host=r2,
+    area=0,
+    network=["10.1.0.0/30", "10.1.0.8/30", "10.1.0.16/30"],
+    router_id="10.1.1.2"
+)
+
+vyos::OspfRedistribute(
+    ospf=ospf2,
+    type="connected"
+)
+
+# r3 router config
+r3 = vyos::Host(
+    name="R3",
+    user="vyos",
+    password="vyos", 
+    ip="10.0.0.7"
+)
+
+vyos::Interface(
+    host=r3,
+    name="eth1",
+    address="10.1.0.6/30"
+)
+
+vyos::Interface(
+    host=r3,
+    name="eth2",
+    address="10.1.0.10/30"
+)
+
+vyos::Interface(
+    host=r3,
+    name="eth3",
+    address="10.1.0.21/30"
+)
+
+vyos::Interface(
+    host=r3,
+    name="eth4",
+    address="10.0.3.1/24"
+)
+
+vyos::Hostname(
+    host=r3,
+    name = "R3"
+)
+
+vyos::Loopback(
+    host=r3,
+    address="10.1.1.3/32"
+)
+
+ospf3 = vyos::Ospf(
+    host=r3,
+    area=0,
+    network=["10.1.0.4/30", "10.1.0.8/30", "10.1.0.20/30"],
+    router_id="10.1.1.3"
+)
+
+vyos::OspfRedistribute(
+    ospf=ospf3,
+    type="connected"
+)
+
+# r4 router config
+r4 = vyos::Host(
+    name="R4",
+    user="vyos",
+    password="vyos", 
+    ip="10.0.0.8"
+)
+
+vyos::Interface(
+    host=r4,
+    name="eth1",
+    address="10.1.0.14/30"
+)
+
+vyos::Interface(
+    host=r4,
+    name="eth2",
+    address="10.1.0.18/30"
+)
+
+vyos::Interface(
+    host=r4,
+    name="eth3",
+    address="10.1.0.22/30"
+)
+
+vyos::Interface(
+    host=r4,
+    name="eth4",
+    address="10.0.4.1/24"
+)
+
+vyos::Hostname(
+    host=r4,
+    name = "R2"
+)
+
+vyos::Loopback(
+    host=r4,
+    address="10.1.1.4/32"
+)
+
+ospf4 = vyos::Ospf(
+    host=r4,
+    area=0,
+    network=["10.1.0.12/30", "10.1.0.16/30", "10.1.0.20/30"],
+    router_id="10.1.1.4"
+)
+
+vyos::OspfRedistribute(
+    ospf=ospf4,
+    type="connected"
+)

@@ -1,8 +1,35 @@
+# Content Overview
+
+This folder contains examples that are part of the inmanta training program. 
+
+It contains
+-  all resources required to set up a lab, consisting of 4 routers in a full mesh topology. This lab and all associated resources exists for both vyos and sros routers. 
+
+![](topology.svg)
+
+- an inmanta project to configure
+   - the loopback ip on each router
+   - all interfaces on the router
+   - OSPF on all routers
+- different variations of this same model, that become increasingly sophisticated. Each subsequent version has less code and more power. This approach is similar to the one taken in this series of videos (https://youtu.be/l_ClsJG-BNQ)
+
+| main version | Description |
+| --- | --- |
+| `main_step1.cf` | First version of the model, everything is hardcoded in the model at this point. |
+| `main_step2.cf` | In this version, the model is filled with a yaml file. |
+| `main_step3.cf` | The first entity based model, with a router and a port entity and their relation. |
+| `main_step4.cf` | In this version, the view of the model is changed to remove redundancy and plugins are used. |
+| `main_step5.cf` | In this version, this model adds the indexes and the typedef. |
+
+# Prerequisites
+
+Docker and containerlab should be installed on your machine
+- docker : https://docs.docker.com/engine/install/
+- containerlab : https://containerlab.dev/install/
+
 # Quickly setup the training lab
 
 > :warning: For now, we only found this to be working on Ubuntu 20.04 hosts.  On more recent linux versions, the routers don't start, probably because of an incompatibility with the kernel of the host.
-
-![](topology.svg)
 
 ## 1. Bring the lab up
 ```console
@@ -86,3 +113,10 @@ INFO[0001] Removed container: clab-training-R3
 INFO[0001] Removed container: clab-training-R2          
 INFO[0001] Removing containerlab host entries from /etc/hosts file
 ```
+
+## 5. Setup the clients
+To setup the clients interfaces and routing table once containerlab is running, use the script setup_Clients with the command "bash setup_Clients". 
+This will run the script config_ip in resources/Clients/ for each client container.
+
+## 6. Two different topologies
+There are 2 different topologies in the folder, one working with `vyos` containers and the other with `srlinux` containers and each of them has its own project in respectively project/vylab and project/srlab.

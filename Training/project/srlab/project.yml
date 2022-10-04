@@ -1,0 +1,17 @@
+name: srlab
+description: 
+author: Inmanta
+author_email: code@inmanta.com
+license: ASL 2.0
+copyright: 2022 Inmanta
+modulepath: libs
+downloadpath: libs
+repo:
+    - type: package
+      url: https://packages.inmanta.com/public/quickstart/python/simple/
+    - type: package
+      url: https://pypi.org/simple/
+    - type: git
+      url: https://github.com/inmanta/examples
+install_mode: release
+requires:

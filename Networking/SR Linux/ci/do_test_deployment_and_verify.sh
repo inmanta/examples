@@ -25,4 +25,4 @@ while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying;
 inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep success
 
 # check if deployment was successful
-../venv/bin/python3 ci/validate_config.py
+venv/bin/python3 ci/validate_config.py

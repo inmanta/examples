@@ -51,6 +51,7 @@ pipeline {
                             sh '''
                                # Cleanup before starting
                                cd "Networking/SR Linux"
+                               sudo rm -rf clab-srlinux
                                rm -f *.log
                                sudo clab destroy -t containerlab/topology.yml
                                sudo docker system prune -fa

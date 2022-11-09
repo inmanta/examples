@@ -65,9 +65,7 @@ pipeline {
                         steps {
                             sh '''
                                 cd "Networking/SR Linux"
-                                # bring up the docker containers
-                                sudo clab deploy -t containerlab/topology.yml --reconfigure"
-
+                                sudo clab deploy -t containerlab/topology.yml --reconfigure
                                 ci/do_test_deployment_and_verify.sh
                             '''
                         }

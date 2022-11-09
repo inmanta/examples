@@ -34,6 +34,6 @@ def main() -> None:
     print("[+] Deployment was successful!")
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     print("Run validation script")
     main()

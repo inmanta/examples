@@ -1,13 +1,5 @@
 pipeline {
     agent any
-    parameters {
-        choice(
-            name: 'RELEASE_FILTER',
-            choices: ['dev_and_stable', 'dev', 'next', 'stable'],
-            description: 'Set to dev, next or stable when the matrix should only the tests for dev, next or stable releases. \
-                          By default, this job will run against dev and stable releases.'
-        )
-    }
 
     triggers {
         cron(BRANCH_NAME == 'master' ? 'H H(2-5) * * *' : '')

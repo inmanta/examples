@@ -52,6 +52,7 @@ def main() -> None:
                     count += 1
                     break
 
+                print(interface["neighbor"][0]["router-id"])
                 neigbours.remove(interface["neighbor"][0]["router-id"])
 
             if not neigbours:

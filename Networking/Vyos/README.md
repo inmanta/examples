@@ -18,7 +18,7 @@ sudo docker pull vyos/vyos:1.2.8
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container is not a necessity to try out these examples but it is nice to have and it can be pulled:
 
 ```bash
-sudo docker pull ghcr.io/inmanta/orchestrator:dev
+sudo docker pull ghcr.io/inmanta/orchestrator:latest
 ```
 
 There is a [Docker compose file](containerlab/docker-compose.yml) inside the containerlab folder and it could be used to start up all the containers:

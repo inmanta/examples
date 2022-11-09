@@ -12,7 +12,7 @@ services:
 
   inmanta-server:
     container_name: inmanta_orchestrator
-    image: ghcr.io/inmanta/orchestrator:2022
+    image: ghcr.io/inmanta/orchestrator:latest
     ports:
       - 8888:8888
     networks:

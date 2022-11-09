@@ -65,7 +65,7 @@ topology:
       mgmt_ipv4: 10.0.0.100
     orchestrator:
       kind: linux
-      image: ghcr.io/inmanta/orchestrator:dev
+      image: ghcr.io/inmanta/orchestrator:latest
       binds:
         - ./resources/inmanta.cfg:/etc/inmanta/inmanta.cfg
       cmd: server --wait-for-host clab-training-pgmaster --wait-for-port 5432

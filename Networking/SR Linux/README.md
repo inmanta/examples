@@ -45,7 +45,7 @@ The `SR Linux` topology alongside the IP addresses is depicted as follows:
 Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container can be manually pulled by:
 
 ```bash
-sudo docker pull ghcr.io/inmanta/orchestrator:dev
+sudo docker pull ghcr.io/inmanta/orchestrator:latest
 ```
 
 > NOTE: This container will automatically get pulled by Containerlab if you skip the command above.
@@ -212,7 +212,7 @@ sudo docker system prune
 Remove the `Docker` images:
 
 ```bash
-sudo docker rmi -f ghcr.io/inmanta/orchestrator:dev
+sudo docker rmi -f ghcr.io/inmanta/orchestrator:latest
 sudo docker rmi -f ghcr.io/nokia/srlinux:latest
 sudo docker rmi -f postgres:13
 ```

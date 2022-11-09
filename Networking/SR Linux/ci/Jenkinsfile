@@ -20,71 +20,45 @@ pipeline {
 
     stages {
         stage('BuildAndTest') {
-            matrix {
-                agent any
-
-                when {
-                    anyOf {
-                        allOf {
-                            expression { params.RELEASE_FILTER == 'dev_and_stable' }
-                            anyOf {
-                                expression { 'dev' == env.RELEASE }
-                                expression { 'stable' == env.RELEASE }
-                            }
-                        }
-                        expression { params.RELEASE_FILTER == env.RELEASE }
-                    }
-                }
-                axes {
-                    axis {
-                        name 'RELEASE'
-                        values 'dev', 'next', 'stable'
-                    }
-                    axis {
-                        name 'EL_VERSION'
-                        values '8'
-                    }
-                }
-                stages {
-                    stage('Cleanup') {
-                        steps {
-                            sh '''
-                               # Cleanup before starting
-                               cd "Networking/SR Linux"
-                               sudo rm -rf clab-srlinux
-                               rm -f *.log
-                               sudo clab destroy -t containerlab/topology.yml
-                               sudo docker system prune -fa
-                               sudo docker volume prune -f
-                               rm .inmanta
-                            '''
-                        }
-                    }
-                    stage('Build') {
-                        options {
-                            timeout(time: 1, unit: 'HOURS')
-                        }
-                        steps {
-                            sh '''
-                                cd "Networking/SR Linux"
-                                sudo clab deploy -t containerlab/topology.yml --reconfigure
-                                ci/do_test_deployment_and_verify.sh
-                            '''
-                        }
-                    }
-                }
-                post {
-                    always {
+            stages {
+                stage('Cleanup') {
+                    steps {
                         sh '''
+                            # Cleanup before starting
                             cd "Networking/SR Linux"
-                            sudo clab destroy -t containerlab/topology.yml
                             sudo rm -rf clab-srlinux
+                            rm -f *.log
+                            sudo clab destroy -t containerlab/topology.yml
                             sudo docker system prune -fa
                             sudo docker volume prune -f
+                            rm .inmanta
                         '''
-                        archiveArtifacts artifacts: '*.log'
-                        deleteDir()
                     }
+                }
+                stage('Build') {
+                    options {
+                        timeout(time: 1, unit: 'HOURS')
+                    }
+                    steps {
+                        sh '''
+                            cd "Networking/SR Linux"
+                            sudo clab deploy -t containerlab/topology.yml --reconfigure
+                            ci/do_test_deployment_and_verify.sh
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    sh '''
+                        cd "Networking/SR Linux"
+                        sudo clab destroy -t containerlab/topology.yml
+                        sudo rm -rf clab-srlinux
+                        sudo docker system prune -fa
+                        sudo docker volume prune -f
+                    '''
+                    archiveArtifacts artifacts: '*.log'
+                    deleteDir()
                 }
             }
         }

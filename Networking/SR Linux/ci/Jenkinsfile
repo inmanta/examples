@@ -65,7 +65,8 @@ pipeline {
                         steps {
                             sh '''
                                 cd "Networking/SR Linux"
-                                python3 -m venv venv && source venv/bin/activate && \
+                                python3 -m venv venv && source venv/bin/activate
+                                export PIP_INDEX_URL=https://packages.inmanta.com/public/quickstart/python/simple/
                                 pip install -r requirements.txt
 
                                 # bring up the docker containers

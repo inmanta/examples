@@ -44,7 +44,7 @@ pipeline {
                         sudo clab destroy -t containerlab/topology.yml
                         sudo rm -rf clab-srlinux
                     '''
-                    archiveArtifacts artifacts: '*.log'
+                    archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
                     deleteDir()
                 }
             }

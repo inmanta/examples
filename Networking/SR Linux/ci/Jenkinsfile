@@ -77,9 +77,10 @@ pipeline {
                     always {
                         sh '''
                             cd "Networking/SR Linux"
-                           sudo clab destroy -t containerlab/topology.yml
-                           sudo docker system prune -fa
-                           sudo docker volume prune -f
+                            sudo clab destroy -t containerlab/topology.yml
+                            sudo rm -rf clab-srlinux
+                            sudo docker system prune -fa
+                            sudo docker volume prune -f
                         '''
                         archiveArtifacts artifacts: '*.log'
                         deleteDir()

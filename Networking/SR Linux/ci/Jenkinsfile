@@ -1,6 +1,4 @@
 pipeline {
-    agent none
-
     parameters {
         choice(
             name: 'RELEASE_FILTER',

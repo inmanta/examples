@@ -28,9 +28,7 @@ pipeline {
                             sudo rm -rf clab-srlinux
                             rm -f *.log
                             sudo clab destroy -t containerlab/topology.yml
-                            sudo docker system prune -fa
-                            sudo docker volume prune -f
-                            rm .inmanta
+                            rm -f .inmanta
                         '''
                     }
                 }
@@ -53,8 +51,6 @@ pipeline {
                         cd "Networking/SR Linux"
                         sudo clab destroy -t containerlab/topology.yml
                         sudo rm -rf clab-srlinux
-                        sudo docker system prune -fa
-                        sudo docker volume prune -f
                     '''
                     archiveArtifacts artifacts: '*.log'
                     deleteDir()

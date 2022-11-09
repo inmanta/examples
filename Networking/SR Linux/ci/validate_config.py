@@ -1,5 +1,9 @@
+from pygnmi.client import gNMIclient
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 def main() -> None:
-    from pygnmi.client import gNMIclient
 
     HOST = ("172.30.0.100", "57400")
 
@@ -8,7 +12,7 @@ def main() -> None:
     OSPF_PATH = "srl_nokia-ospf:ospf"
 
     with gNMIclient(
-        target=HOST, username="admin", password="admin", insecure=False
+        target=HOST, username="admin", password="admin", insecure=False, skip_verify=True,
     ) as gc:
         result = gc.get(path=["interface", "network-instance"], encoding="json_ietf")
 
@@ -24,13 +28,20 @@ def main() -> None:
     assert ospf_result is not None
 
     router_id = ospf_result["protocols"][OSPF_PATH]["instance"][0]["router-id"]
-    assert router_id == "10.20.30.210"
+    assert router_id == "10.20.30.100"
 
     sub_int_ip_address = interface_result["subinterface"][0]["ipv4"]["address"][0][
         "ip-prefix"
     ]
+    assert sub_int_ip_address == "10.10.11.1/30"
 
-    assert sub_int_ip_address == "10.10.11.2/30"
+    # Check if we see the two neighbours
+    neigbours = ["10.20.30.210", "10.20.30.220"]
+    for interface in ospf_result["protocols"][OSPF_PATH]["instance"][0]["area"][0]["interface"]:
+        len(interface["neighbor"]) == 1
+        assert interface["neighbor"][0]["router-id"] in neigbours
+
+
     print("[+] Deployment was successful!")
 
 

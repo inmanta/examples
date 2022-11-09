@@ -35,4 +35,5 @@ def main() -> None:
 
 
 if __name__ == "main":
+    print("Run validation script")
     main()

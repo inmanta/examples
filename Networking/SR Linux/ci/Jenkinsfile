@@ -1,0 +1,93 @@
+pipeline {
+    agent none
+
+    parameters {
+        choice(
+            name: 'RELEASE_FILTER',
+            choices: ['dev_and_stable', 'dev', 'next', 'stable'],
+            description: 'Set to dev, next or stable when the matrix should only the tests for dev, next or stable releases. \
+                          By default, this job will run against dev and stable releases.'
+        )
+    }
+
+    triggers {
+        cron(BRANCH_NAME == 'master' ? 'H H(2-5) * * *' : '')
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('BuildAndTest') {
+            matrix {
+                agent any
+
+                when {
+                    anyOf {
+                        allOf {
+                            expression { params.RELEASE_FILTER == 'dev_and_stable' }
+                            anyOf {
+                                expression { 'dev' == env.RELEASE }
+                                expression { 'stable' == env.RELEASE }
+                            }
+                        }
+                        expression { params.RELEASE_FILTER == env.RELEASE }
+                    }
+                }
+                axes {
+                    axis {
+                        name 'RELEASE'
+                        values 'dev', 'next', 'stable'
+                    }
+                    axis {
+                        name 'EL_VERSION'
+                        values '8'
+                    }
+                }
+                stages {
+                    stage('Cleanup') {
+                        steps {
+                            sh '''
+                               # Cleanup before starting
+                               rm -f *.log
+                               sudo rm -rf quickstart-project
+                               sudo clab destroy -t containerlab/topology.yml
+                               sudo docker system prune -fa
+                               sudo docker volume prune -f
+                            '''
+                        }
+                    }
+                    stage('Build') {
+                        options {
+                            timeout(time: 1, unit: 'HOURS')
+                        }
+                        steps {
+                            sh '''
+                                cd "Networking/SR Linux"
+                                python3 -m venv venv && source venv/bin/activate && \
+                                pip install -r requirements.txt
+
+                                # bring up the docker containers
+                                sudo sh -c "sudo clab deploy -t containerlab/topology.yml --reconfigure"
+
+                                ci/do_test_deployment_and_verify.sh
+                            '''
+                        }
+                    }
+                }
+                post {
+                    always {
+                        sh '''
+                           sudo clab destroy -t containerlab/topology.yml
+                           sudo rm -rf quickstart-project
+                           sudo docker system prune -fa
+                           sudo docker volume prune -f
+                        '''
+                        archiveArtifacts artifacts: '*.log'
+                    }
+                }
+            }
+        }
+    }
+}

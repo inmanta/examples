@@ -48,7 +48,7 @@ def main() -> None:
         count = 0
         while neigbours and count < 60:
             for interface in ospf_result["protocols"][OSPF_PATH]["instance"][0]["area"][0]["interface"]:
-                if len(interface["neighbor"]) != 1:
+                if "neighbor" not in interface or len(interface["neighbor"]) == 0:
                     count += 1
                     break
 

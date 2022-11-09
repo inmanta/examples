@@ -24,5 +24,10 @@ inmanta -vvv export -f interfaces.cf
 while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
 inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep success
 
+sudo docker logs clab-srlinux-inmanta-server >server.log
+sudo docker logs clab-srlinux-postgres >postgres.log
+sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/resource-*.log" >resource-actions.log
+sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/agent-*.log" >agents.log
+
 # check if deployment was successful
 venv/bin/python3 ci/validate_config.py

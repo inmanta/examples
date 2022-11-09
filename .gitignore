@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Auto test
+Networking/SR Linux/test/.virtualenvs
+Networking/SR Linux/test/examples
+Networking/SR Linux/containerlab/clab*
+.cfcache

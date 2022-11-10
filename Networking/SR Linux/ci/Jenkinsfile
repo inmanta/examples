@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    triggers {
+        cron(BRANCH_NAME == 'master' ? 'H H(2-5) * * *' : '')
+    }
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('BuildAndTest') {
+            stages {
+                stage('Cleanup') {
+                    steps {
+                        sh '''
+                            # Cleanup before starting
+                            cd "Networking/SR Linux"
+                            sudo rm -rf clab-srlinux
+                            rm -f *.log
+                            sudo clab destroy -t containerlab/topology.yml
+                            rm -f .inmanta
+                        '''
+                    }
+                }
+                stage('Build') {
+                    options {
+                        timeout(time: 1, unit: 'HOURS')
+                    }
+                    steps {
+                        sh '''
+                            cd "Networking/SR Linux"
+                            sudo clab deploy -t containerlab/topology.yml --reconfigure
+                            ci/do_test_deployment_and_verify.sh
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    sh '''
+                        cd "Networking/SR Linux"
+                        sudo clab destroy -t containerlab/topology.yml
+                        sudo rm -rf clab-srlinux
+                    '''
+                    archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
+                    deleteDir()
+                }
+            }
+        }
+    }
+}

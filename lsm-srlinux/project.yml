@@ -1,0 +1,15 @@
+name: SR Linux Examples
+description: Provides examples for the SR Linux module
+author: Inmanta
+author_email: code@inmanta.com
+license: ASL 2.0
+copyright: 2022 Inmanta
+modulepath: libs
+downloadpath: libs
+repo:
+  - type: package
+    url: https://packages.inmanta.com/public/quickstart/python/simple/
+  - type: package
+    url: https://packages.inmanta.com/<orchestrator-password>/inmanta-service-orchestrator-6-stable/python/simple/
+install_mode: release
+requires:

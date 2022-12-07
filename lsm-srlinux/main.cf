@@ -1,0 +1,114 @@
+import srlinux
+import srlinux::interface as srinterface
+import srlinux::interface::subinterface as srsubinterface
+import srlinux::interface::subinterface::ipv4 as sripv4
+import srlinux::network_instance as srnetinstance
+import srlinux::network_instance::protocols as srprotocols
+import srlinux::network_instance::protocols::ospf as srospf
+import srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import yang
+import lsm
+
+import lsm::fsm
+
+
+########################
+
+# example
+# address	10.0.0.4/16		
+# interface_name	ethernet-1/1		
+# router_ip	172.30.0.100		
+# router_name	spine
+
+######## LSM ###########
+
+
+
+entity InterfaceIPAssignment extends lsm::ServiceEntity:
+
+    std::ipv_any_address router_ip
+    string router_ip__description="The IP address of the vyos router that should be configured."
+
+    string router_name
+    string router_name__description="The name of the interface that should be connected on the given VLAN."
+
+
+    string interface_name
+    string interface_name__description="The name of the interface that should be connected on the given VLAN. ethernet-1/2"
+
+    std::ipv_any_interface address
+    string address__description="The IP-address/netmask to assign to the given VLAN interface."
+    lsm::attribute_modifier address__modifier="rw+"
+
+end
+
+
+index InterfaceIPAssignment(router_ip, interface_name)
+
+implement InterfaceIPAssignment using interfaceIPAssignment
+
+implement InterfaceIPAssignment using parents
+
+
+implementation interfaceIPAssignment for InterfaceIPAssignment:
+
+    device = srlinux::GnmiDevice(
+            auto_agent = true,
+            name = self.router_name,
+            mgmt_ip = self.router_ip,
+            yang_credentials = yang::Credentials(
+                username = "admin",
+                password = "admin"
+            )
+        )
+
+    resource = srlinux::Resource(
+        device=device,
+        identifier = self.instance_id
+    )
+
+    self.resources += resource.yang_resource
+
+    interface = srlinux::Interface(
+        device = device,
+        name = self.interface_name,
+        resource = resource,
+        mtu = 9000,
+        subinterface = [subinterface]
+    )
+
+    subinterface = srinterface::Subinterface(
+        parent_interface = interface,
+        x_index = 0,
+        ipv4 = subinterface_address
+    )
+
+    subinterface_address = srsubinterface::Ipv4(
+        parent_subinterface = subinterface,
+        address = sripv4::Address(
+            parent_ipv4 = subinterface_address,
+            ip_prefix = self.address
+        )
+    )
+
+end
+
+
+binding = lsm::ServiceEntityBinding(
+    service_entity="__config__::InterfaceIPAssignment",
+    lifecycle=lsm::fsm::simple,
+    service_entity_name="interface-ip-assignment",
+)
+
+
+for assignment in lsm::all(binding):
+    InterfaceIPAssignment(
+        instance_id=assignment["id"],
+        router_ip=assignment["attributes"]["router_ip"],
+        router_name=assignment["attributes"]["router_name"],
+        interface_name=assignment["attributes"]["interface_name"],
+        address=assignment["attributes"]["address"],
+        entity_binding=binding,
+    )
+end

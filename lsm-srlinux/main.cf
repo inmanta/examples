@@ -13,32 +13,22 @@ import lsm
 import lsm::fsm
 
 
-########################
-
-# example
-# address	10.0.0.4/16		
-# interface_name	ethernet-1/1		
-# router_ip	172.30.0.100		
-# router_name	spine
-
-######## LSM ###########
-
 
 
 entity InterfaceIPAssignment extends lsm::ServiceEntity:
 
     std::ipv_any_address router_ip
-    string router_ip__description="The IP address of the vyos router that should be configured."
+    string router_ip__description="The IP address of the SR linux router that should be configured."
 
     string router_name
-    string router_name__description="The name of the interface that should be connected on the given VLAN."
+    string router_name__description="The name of the SR linux router that should be configured."
 
 
     string interface_name
-    string interface_name__description="The name of the interface that should be connected on the given VLAN. ethernet-1/2"
+    string interface_name__description="The name of the interface router that should be configured."
 
     std::ipv_any_interface address
-    string address__description="The IP-address/netmask to assign to the given VLAN interface."
+    string address__description="The IP-address to assign to the given interface."
     lsm::attribute_modifier address__modifier="rw+"
 
 end

@@ -2,20 +2,17 @@ import srlinux
 import srlinux::interface as srinterface
 import srlinux::interface::subinterface as srsubinterface
 import srlinux::interface::subinterface::ipv4 as sripv4
-import srlinux::network_instance::protocols::ospf as srospfsrospfarea
-import srlinux::network_instance::protocols::ospf::instance as srospfinstance
-import srlinux::network_instance::protocols::ospf::instance::area as 
 import yang
 import lsm
 import lsm::fsm
 
 entity InterfaceIPAssignment extends lsm::ServiceEntity:
     """
-        Router details.
+        Interface details.
 
         :attr router_ip: The IP address of the SR linux router that should be configured.
         :attr router_name: The name of the SR linux router that should be configured.
-        :attr interface_name: The name of the interface router that should be configured.
+        :attr interface_name: The name of the interface of the router that should be configured.
         :attr address: The IP-address to assign to the given interface.
     """
 

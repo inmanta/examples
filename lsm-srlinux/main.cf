@@ -16,19 +16,20 @@ import lsm::fsm
 
 
 entity InterfaceIPAssignment extends lsm::ServiceEntity:
+    """
+        Router details.
+
+        :attr router_ip: The IP address of the SR linux router that should be configured.
+        :attr router_name: The name of the SR linux router that should be configured.
+        :attr interface_name: The name of the interface router that should be configured.
+        :attr address: The IP-address to assign to the given interface.
+    """
 
     std::ipv_any_address router_ip
-    string router_ip__description="The IP address of the SR linux router that should be configured."
-
     string router_name
-    string router_name__description="The name of the SR linux router that should be configured."
-
-
     string interface_name
-    string interface_name__description="The name of the interface router that should be configured."
 
     std::ipv_any_interface address
-    string address__description="The IP-address to assign to the given interface."
     lsm::attribute_modifier address__modifier="rw+"
 
 end

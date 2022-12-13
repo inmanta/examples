@@ -4,3 +4,5 @@ dir=/var/lib/inmanta/server/environments/$environment
 
 mkdir $dir
 cp -r /code/* $dir
+
+sudo chown -R inmanta $dir

@@ -9,5 +9,7 @@ downloadpath: libs
 repo:
   - type: package
     url: https://packages.inmanta.com/public/quickstart/python/simple/
+  - type: package
+    url: https://pypi.org/simple/
 install_mode: release
 requires:

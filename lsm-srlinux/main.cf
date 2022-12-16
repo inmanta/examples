@@ -57,7 +57,8 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
         name = self.interface_name,
         resource = resource,
         mtu = 9000,
-        subinterface = [subinterface]
+        subinterface = [subinterface],
+        comanaged = false
     )
 
     subinterface = srinterface::Subinterface(

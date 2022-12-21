@@ -28,10 +28,7 @@ end
 
 index InterfaceIPAssignment(router_ip, interface_name)
 
-implement InterfaceIPAssignment using interfaceIPAssignment
-
-implement InterfaceIPAssignment using parents
-
+implement InterfaceIPAssignment using parents, interfaceIPAssignment
 
 implementation interfaceIPAssignment for InterfaceIPAssignment:
 

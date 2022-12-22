@@ -1,218 +1,355 @@
-# SR Linux Module
+LSM quickstart
+==============
 
-Table of contents:
+This document provides a quickstart for the Inmanta lifecycle service
+manager (LSM). A high-level overview will be given on how Inmanta LSM
+can be used to model and provision new services within a certain
+infrastructure. This quickstart considers a basic service, which creates
+and updates the IP of a given interface.
 
-- [SR Linux Module](#sr-linux-module)
-  - [Introduction](#introduction)
-  - [SR Linux Topology](#sr-linux-topology)
-  - [Using The Open-source Inmanta Service Orchestrator](#using-the-open-source-inmanta-service-orchestrator)
-  - [Starting The Containers](#starting-the-containers)
-  - [Connecting to the Inmanta Container](#connecting-to-the-inmanta-container)
-    - [Create a New Environment](#create-a-new-environment)
-  - [Connecting to the SR Linux Containers](#connecting-to-the-sr-linux-containers)
-  - [Applying the examples](#applying-the-examples)
-  - [Additional Commands](#additional-commands)
+Overview setup
+--------------
 
-## Introduction
+The figure shown below, gives an overview of the infrastructure required
+to execute this quickstart. The infrastructure consists of:
 
-This repository showcases our `SR Linux` module and has a few examples to get you started with Inmanta.
+1.  An Inmanta Service Orchestrator with LSM
+2.  Three SR Linux routers (spine, leaf1, leaf2)
+3.  An internet connection
 
-The provided examples in the `*.cf` files can be applied on `SR Linux` devices either on:
+![Overview setup](images/setup.png)
 
-- A device that you already have and by changing the IP address, port, etc... in the examples files
-- Or using [containerlab](https://containerlab.srlinux.dev/) with the provided [topology file](containerlab/topology.yml).
+The SR Linux routers in this guide are setup as a 3-node CLOS network
+with a spine and two leaf switches. `mgmt` is the management interface
+of the SR Linux routers and the Inmanta Service Orchestrator making them
+reachable over the management network (172.30.0.0/24).
 
-  > Install containerlab using [this link](https://containerlab.dev/install)
+The service modelled in the following section manages the association of
+IP-addresses to any interface of the SR Linux routers.
 
-In case of choosing the `containerlab` option, it is worthwhile to mention that you need to have a `SR Linux` Docker image present on the host machine running `containerlab` and having it **tagged** similar to the topology file; in this case: `ghcr.io/nokia/srlinux`.
+Prerequisites
+-------------
 
-The `SR Linux` docker image can be pulled using:
+This guide assumes that you already finished the
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html). so if you
+haven\'t followed that one, please start with it.
 
-```bash
-sudo docker pull ghcr.io/nokia/srlinux
+**Make sure that you have the necessary sensitive information**, namely:
+
+-   Credentials to the package repository;
+-   Entitlement file;
+-   License file.
+
+1.  Follow the
+    [quickstart prerequisites](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#prerequisites) until step 4
+2.  Change directory to the LSM SR Linux example:
+
+``` {.}
+$ cd examples/lsm-srlinux
 ```
 
-Furthermore, if the `SR Linux` docker image is missing on your machine, it will be pulled by the `Containerlab` automatically.
+This folder contains a project.yml, which looks like this:
 
-## SR Linux Topology
-
-The `SR Linux` topology alongside the IP addresses is depicted as follows:
-
-![srlinux.png](containerlab/srlinux.png)
-
-## Using The Open-source Inmanta Service Orchestrator
-
-Inmanta [Service Orchestrator](https://inmanta.com/service-orchestrator/) is another containerized piece that can supply a GUI, providing many useful information such as deployment process, agents status and so much more. This container can be manually pulled by:
-
-```bash
-sudo docker pull ghcr.io/inmanta/orchestrator:latest
+``` {.}
+name: LSM SR Linux Example
+description: Provides and example of a LSM use case with SR Linux.
+author: Inmanta
+author_email: code@inmanta.com
+license: ASL 2.0
+copyright: 2022 Inmanta
+modulepath: libs
+downloadpath: libs
+repo:
+- type: package
+    url: https://packages.inmanta.com/public/quickstart/python/simple/
+- type: package
+    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
+install_mode: release
+requires:
 ```
 
-> NOTE: This container will automatically get pulled by Containerlab if you skip the command above.
+> **_NOTE:_**
+Additional explanation of each field can be found on the [quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html).
 
-## Starting The Containers
 
-In order to deploy the provided topology file with `containerlab` go to the containerlab folder where the topology file is present and run:
+3.  Change the \<token\> in the repo url to the password that you
+    received.
+4.  Go to the `containerlab` directory.
 
-```bash
-cd containerlab
-sudo clab deploy -t topology.yml
+``` {.}
+$ cd containerlab
 ```
 
-This command will spin-up three `SR Linux` containers, an `Inmanta server` and a `PostgreSQL` container.
+5.  Create a folder called `resources` on the `containerlab` folder and
+    place your license and entitlement files there. The names of the
+    files have to be `com.inmanta.jwe` for the entitlement file and
+    `com.inmanta.license` for the license file.
+6.  [Spin-up the containers](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers)
 
-> **Note:** It will take a few seconds up to minutes to fully boot-up the containers depending on your system horsepower.
-
-## Connecting to the Inmanta Container
-
-Open up a browser and connect to the Inmanta container using this URL <http://172.30.0.3:8888>.
-
-### Create a New Environment
-
-After connecting to the Inmanta container, you can create a new environment by clicking on the `Create new environment` button. Then you need to copy the environment ID either:
-
-- from the URL, e.g. `ec05d6d9-25a4-4141-a92f-38e24a12b721` from the `http://172.30.0.3:8888/console/desiredstate?env=ec05d6d9-25a4-4141-a92f-38e24a12b721`.
-- or by clicking on the gear icon on the top right of the Web Console, then click on `Environment`, scroll down all the way to the bottom of the page and copy the environment ID.
-
-> Additionally, you can prepare a [development environment](#applying-the-examples) and achieve the same goal through `inmanta-cli` by referring to the last section of [additional commands](#additional-commands)
-
-## Connecting to the SR Linux Containers
-
-You can connect to the containers in two ways:
-
-1. Using Docker:
-
-   ```bash
-   docker exec -it clab-srlinux-spine sr_cli
-   # or
-   docker exec -it clab-srlinux-leaf1 sr_cli
-   # or
-   docker exec -it clab-srlinux-leaf2 sr_cli
-   ```
-
-2. Using SSH (username and password are `admin`):
-
-   ```bash
-   ssh admin@clab-srlinux-spine
-   ssh admin@clab-srlinux-leaf1
-   ssh admin@clab-srlinux-leaf2
-   ```
-
-Then enter the configuration mode by typing:
-
-```bash
-enter candidate
+``` {.}
+$ sudo clab deploy -t topology.yml
 ```
 
-The output should look something like this:
+> **_NOTE:_**
+Additional information about this command and how to connect to these
+containers can be found on the
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers).
 
-```txt
-Welcome to the srlinux CLI.
-Type 'help' (and press <ENTER>) if you need any help using this.
+Orchestration model {#quickstart_orchestration_model}
+-------------------
+
+The full orchestration model to assign an IP-address to an interface of
+a SR Linux router, is shown below.
+
+``` {.inmanta}
+import srlinux
+import srlinux::interface as srinterface
+import srlinux::interface::subinterface as srsubinterface
+import srlinux::interface::subinterface::ipv4 as sripv4
+import yang
+import lsm
+import lsm::fsm
+
+entity InterfaceIPAssignment extends lsm::ServiceEntity:
+    """
+        Interface details.
+
+        :attr router_ip: The IP address of the SR linux router that should be configured.
+        :attr router_name: The name of the SR linux router that should be configured.
+        :attr interface_name: The name of the interface of the router that should be configured.
+        :attr address: The IP-address to assign to the given interface.
+    """
+
+    std::ipv_any_address router_ip
+    string router_name
+    string interface_name
+
+    std::ipv_any_interface address
+    lsm::attribute_modifier address__modifier="rw+"
+
+end
+
+implement InterfaceIPAssignment using parents, interfaceIPAssignment
+
+implementation interfaceIPAssignment for InterfaceIPAssignment:
+
+    device = srlinux::GnmiDevice(
+            auto_agent = true,
+            name = self.router_name,
+            mgmt_ip = self.router_ip,
+            yang_credentials = yang::Credentials(
+                username = "admin",
+                password = "admin"
+            )
+        )
+
+    resource = srlinux::Resource(
+        device=device,
+        identifier = self.instance_id
+    )
+
+    self.resources += resource.yang_resource
+
+    interface = srlinux::Interface(
+        device = device,
+        name = self.interface_name,
+        resource = resource,
+        mtu = 9000,
+        subinterface = [subinterface],
+        comanaged = false
+    )
+
+    subinterface = srinterface::Subinterface(
+        parent_interface = interface,
+        x_index = 0,
+        ipv4 = subinterface_address
+    )
+
+    subinterface_address = srsubinterface::Ipv4(
+        parent_subinterface = subinterface,
+        address = sripv4::Address(
+            parent_ipv4 = subinterface_address,
+            ip_prefix = self.address
+        )
+    )
+
+end
 
 
---{ running }--[  ]--
-A:spine#
+binding = lsm::ServiceEntityBinding(
+    service_entity="__config__::InterfaceIPAssignment",
+    lifecycle=lsm::fsm::simple,
+    service_entity_name="interface-ip-assignment",
+)
+
+
+for assignment in lsm::all(binding):
+    InterfaceIPAssignment(
+        instance_id=assignment["id"],
+        router_ip=assignment["attributes"]["router_ip"],
+        router_name=assignment["attributes"]["router_name"],
+        interface_name=assignment["attributes"]["interface_name"],
+        address=assignment["attributes"]["address"],
+        entity_binding=binding,
+    )
+end
 ```
 
-## Applying the examples
+-   Lines 1 to 7 import several modules required by this configuration
+    model.
+-   Lines 9 to 26 define the API of the new service, i.e. the attributes
+    required to instantiate a new instance of the service. The
+    ÃŽnterfaceIPAssignment entity defines four attributes: router\_ip,
+    router\_name, interface\_name and address. Each attribute has a
+    description defined in the docstring above. The docstring provides
+    documentation on the meaning of a specific service attribute. The
+    \"\<attribute\>\_\_modifier\" fields are meta-data fields. They
+    defines whether the attribute can be modified or not. In the
+    above-mentioned orchestration model, the router\_ip, router\_name
+    and the interface\_name attribute can only be set upon instantiation
+    of the model, while the address attribute can be changed during the
+    lifetime of the service. More information on attribute modifiers can
+    be found
+    [here](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier).
+-   Lines 31 defines which implementation should be used to instantiate
+    the InterfaceIPAssignment service entity.
+-   Lines 33 to 75 provide the actual implementation for the
+    InterfaceIPAssignment service entity. If an instance is created of
+    the InterfaceIPAssignment service entity, this implementation will
+    make sure that the address specified in the attributes of the
+    service instance, will be configured on the requested interface and
+    SR Linux router.
+-   Lines 45 to 50 in particular, are where the resource is instantiated
+    and assigned to the resources field. The resources field should
+    contain the list of resources that need to be deployed before the
+    state of the instance can be moved from *creating* to *up*.
+-   Lines 78 to 82 create a service entity binding. It associates a name
+    and a lifecycle to the InterfaceIPAssignment service entity and
+    registers it in the Inmanta Service Orchestrator via its northbound
+    API. More information on service lifecycles can be found
+    [here](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/lifecycle/lifecycle.html).
+-   Lines 85 to 93 create an instance of the InterfaceIPAssignment
+    entity for each service instance. The `lsm::all()` plugin retrieves
+    all the service instances via the Inmanta Service Orchestrator API.
 
-In order to run the provided examples, you need to prepare a development environment using **Python 3.9** by creating a `Python virtual environment` and installing the required packages:
+Install the orchestration model onto the Inmanta server
+-------------------------------------------------------
 
-Check the current Python version:
+Go back to the previous folder and
+[create an Inmanta project and environment](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers).
 
-```bash
-$ python3 -V
-Python 3.9.10
+The following command executes a script to copy the required resources
+to a specific folder inside the container.
+
+``` {.}
+$ docker exec -ti -w /code clab-srlinux-inmanta-server  /code/setup.sh
 ```
 
-Create a virtual environment and install `Inmanta`:
+Afterwards, open the web-console, in this example it is on
+<http://172.30.0.3:8888/console/>. This IP-address can be configured in
+`containerlab/topology.html` under the `mgmt_ipv4` of the
+`inmanta-server`.
 
-```bash
-python3 -m venv ~/.virtualenvs/srlinux
-source ~/.virtualenvs/srlinux/bin/activate
-pip install inmanta
+![interface-ip-assignment service in service catalog](images/empty-service-catalog.png)
+
+Click on the `Update Service Catalog` button. This will make the new
+`interface-ip-assignment` service known by the Inmanta orchestrator,
+making it possible to create new instances of this service via the LSM
+API or via the Inmanta web-console.
+
+Clicking on the button will:
+
+-   Pull the code from the git repository to the container, when
+    applicable;
+-   The orchestrator will then install the project;
+-   Lastly, the orchestrator will export the orchestration models.
+
+After executing these commands, the `interface-ip-assignment` service
+will appear in the service catalog of the Inmanta web-console as shown
+in the figure below.
+
+![interface-ip-assignment service in service catalog](images/service-catalog.png)
+
+Check that the router is empty
+------------------------------
+
+Login into the SR Linux router named \"spine\" using the username
+\"admin\" and password \"admin\".
+
+``` {.}
+$ ssh admin@clab-srlinux-spine
 ```
 
-Install the project:
+> **_NOTE:_**
+Additional information on how to connect to these containers can be
+found on the
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier). In this guide we will only do certain commands to show the
+changes.
 
-```bash
-inmanta -vv project install
+Check the interface configuration via the following command.
+
+``` {.}
+A:spine# list interface 
+    interface ethernet-1/1 {
+    }
+    interface ethernet-1/2 {
+    }
+    interface mgmt0 {
+        subinterface 0 {
+            ipv4 {
+                dhcp-client {
+                }
+            }
+            ipv6 {
+                dhcp-client {
+                }
+            } 
+        }
+    }
 ```
 
-And then, compile the `main.cf` file to make sure you have all the required packages:
+Create a new service instance
+-----------------------------
 
-```bash
-inmanta compile -f main.cf
-```
+Now, we will provision a new instance of the interface-ip-assignment
+service via the Inmanta web-console. Click on the *Show inventory*
+button after the vlan-assignment service and click on the *Add instance*
+button.
 
-> When `inmanta compile` is run by itself, the implicit behavior is that it always compiles the `main.cf` file. Hence, the command above could simply be `inmanta compile`.
+![Click on the \"Add-instance\" button](images/add-instance.png)
 
-After that, export a model to the server. For example, `interfaces.cf`:
+Fill in the required attributes and click on confirm.
 
-```bash
-inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address 172.30.0.3
-```
+![Form to create a new service instance](images/add-instance-form.png)
 
-> NOTE: Please make sure to swap the `<environment_id>` with your own environment id.
+The service will be deployed automatically after clicking the *confirm*
+button. During the deployment, the service instance will move through
+different states of its lifecycle: start -\> acknowledged -\> creating
+-\> up. When the service is in the up state, the interface is configured
+successfully. Verify the configuration on the SR Linux \"spine\" router.
 
-## Additional Commands
-
-Deploy the LAB:
-
-```sh
-sudo clab deploy -t topology.yml
-```
-
-View the current LAB state:
-
-```sh
-sudo clab inspect -t topology.yml
-```
-
-Delete the deployed LAB:
-
-```sh
-sudo clab destroy -t topology.yml
-```
-
-Export the model to Inmanta server:
-
-```sh
-inmanta -vvv export -f main.cf -e <environment_id> --server_address 172.30.0.3
-# or
-inmanta -vvv export -f interfaces.cf -e <environment_id> --server_address 172.30.0.3
-# or
-inmanta -vvv export -f ospf.cf -e <environment_id> --server_address 172.30.0.3
-```
-
-Create a project and an environment (`test` and `SR_Linux` respectively):
-
-```bash
-inmanta-cli --host 172.30.0.3 project create -n test
-inmanta-cli --host 172.30.0.3 environment create -p test -n SR_Linux --save
-```
-
-By using the `inmanta-cli` command, you can omit the `environment id` and `server ip address` from the `inmanta export` command:
-
-```bash
-inmanta -vvv export -f main.cf
-# or
-inmanta -vvv export -f interfaces.cf
-# or
-inmanta -vvv export -f ospf.cf
-```
-
-Free up the taken disk space by `Docker` using:
-
-```bash
-sudo docker system prune
-```
-
-Remove the `Docker` images:
-
-```bash
-sudo docker rmi -f ghcr.io/inmanta/orchestrator:latest
-sudo docker rmi -f ghcr.io/nokia/srlinux:latest
-sudo docker rmi -f postgres:13
+``` {.}
+A:spine# list interface 
+    interface ethernet-1/1 {
+        subinterface 0 {
+            ipv4 {
+                address 10.0.0.4/16 {
+                }
+            }
+        }
+    }
+    interface ethernet-1/2 {
+    }
+    interface mgmt0 {
+        subinterface 0 {
+            ipv4 {
+                dhcp-client {
+                }
+            }
+            ipv6 {
+                dhcp-client {
+                }
+            }
+        }
+    }
 ```

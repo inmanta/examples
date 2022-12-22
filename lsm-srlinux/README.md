@@ -204,14 +204,14 @@ end
     model.
 -   Lines 9 to 26 define the API of the new service, i.e. the attributes
     required to instantiate a new instance of the service. The
-    `InterfaceIPAssignment` entity defines four attributes: `router\_ip`,
-    `router\_name`, `interface\_name` and `address`. Each attribute has a
+    `InterfaceIPAssignment` entity defines four attributes: `router_ip`,
+    `router_name`, `interface_name` and `address`. Each attribute has a
     description defined in the docstring above. The docstring provides
     documentation on the meaning of a specific service attribute. The
     \"\<attribute\>\_\_modifier\" fields are meta-data fields. They
     defines whether the attribute can be modified or not. In the
-    above-mentioned orchestration model, the `router\_ip`, `router\_name`
-    and the `interface\_name` attribute can only be set upon instantiation
+    above-mentioned orchestration model, the `router_ip`, `router_name`
+    and the `interface_name` attribute can only be set upon instantiation
     of the model, while the address attribute can be changed during the
     lifetime of the service. More information on attribute modifiers can
     be found

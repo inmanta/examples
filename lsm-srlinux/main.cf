@@ -25,9 +25,6 @@ entity InterfaceIPAssignment extends lsm::ServiceEntity:
 
 end
 
-
-index InterfaceIPAssignment(router_ip, interface_name)
-
 implement InterfaceIPAssignment using parents, interfaceIPAssignment
 
 implementation interfaceIPAssignment for InterfaceIPAssignment:

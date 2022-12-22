@@ -96,7 +96,7 @@ $ cd containerlab
     place your license and entitlement files there. The names of the
     files have to be `com.inmanta.jwe` for the entitlement file and
     `com.inmanta.license` for the license file.
-8.  [Spin-up the containers](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html#connecting-to-the-containers)
+8.  [Spin-up the containers](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html#setting-up-the-lab)
 
 ``` {.}
 $ sudo clab deploy -t topology.yml

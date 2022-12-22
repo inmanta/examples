@@ -26,13 +26,21 @@ inmanta -vvv export -f main.cf
 inmanta -vvv export -f interfaces.cf
 
 while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
-inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep success
+
+if [ -z "$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux |grep '^|' |cut -d '|' -f 3,8 |grep '2' |grep -i success)" ]; then
+   echo "interfaces.cf was not deployed successfully"
+   exit 1
+fi
 
 # test ospf
 inmanta -vvv export -f ospf.cf
 
 while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
-inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep success
+
+if [ -z "$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux |grep '^|' |cut -d '|' -f 3,8 |grep '3' |grep -i success)" ]; then
+   echo "ospf.cf was not deployed successfully"
+   exit 1
+fi
 
 # fetch logs
 sudo docker logs clab-srlinux-inmanta-server >server.log

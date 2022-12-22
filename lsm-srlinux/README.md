@@ -204,7 +204,7 @@ end
     model.
 -   Lines 9 to 26 define the API of the new service, i.e. the attributes
     required to instantiate a new instance of the service. The
-    `interfaceIPAssignment` entity defines four attributes: `router\_ip`,
+    `InterfaceIPAssignment` entity defines four attributes: `router\_ip`,
     `router\_name`, `interface\_name` and `address`. Each attribute has a
     description defined in the docstring above. The docstring provides
     documentation on the meaning of a specific service attribute. The
@@ -216,12 +216,12 @@ end
     lifetime of the service. More information on attribute modifiers can
     be found
     [here](https://docs.inmanta.com/inmanta-service-orchestrator/latest/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier).
--   Lines 28 defines which implementation should be used to instantiate
+-   Line 28 defines which implementation should be used to instantiate
     the `InterfaceIPAssignment` service entity.
 -   Lines 30 to 65 provide the actual implementation for the
     `InterfaceIPAssignment` service entity. If an instance is created of
     the `InterfaceIPAssignment` service entity, this implementation will
-    make sure that the address specified in the attributes of the
+    make sure that the `address` specified in the attributes of the
     service instance, will be configured on the requested interface and
     SR Linux router.
 -   Lines 42 to 47 in particular, are where the resource is instantiated

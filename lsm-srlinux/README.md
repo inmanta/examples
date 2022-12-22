@@ -31,18 +31,31 @@ Prerequisites
 -------------
 
 This guide assumes that you already finished the
-[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html). so if you
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html). so if you
 haven\'t followed that one, please start with it.
 
-**Make sure that you have the necessary sensitive information**, namely:
+**Make sure that you have the necessary license information**, namely:
 
 -   Credentials to the package repository;
 -   Entitlement file;
 -   License file.
 
-1.  Follow the
-    [quickstart prerequisites](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#prerequisites) until step 4
-2.  Change directory to the LSM SR Linux example:
+**Python version 3.9**, Docker, Containerlab and Inmanta need to be installed on your machine and our examples repository has to be cloned in order to proceed. Please make sure to follow the links below to that end.
+
+1.  [Install Docker](https://docs.docker.com/get-docker/).
+
+2.  [Install Containerlab](https://containerlab.dev/install/).
+
+3.  Prepare a development environment by creating a python virtual environment and installing Inmanta:
+
+``` {.}
+$ mkdir -p ~/.virtualenvs
+$ python3 -m venv ~/.virtualenvs/lsm-srlinux
+$ source ~/.virtualenvs/lsm-srlinux/bin/activate
+$ pip install inmanta
+```
+
+4.  Change directory to the LSM SR Linux example:
 
 ``` {.}
 $ cd examples/lsm-srlinux
@@ -69,22 +82,21 @@ requires:
 ```
 
 > **_NOTE:_**
-Additional explanation of each field can be found on the [quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html).
+Additional explanation of each field can be found on the [quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html).
 
 
-3.  Change the \<token\> in the repo url to the password that you
-    received.
-4.  Go to the `containerlab` directory.
+5.  Change the \<token\> in the repo url to the credentials to the package repository that you received.
+6.  Go to the `containerlab` directory.
 
 ``` {.}
 $ cd containerlab
 ```
 
-5.  Create a folder called `resources` on the `containerlab` folder and
+7.  Create a folder called `resources` on the `containerlab` folder and
     place your license and entitlement files there. The names of the
     files have to be `com.inmanta.jwe` for the entitlement file and
     `com.inmanta.license` for the license file.
-6.  [Spin-up the containers](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers)
+8.  [Spin-up the containers](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html#connecting-to-the-containers)
 
 ``` {.}
 $ sudo clab deploy -t topology.yml
@@ -93,9 +105,9 @@ $ sudo clab deploy -t topology.yml
 > **_NOTE:_**
 Additional information about this command and how to connect to these
 containers can be found on the
-[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers).
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html#connecting-to-the-containers).
 
-Orchestration model {#quickstart_orchestration_model}
+Orchestration model
 -------------------
 
 The full orchestration model to assign an IP-address to an interface of
@@ -155,22 +167,15 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
         name = self.interface_name,
         resource = resource,
         mtu = 9000,
-        subinterface = [subinterface],
-        comanaged = false
-    )
-
-    subinterface = srinterface::Subinterface(
-        parent_interface = interface,
-        x_index = 0,
-        ipv4 = subinterface_address
-    )
-
-    subinterface_address = srsubinterface::Ipv4(
-        parent_subinterface = subinterface,
-        address = sripv4::Address(
-            parent_ipv4 = subinterface_address,
-            ip_prefix = self.address
-        )
+        subinterface = srinterface::Subinterface(
+             x_index = 0,
+             ipv4=srsubinterface::Ipv4(
+                 address = sripv4::Address(
+                     ip_prefix = self.address
+                  ),
+             ),
+         ),           
+         comanaged = false
     )
 
 end
@@ -199,36 +204,36 @@ end
     model.
 -   Lines 9 to 26 define the API of the new service, i.e. the attributes
     required to instantiate a new instance of the service. The
-    ÃŽnterfaceIPAssignment entity defines four attributes: router\_ip,
-    router\_name, interface\_name and address. Each attribute has a
+    `interfaceIPAssignment` entity defines four attributes: `router\_ip`,
+    `router\_name`, `interface\_name` and `address`. Each attribute has a
     description defined in the docstring above. The docstring provides
     documentation on the meaning of a specific service attribute. The
     \"\<attribute\>\_\_modifier\" fields are meta-data fields. They
     defines whether the attribute can be modified or not. In the
-    above-mentioned orchestration model, the router\_ip, router\_name
-    and the interface\_name attribute can only be set upon instantiation
+    above-mentioned orchestration model, the `router\_ip`, `router\_name`
+    and the `interface\_name` attribute can only be set upon instantiation
     of the model, while the address attribute can be changed during the
     lifetime of the service. More information on attribute modifiers can
     be found
-    [here](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier).
--   Lines 31 defines which implementation should be used to instantiate
-    the InterfaceIPAssignment service entity.
--   Lines 33 to 75 provide the actual implementation for the
-    InterfaceIPAssignment service entity. If an instance is created of
-    the InterfaceIPAssignment service entity, this implementation will
+    [here](https://docs.inmanta.com/inmanta-service-orchestrator/latest/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier).
+-   Lines 28 defines which implementation should be used to instantiate
+    the `InterfaceIPAssignment` service entity.
+-   Lines 30 to 65 provide the actual implementation for the
+    `InterfaceIPAssignment` service entity. If an instance is created of
+    the `InterfaceIPAssignment` service entity, this implementation will
     make sure that the address specified in the attributes of the
     service instance, will be configured on the requested interface and
     SR Linux router.
--   Lines 45 to 50 in particular, are where the resource is instantiated
-    and assigned to the resources field. The resources field should
+-   Lines 42 to 47 in particular, are where the resource is instantiated
+    and assigned to the `resources` field. The `resources` field should
     contain the list of resources that need to be deployed before the
     state of the instance can be moved from *creating* to *up*.
--   Lines 78 to 82 create a service entity binding. It associates a name
-    and a lifecycle to the InterfaceIPAssignment service entity and
+-   Lines 68 to 72 create a service entity binding. It associates a name
+    and a lifecycle to the `InterfaceIPAssignment` service entity and
     registers it in the Inmanta Service Orchestrator via its northbound
     API. More information on service lifecycles can be found
-    [here](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/lifecycle/lifecycle.html).
--   Lines 85 to 93 create an instance of the InterfaceIPAssignment
+    [here](https://docs.inmanta.com/inmanta-service-orchestrator/latest/moduleguides/lsm/lifecycle/lifecycle.html).
+-   Lines 75 to 83 create an instance of the `InterfaceIPAssignment`
     entity for each service instance. The `lsm::all()` plugin retrieves
     all the service instances via the Inmanta Service Orchestrator API.
 
@@ -236,7 +241,14 @@ Install the orchestration model onto the Inmanta server
 -------------------------------------------------------
 
 Go back to the previous folder and
-[create an Inmanta project and environment](https://docs.inmanta.com/inmanta-service-orchestrator/5/quickstart.html#connecting-to-the-containers).
+[create an Inmanta project and environment](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html#create-an-inmanta-project-and-an-environment).
+
+```{-}
+# Create a project called test
+$ inmanta-cli --host 172.30.0.3 project create -n test
+# Create an environment called lsm-srlinux
+$ inmanta-cli --host 172.30.0.3 environment create -p test -n lsm-srlinux --save
+```
 
 The following command executes a script to copy the required resources
 to a specific folder inside the container.
@@ -246,9 +258,7 @@ $ docker exec -ti -w /code clab-srlinux-inmanta-server  /code/setup.sh
 ```
 
 Afterwards, open the web-console, in this example it is on
-<http://172.30.0.3:8888/console/>. This IP-address can be configured in
-`containerlab/topology.html` under the `mgmt_ipv4` of the
-`inmanta-server`.
+<http://172.30.0.3:8888/console/>.
 
 ![interface-ip-assignment service in service catalog](images/empty-service-catalog.png)
 
@@ -259,10 +269,9 @@ API or via the Inmanta web-console.
 
 Clicking on the button will:
 
--   Pull the code from the git repository to the container, when
-    applicable;
--   The orchestrator will then install the project;
--   Lastly, the orchestrator will export the orchestration models.
+-   Download all required code onto the orchestrator;
+-   Install the project;
+-   Export the service entity bindings to the service catalog.
 
 After executing these commands, the `interface-ip-assignment` service
 will appear in the service catalog of the Inmanta web-console as shown
@@ -283,7 +292,7 @@ $ ssh admin@clab-srlinux-spine
 > **_NOTE:_**
 Additional information on how to connect to these containers can be
 found on the
-[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/5/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier). In this guide we will only do certain commands to show the
+[quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/latest/moduleguides/lsm/attributes_metadata/attributes_metadata.html#attribute-modifier). In this guide we will only do certain commands to show the
 changes.
 
 Check the interface configuration via the following command.

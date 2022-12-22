@@ -51,22 +51,15 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
         name = self.interface_name,
         resource = resource,
         mtu = 9000,
-        subinterface = [subinterface],
-        comanaged = false
-    )
-
-    subinterface = srinterface::Subinterface(
-        parent_interface = interface,
-        x_index = 0,
-        ipv4 = subinterface_address
-    )
-
-    subinterface_address = srsubinterface::Ipv4(
-        parent_subinterface = subinterface,
-        address = sripv4::Address(
-            parent_ipv4 = subinterface_address,
-            ip_prefix = self.address
-        )
+        subinterface = srinterface::Subinterface(
+             x_index = 0,
+             ipv4=srsubinterface::Ipv4(
+                 address = sripv4::Address(
+                     ip_prefix = self.address
+                  ),
+             ),
+         ),           
+         comanaged = false
     )
 
 end

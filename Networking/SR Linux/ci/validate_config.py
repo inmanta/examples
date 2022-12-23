@@ -28,7 +28,7 @@ def fetch_config(gc):
 
 def main() -> None:
     with gNMIclient(
-        target=HOST, username="admin", password="admin", insecure=False, skip_verify=True,
+        target=HOST, username="admin", password="NokiaSrl1!", insecure=False, skip_verify=True,
     ) as gc:
         interface_result, ospf_result = fetch_config(gc)
 

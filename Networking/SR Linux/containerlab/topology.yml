@@ -6,7 +6,7 @@ mgmt:
 topology:
   kinds:
     srl:
-      image: ghcr.io/nokia/srlinux
+      image: ghcr.io/nokia/srlinux:latest
   nodes:
     inmanta-server:
       kind: linux

@@ -14,7 +14,7 @@ leaf1 = srlinux::GnmiDevice(
     mgmt_ip = "172.30.0.210",
     yang_credentials = yang::Credentials(
         username = "admin",
-        password = "admin"
+        password = "NokiaSrl1!"
     )
 )
 
@@ -50,7 +50,7 @@ leaf2 = srlinux::GnmiDevice(
     mgmt_ip = "172.30.0.220",
     yang_credentials = yang::Credentials(
         username = "admin",
-        password = "admin"
+        password = "NokiaSrl1!"
     )
 )
 
@@ -86,7 +86,7 @@ spine = srlinux::GnmiDevice(
     mgmt_ip = "172.30.0.100",
     yang_credentials = yang::Credentials(
         username = "admin",
-        password = "admin"
+        password = "NokiaSrl1!"
     )
 )
 

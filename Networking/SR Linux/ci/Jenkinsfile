@@ -31,6 +31,8 @@ pipeline {
                     steps {
                         sh '''
                             cd "Networking/SR Linux"
+                            # Ensure we have the latest version of the srlinux image
+                            sudo docker pull ghcr.io/nokia/srlinux:latest
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             ci/do_test_deployment_and_verify.sh
                         '''

@@ -40,7 +40,7 @@ haven\'t followed that one, please start with it.
 -   Entitlement file;
 -   License file.
 
-**Python version 3.9**, Docker, Containerlab and Inmanta need to be installed on your machine and our examples repository has to be cloned in order to proceed. Please make sure to follow the links below to that end.
+**Python version 3.9 needs to be installed on your machine.**
 
 1.  [Install Docker](https://docs.docker.com/get-docker/).
 
@@ -85,7 +85,7 @@ requires:
 Additional explanation of each field can be found on the [quickstart](https://docs.inmanta.com/inmanta-service-orchestrator/latest/quickstart.html).
 
 
-5.  Change the \<token\> in the repo url to the credentials to the package repository that you received.
+5.  Change the \<token\> in the repo url to the credentials to the package repository (see Prerequisites section).
 6.  Go to the `containerlab` directory.
 
 ``` {.}

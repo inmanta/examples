@@ -22,21 +22,14 @@ leaf1_eth1 = srlinux::Interface(
     device = leaf1,
     name = "ethernet-1/1",
     mtu = 9000,
-    subinterface = [leaf1_eth1_subint]
-)
-
-leaf1_eth1_subint = srinterface::Subinterface(
-    parent_interface = leaf1_eth1,
-    x_index = 0,
-    ipv4 = leaf1_eth1_subint_address
-)
-
-leaf1_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = leaf1_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = leaf1_eth1_subint_address,
-        ip_prefix = "10.10.11.2/30"
-    )
+    subinterface = [srinterface::Subinterface(
+        x_index = 0,
+        ipv4 = srsubinterface::Ipv4(
+            address = sripv4::Address(
+                ip_prefix = "10.10.11.2/30"
+            )
+        )
+    )]
 )
 
 ########################
@@ -58,21 +51,14 @@ leaf2_eth1 = srlinux::Interface(
     device = leaf2,
     name = "ethernet-1/1",
     mtu = 9000,
-    subinterface = [leaf2_eth1_subint]
-)
-
-leaf2_eth1_subint = srinterface::Subinterface(
-    parent_interface = leaf2_eth1,
-    x_index = 0,
-    ipv4 = leaf2_eth1_subint_address
-)
-
-leaf2_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = leaf2_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = leaf2_eth1_subint_address,
-        ip_prefix = "10.10.21.2/30"
-    )
+    subinterface = [srinterface::Subinterface(
+        x_index = 0,
+        ipv4 = srsubinterface::Ipv4(
+            address = sripv4::Address(
+                ip_prefix = "10.10.21.2/30"
+            )
+        )
+    )]
 )
 
 ########################
@@ -96,21 +82,14 @@ spine_eth1 = srlinux::Interface(
     device = spine,
     name = "ethernet-1/1",
     mtu = 9000,
-    subinterface = [spine_eth1_subint]
-)
-
-spine_eth1_subint = srinterface::Subinterface(
-    parent_interface = spine_eth1,
-    x_index = 0,
-    ipv4 = spine_eth1_subint_address
-)
-
-spine_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = spine_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = spine_eth1_subint_address,
-        ip_prefix = "10.10.11.1/30"
-    )
+    subinterface = [srinterface::Subinterface(
+        x_index = 0,
+        ipv4 = srsubinterface::Ipv4(
+            address = sripv4::Address(
+                ip_prefix = "10.10.11.1/30"
+            )
+        )
+    )]
 )
 
 # |ethernet 2| #
@@ -119,21 +98,14 @@ spine_eth2 = srlinux::Interface(
     device = spine,
     name = "ethernet-1/2",
     mtu = 9000,
-    subinterface = [spine_eth2_subint]
-)
-
-spine_eth2_subint = srinterface::Subinterface(
-    parent_interface = spine_eth2,
-    x_index = 0,
-    ipv4 = spine_eth2_subint_address
-)
-
-spine_eth2_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = spine_eth2_subint,
-    address = sripv4::Address(
-        parent_ipv4 = spine_eth2_subint_address,
-        ip_prefix = "10.10.21.1/30"
-    )
+    subinterface = [srinterface::Subinterface(
+        x_index = 0,
+        ipv4 = srsubinterface::Ipv4(
+            address = sripv4::Address(
+                ip_prefix = "10.10.21.1/30"
+            )
+        )
+    )]
 )
 
 ########################

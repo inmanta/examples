@@ -22,8 +22,8 @@ vif = vyos::Vif(
     parent=itf,
     vlan=10,
     host=r1,
+    addresses=[
+        vyos::Address(ip="192.168.7.3/24"),
+        vyos::Address(ip="2a02:1810:bc04:5200::1/64")
+    ]
 )
-
-# Set these two adresses on the interface
-vif.addresses += vyos::Address(ip="192.168.7.3/24")
-vif.addresses += vyos::Address(ip="2a02:1810:bc04:5200::1/64")

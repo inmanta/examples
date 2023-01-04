@@ -1,4 +1,4 @@
- import vyos
+import vyos
 
 username = "vyos"
 password = "vyos"
@@ -19,16 +19,13 @@ itf = vyos::Interface(
     address="10.15.1.1/24"
 )
 
-# Enable ospf
+# Enable ospf and redistributed all connected networks
 ospf1 = vyos::Ospf(
     area=0,
     network=["10.15.1.0/24"],
     router_id="10.15.1.1",
     host=r1,
-)
-
-# Redistributed all connected networks
-vyos::OspfRedistribute(
-    ospf=ospf1,
-    type="connected",
+    redistributes=vyos::OspfRedistribute(
+        type="connected",
+    )
 )

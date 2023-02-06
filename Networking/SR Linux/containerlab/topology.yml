@@ -10,7 +10,7 @@ topology:
   nodes:
     inmanta-server:
       kind: linux
-      image: ghcr.io/inmanta/orchestrator:latest
+      image: ghcr.io/inmanta/orchestrator:2023.1-rc
       mgmt_ipv4: 172.30.0.3
       ports:
         - 8888:8888

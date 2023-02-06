@@ -10,7 +10,7 @@ topology:
   nodes:
     inmanta-server:
       kind: linux
-      image: containers.inmanta.com/containers/service-orchestrator:6
+      image: containers.inmanta.com/containers/service-orchestrator:2023.1-rc
       ports:
           - 8888:8888
       binds:

@@ -13,7 +13,7 @@ Self contained examples for managing various types of network equipment:
 | [Vyos](https://vyos.io/) | [Networking/Vyos](Networking/Vyos/README.md) | No | [Yes](Networking/Vyos/containerlab/topology.yml) |
 | Nokia SR | [Networking/Nokia](Networking/Nokia/README.md) | Yes | [Yes](Networking/Nokia/containerlab/topology.yml)|
 | Juniper JunOS MX | [Networking/Juniper](Networking/Juniper/README.md) | Yes | [Yes](Networking/Juniper/containerlab/topology.yml)|
-| Cisco Cisco IOS-XR | [Networking/Cisco](Networking/Cisco/README.md) | Yes | [Yes](Networking/Cisco/containerlab/topology.yml)|
+| Cisco IOS-XR | [Networking/Cisco](Networking/Cisco/README.md) | Yes | [Yes](Networking/Cisco/containerlab/topology.yml)|
 
 
 

@@ -14,7 +14,7 @@ python3.9 -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
 pip install inmanta
-inmanta project install
+inmanta -vvvv project install
 
 inmanta-cli --host 172.30.0.3 project create -n test
 inmanta-cli --host 172.30.0.3 environment create -p test -n SR_Linux --save

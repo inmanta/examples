@@ -10,7 +10,60 @@ pipeline {
     }
 
     stages {
-        stage('BuildAndTest') {
+        stage('Refresh Package Registry') {
+            stages {
+                stage('Update modules in registry') {
+                    steps {
+                        withCredentials([
+                            string(
+                                credentialsId: 'cloudsmith-api-key',
+                                variable: 'CLOUDSMITH_API_KEY',
+                            ),
+                        ]) {
+                            dir('yang') {
+                                git(
+                                    branch: 'master',
+                                    url: 'https://code.inmanta.com/solutions/modules/yang.git',
+                                    poll: false,
+                                    changelog: false,
+                                    credentialsId: 'jenkins_on_gitlab_with_username',
+                                )
+                                sh '''
+                                    python3 -m venv venv
+                                    source venv/bin/activate
+                                    pip install inmanta-core
+
+                                    inmanta module build --byte-code .
+
+                                    pip install cloudsmith-cli
+                                    cloudsmith push python inmanta/quickstart dist/*.whl
+                                '''
+                            }
+                            dir('nokia_srlinux') {
+                                git(
+                                    branch: 'master',
+                                    url: 'https://code.inmanta.com/solutions/modules/nokia-srlinux.git',
+                                    poll: false,
+                                    changelog: false,
+                                    credentialsId: 'jenkins_on_gitlab_with_username',
+                                )
+                                sh '''
+                                    python3 -m venv venv
+                                    source venv/bin/activate
+                                    pip install inmanta-core
+
+                                    inmanta module build --byte-code .
+
+                                    pip install cloudsmith-cli
+                                    cloudsmith push python inmanta/quickstart dist/*.whl
+                                '''
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build And Test') {
             stages {
                 stage('Cleanup') {
                     steps {

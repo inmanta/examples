@@ -34,11 +34,25 @@ pipeline {
                         sh '''
                             python3 -m venv venv
                             source venv/bin/activate
-                            pip install inmanta-core
+                            pip install inmanta-core cloudsmith-cli
 
+                            # Get latest released version of module
+                            latest=$(git describe --tags `git rev-list --tags --max-count=1`)
+                            git checkout $latest
+
+                            # Check if this version is already published on cloudsmith
+                            cloudsmith --credentials-file ../.cloudsmith/credentials.ini \
+                                ls pkgs inmanta/quickstart \
+                                -q "version=$latest AND name:~ĩnmanta-module-yang" \
+                                -F json > result.json
+                            
+                            if [ "$(cat result.json | jq '.data')" != "[]" ]; then
+                                echo "Package inmanta-module-yang-${latest} has already been published"
+                                exit 0
+                            fi
+
+                            # Build and publish the package
                             inmanta module build --byte-code .
-
-                            pip install cloudsmith-cli
                             cloudsmith \
                                 --credentials-file ../.cloudsmith/credentials.ini \
                                 push python inmanta/quickstart dist/*.whl
@@ -55,11 +69,25 @@ pipeline {
                         sh '''
                             python3 -m venv venv
                             source venv/bin/activate
-                            pip install inmanta-core
+                            pip install inmanta-core cloudsmith-cli
 
+                            # Get latest released version of module
+                            latest=$(git describe --tags `git rev-list --tags --max-count=1`)
+                            git checkout $latest
+
+                            # Check if this version is already published on cloudsmith
+                            cloudsmith --credentials-file ../.cloudsmith/credentials.ini \
+                                ls pkgs inmanta/quickstart \
+                                -q "version=$latest AND name:~ĩnmanta-module-nokia-srlinux" \
+                                -F json > result.json
+                            
+                            if [ "$(cat result.json | jq '.data')" != "[]" ]; then
+                                echo "Package inmanta-module-nokia-srlinux-${latest} has already been published"
+                                exit 0
+                            fi
+
+                            # Build and publish the package
                             inmanta module build --byte-code .
-
-                            pip install cloudsmith-cli
                             cloudsmith \
                                 --credentials-file ../.cloudsmith/credentials.ini \
                                 push python inmanta/quickstart dist/*.whl

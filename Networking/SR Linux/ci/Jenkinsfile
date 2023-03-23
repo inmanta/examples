@@ -43,7 +43,7 @@ pipeline {
                             # Check if this version is already published on cloudsmith
                             cloudsmith --credentials-file ../.cloudsmith/credentials.ini \
                                 ls pkgs inmanta/quickstart \
-                                -q "version=$latest AND name:~inmanta-module-yang" \
+                                -q "version:$latest AND name:inmanta-module-yang" \
                                 -F json > result.json
                             
                             if [ "$(cat result.json | jq '.data')" != "[]" ]; then
@@ -78,7 +78,7 @@ pipeline {
                             # Check if this version is already published on cloudsmith
                             cloudsmith --credentials-file ../.cloudsmith/credentials.ini \
                                 ls pkgs inmanta/quickstart \
-                                -q "version=$latest AND name:~inmanta-module-nokia-srlinux" \
+                                -q "version:$latest AND name:inmanta-module-nokia-srlinux" \
                                 -F json > result.json
                             
                             if [ "$(cat result.json | jq '.data')" != "[]" ]; then

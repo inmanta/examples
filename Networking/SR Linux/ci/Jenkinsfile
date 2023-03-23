@@ -10,64 +10,60 @@ pipeline {
     }
 
     stages {
-        stage('Refresh Package Registry') {
-            stages {
-                stage('Update modules in registry') {
-                    steps {
-                        withCredentials([
-                            string(
-                                credentialsId: 'cloudsmith-api-key',
-                                variable: 'CLOUDSMITH_API_KEY',
-                            ),
-                        ]) {
-                            sh '''
-                                mkdir .cloudsmith
-                                echo "[default]" > .cloudsmith/credentials.ini
-                            '''
-                            sh "echo api_key=${CLOUDSMITH_API_KEY} >> .cloudsmith/credentials.ini"
-                            dir('yang') {
-                                git(
-                                    branch: 'master',
-                                    url: 'https://code.inmanta.com/solutions/modules/yang.git',
-                                    poll: false,
-                                    changelog: false,
-                                    credentialsId: 'jenkins_on_gitlab_with_username',
-                                )
-                                sh '''
-                                    python3 -m venv venv
-                                    source venv/bin/activate
-                                    pip install inmanta-core
+        stage('Update modules in registry') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'cloudsmith-api-key',
+                        variable: 'CLOUDSMITH_API_KEY',
+                    ),
+                ]) {
+                    sh '''
+                        mkdir .cloudsmith
+                        echo "[default]" > .cloudsmith/credentials.ini
+                        echo api_key=${CLOUDSMITH_API_KEY} >> .cloudsmith/credentials.ini
+                    '''
+                    dir('yang') {
+                        git(
+                            branch: 'master',
+                            url: 'https://code.inmanta.com/solutions/modules/yang.git',
+                            poll: false,
+                            changelog: false,
+                            credentialsId: 'jenkins_on_gitlab_with_username',
+                        )
+                        sh '''
+                            python3 -m venv venv
+                            source venv/bin/activate
+                            pip install inmanta-core
 
-                                    inmanta module build --byte-code .
+                            inmanta module build --byte-code .
 
-                                    pip install cloudsmith-cli
-                                    cloudsmith \
-                                        --credentials-file ../.cloudsmith/credentials.ini \
-                                        push python inmanta/quickstart dist/*.whl
-                                '''
-                            }
-                            dir('nokia_srlinux') {
-                                git(
-                                    branch: 'master',
-                                    url: 'https://code.inmanta.com/solutions/modules/nokia-srlinux.git',
-                                    poll: false,
-                                    changelog: false,
-                                    credentialsId: 'jenkins_on_gitlab_with_username',
-                                )
-                                sh '''
-                                    python3 -m venv venv
-                                    source venv/bin/activate
-                                    pip install inmanta-core
+                            pip install cloudsmith-cli
+                            cloudsmith \
+                                --credentials-file ../.cloudsmith/credentials.ini \
+                                push python inmanta/quickstart dist/*.whl
+                        '''
+                    }
+                    dir('nokia_srlinux') {
+                        git(
+                            branch: 'master',
+                            url: 'https://code.inmanta.com/solutions/modules/nokia-srlinux.git',
+                            poll: false,
+                            changelog: false,
+                            credentialsId: 'jenkins_on_gitlab_with_username',
+                        )
+                        sh '''
+                            python3 -m venv venv
+                            source venv/bin/activate
+                            pip install inmanta-core
 
-                                    inmanta module build --byte-code .
+                            inmanta module build --byte-code .
 
-                                    pip install cloudsmith-cli
-                                    cloudsmith \
-                                        --credentials-file ../.cloudsmith/credentials.ini \
-                                        push python inmanta/quickstart dist/*.whl
-                                '''
-                            }
-                        }
+                            pip install cloudsmith-cli
+                            cloudsmith \
+                                --credentials-file ../.cloudsmith/credentials.ini \
+                                push python inmanta/quickstart dist/*.whl
+                        '''
                     }
                 }
             }
@@ -109,9 +105,13 @@ pipeline {
                         sudo rm -rf clab-srlinux
                     '''
                     archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
-                    deleteDir()
                 }
             }
+        }
+    }
+    post {
+        always {
+            deleteDir()
         }
     }
 }

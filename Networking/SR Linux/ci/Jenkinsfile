@@ -20,6 +20,11 @@ pipeline {
                                 variable: 'CLOUDSMITH_API_KEY',
                             ),
                         ]) {
+                            sh '''
+                                mkdir .cloudsmith
+                                echo "[default]" > .cloudsmith/credentials.ini
+                            '''
+                            sh "echo api_key=${CLOUDSMITH_API_KEY} >> .cloudsmith/credentials.ini"
                             dir('yang') {
                                 git(
                                     branch: 'master',
@@ -36,7 +41,9 @@ pipeline {
                                     inmanta module build --byte-code .
 
                                     pip install cloudsmith-cli
-                                    cloudsmith push python inmanta/quickstart dist/*.whl
+                                    cloudsmith \
+                                        --credentials-file ../.cloudsmith/credentials.ini \
+                                        push python inmanta/quickstart dist/*.whl
                                 '''
                             }
                             dir('nokia_srlinux') {
@@ -55,7 +62,9 @@ pipeline {
                                     inmanta module build --byte-code .
 
                                     pip install cloudsmith-cli
-                                    cloudsmith push python inmanta/quickstart dist/*.whl
+                                    cloudsmith \
+                                        --credentials-file ../.cloudsmith/credentials.ini \
+                                        push python inmanta/quickstart dist/*.whl
                                 '''
                             }
                         }

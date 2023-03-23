@@ -10,7 +10,7 @@ pipeline {
     }
 
     stages {
-        stage('BuildAndTest') {
+        stage('Build And Test') {
             stages {
                 stage('Cleanup') {
                     steps {
@@ -47,9 +47,13 @@ pipeline {
                         sudo rm -rf clab-srlinux
                     '''
                     archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
-                    deleteDir()
                 }
             }
+        }
+    }
+    post {
+        always {
+            deleteDir()
         }
     }
 }

@@ -1,19 +1,19 @@
-import srlinux
-import srlinux::interface as srinterface
-import srlinux::interface::subinterface as srsubinterface
-import srlinux::interface::subinterface::ipv4 as sripv4
-import srlinux::network_instance as srnetinstance
-import srlinux::network_instance::protocols as srprotocols
-import srlinux::network_instance::protocols::ospf as srospf
-import srlinux::network_instance::protocols::ospf::instance as srospfinstance
-import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import nokia_srlinux
+import nokia_srlinux::interface as srinterface
+import nokia_srlinux::interface::subinterface as srsubinterface
+import nokia_srlinux::interface::subinterface::ipv4 as sripv4
+import nokia_srlinux::network_instance as srnetinstance
+import nokia_srlinux::network_instance::protocols as srprotocols
+import nokia_srlinux::network_instance::protocols::ospf as srospf
+import nokia_srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 
 
 
 ######## Leaf 1 ########
 
-leaf1 = srlinux::GnmiDevice(
+leaf1 = nokia_srlinux::GnmiDevice(
     auto_agent = true,
     name = "leaf1",
     mgmt_ip = "172.30.0.210",
@@ -25,7 +25,7 @@ leaf1 = srlinux::GnmiDevice(
 
 # |interface configuration| #
 
-leaf1_eth1 = srlinux::Interface(
+leaf1_eth1 = nokia_srlinux::Interface(
     device = leaf1,
     name = "ethernet-1/1",
     mtu = 9000,
@@ -48,7 +48,7 @@ leaf1_eth1_subint_address = srsubinterface::Ipv4(
 
 # |network instance| #
 
-leaf1_net_instance = srlinux::NetworkInstance(
+leaf1_net_instance = nokia_srlinux::NetworkInstance(
     device = leaf1,
     name = "default",
 )
@@ -93,7 +93,7 @@ leaf1_ospf_int1 = srospfarea::Interface(
 
 ######## Leaf 2 ########
 
-leaf2 = srlinux::GnmiDevice(
+leaf2 = nokia_srlinux::GnmiDevice(
     auto_agent = true,
     name = "leaf2",
     mgmt_ip = "172.30.0.220",
@@ -105,7 +105,7 @@ leaf2 = srlinux::GnmiDevice(
 
 # |interface configuration| #
 
-leaf2_eth1 = srlinux::Interface(
+leaf2_eth1 = nokia_srlinux::Interface(
     device = leaf2,
     name = "ethernet-1/1",
     mtu = 9000,
@@ -128,7 +128,7 @@ leaf2_eth1_subint_address = srsubinterface::Ipv4(
 
 # |network instance| #
 
-leaf2_net_instance = srlinux::NetworkInstance(
+leaf2_net_instance = nokia_srlinux::NetworkInstance(
     device = leaf2,
     name = "default",
 )
@@ -175,7 +175,7 @@ leaf2_ospf_int1 = srospfarea::Interface(
 
 ######## Spine ########
 
-spine = srlinux::GnmiDevice(
+spine = nokia_srlinux::GnmiDevice(
     auto_agent = true,
     name = "spine",
     mgmt_ip = "172.30.0.100",
@@ -189,7 +189,7 @@ spine = srlinux::GnmiDevice(
 
     # |ethernet 1| #
 
-spine_eth1 = srlinux::Interface(
+spine_eth1 = nokia_srlinux::Interface(
     device = spine,
     name = "ethernet-1/1",
     mtu = 9000,
@@ -212,7 +212,7 @@ spine_eth1_subint_address = srsubinterface::Ipv4(
 
     # |ethernet 2| #
 
-spine_eth2 = srlinux::Interface(
+spine_eth2 = nokia_srlinux::Interface(
     device = spine,
     name = "ethernet-1/2",
     mtu = 9000,
@@ -235,7 +235,7 @@ spine_eth2_subint_address = srsubinterface::Ipv4(
 
 # |network instance| #
 
-spine_net_instance = srlinux::NetworkInstance(
+spine_net_instance = nokia_srlinux::NetworkInstance(
     device = spine,
     name = "default",
 )

@@ -60,7 +60,7 @@ pipeline {
                     }
                     dir('nokia_srlinux') {
                         git(
-                            branch: 'master',
+                            branch: 'v21',
                             url: 'https://code.inmanta.com/solutions/modules/nokia-srlinux.git',
                             poll: false,
                             changelog: false,

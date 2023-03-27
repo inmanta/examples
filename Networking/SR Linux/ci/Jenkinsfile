@@ -1,10 +1,10 @@
 def update_topology() {
     """
-    Updates the topology.yml so that the lab environement is in sync with the 
-    version of the Python package of the OSS product
+    Updates the topology.yml so that the lab environement uses the same 
+    version as the specified Python package of the OSS product
     """
     def version = formatVersion()
-    if (version) {
+    if (version != 'latest') {
         def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
         yamlFile['topology']['nodes']['inmanta-server']['image'] = "ghcr.io/inmanta/orchestrator:${version}"
         writeYaml file:"Networking/SR Linux/containerlab/topology.yml",data: yamlFile, overwrite: true
@@ -13,25 +13,27 @@ def update_topology() {
 
 
 def convert_python_version_to_docker_tag() {
-    def version = env.rc_version
+    def version = env.version
     if (version) {
-        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)(rc)?(\d*)/
+        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)?(rc)?(\d*)/
         if (matcher.matches()) {
             def year = matcher.group(1)
             def minor = matcher.group(2)
             def patch = matcher.group(3)
             def rc = matcher.group(4)
-            def formattedVersion = "${year}.${minor}.${patch}"
+            def formattedVersion = "${year}.${minor}"
+            if (patch) {
+                formattedVersion += ".${patch}"
+            }
             if (rc) {
                 formattedVersion += "-${rc}"
             }
             return formattedVersion
         } else {
             error("Invalid version format: ${version}")
-            return
         }
     }
-    return 
+    return 'latest'
 
 }
 
@@ -39,7 +41,7 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'version', description: 'Run OSS quickstart against the specified version. If left empty it will run against the latest stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc or 2023.1.1')
+        string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc or 2023.1.1')
     }
 
     environment {

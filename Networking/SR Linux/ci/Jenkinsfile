@@ -1,4 +1,4 @@
-def update_topology() {/project/inmanta/2023.1.1/
+def update_topology() {
     """
     Updates the topology.yml so that the lab environement uses the same 
     version as the specified Python package of the OSS product

@@ -1,6 +1,6 @@
 def update_topology() {
     def version = formatVersion()
-    echo "hoohohoho"
+    echo "-------"
     echo version
     if (version) {
         def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
@@ -15,7 +15,7 @@ def formatVersion() {
     def version = env.rc_version
     if (version) {
         echo version
-        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)(rc)(\d*)/
+        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)(rc)?(\d*)/
         if (matcher.matches()) {
             def year = matcher.group(1)
             echo year
@@ -25,10 +25,14 @@ def formatVersion() {
             echo minor
             def rc = matcher.group(4)
             echo rc
-            def formattedVersion = "${year}.${major}.${minor}-${rc}"
+            def formattedVersion = "${year}.${major}.${minor}"
+            if (rc) {
+                formattedVersion += "-${rc}"
+            }
             return formattedVersion
         } else {
             error("Invalid version format: ${version}")
+            return
         }
     }
     return 
@@ -39,7 +43,8 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'rc_version', description: 'Run OSS quickstart against the RC with the given version. If left empty it will run against the stable version')
+        string(name: 'rc_version', description: 'Run OSS quickstart against the RC with the given version. If left empty it will run against the stable version.\nThe version can be
+        of format 2023.1.1rc20230217144359 or 2023.1.1rc')
     }
 
     triggers {

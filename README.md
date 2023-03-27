@@ -9,7 +9,7 @@ Self contained examples for managing various types of network equipment:
 
 | Vendor | Folder | License required? | Containerlab File |
 |--------|--------|--------------------|-------------------|
-| [SR Linux](https://www.nokia.com/networks/data-center/service-router-linux-NOS/) | [Networking/SR Linux](Networking/SR%20Linux/README.md) | No | [Yes](Networking/SR Linux/containerlab/topology.yml) |
+| [SR Linux](https://www.nokia.com/networks/data-center/service-router-linux-NOS/) | [Networking/SR Linux](Networking/SR%20Linux/README.md) | No | [Yes](Networking/SR%20Linux/containerlab/topology.yml) |
 | [Vyos](https://vyos.io/) | [Networking/Vyos](Networking/Vyos/README.md) | No | [Yes](Networking/Vyos/containerlab/topology.yml) |
 | Nokia SR | [Networking/Nokia](Networking/Nokia/README.md) | Yes | [Yes](Networking/Nokia/containerlab/topology.yml)|
 | Juniper JunOS MX | [Networking/Juniper](Networking/Juniper/README.md) | Yes | [Yes](Networking/Juniper/containerlab/topology.yml)|

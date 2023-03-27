@@ -35,7 +35,7 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'rc_version', description: 'Run OSS quickstart against the RC with the given version. If left empty it will run against the stable version.\nThe version can be of format 2023.1.1rc20230217144359 or 2023.1.1rc')
+        string(name: 'version', description: 'Run OSS quickstart against the specified version. If left empty it will run against the stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc or 2023.1.1')
     }
 
     environment {

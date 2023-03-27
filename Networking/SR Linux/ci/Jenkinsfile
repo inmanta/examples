@@ -46,6 +46,10 @@ pipeline {
         string(name: 'rc_version', description: 'Run OSS quickstart against the RC with the given version. If left empty it will run against the stable version.\nThe version can be of format 2023.1.1rc20230217144359 or 2023.1.1rc')
     }
 
+    environment {
+    PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
+  }
+
     triggers {
         cron(BRANCH_NAME == 'master' ? 'H H(2-5) * * *' : '')
     }

@@ -17,13 +17,13 @@ def formatVersion() {
         echo version
         def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)(rc)(\d*)/
         if (matcher.matches()) {
-            def year = matcher.group(2)
+            def year = matcher.group(1)
             echo year
-            def major = matcher.group(3)
+            def major = matcher.group(2)
             echo major
-            def minor = matcher.group(4)
+            def minor = matcher.group(3)
             echo minor
-            def rc = matcher.group(5)
+            def rc = matcher.group(4)
             echo rc
             def formattedVersion = "${year}.${major}.${minor}-${rc}"
             return formattedVersion

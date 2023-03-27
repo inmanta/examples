@@ -15,7 +15,7 @@ def update_topology() {
 def convert_python_version_to_docker_tag() {
     def version = env.version
     if (version) {
-        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)?(rc)?(\d*)/
+        def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc)?(\d*)/
         if (matcher.matches()) {
             def year = matcher.group(1)
             def minor = matcher.group(2)
@@ -23,7 +23,7 @@ def convert_python_version_to_docker_tag() {
             def rc = matcher.group(4)
             def formattedVersion = "${year}.${minor}"
             if (patch) {
-                formattedVersion += ".${patch}"
+                formattedVersion += "${patch}"
             }
             if (rc) {
                 formattedVersion += "-${rc}"

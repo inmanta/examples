@@ -1,4 +1,4 @@
-def update_topology() {
+def update_topology() {/project/inmanta/2023.1.1/
     """
     Updates the topology.yml so that the lab environement uses the same 
     version as the specified Python package of the OSS product
@@ -41,7 +41,7 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc or 2023.1.1')
+        string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1 or 2022.4')
     }
 
     environment {

@@ -15,7 +15,7 @@ def formatVersion() {
     def version = env.rc_version
     if (version) {
         echo version
-        def matcher = version =~ /(inmanta-)?(\d{4})\.(\d+)\.(\d+)(rc)(\d*)/
+        def matcher = version =~ /(\d{4})\.(\d+)\.(\d+)(rc)(\d*)/
         if (matcher.matches()) {
             def year = matcher.group(2)
             echo year

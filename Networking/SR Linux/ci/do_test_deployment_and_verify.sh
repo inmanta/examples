@@ -9,7 +9,6 @@ set -ex
 
 base=$(pwd)
 
-echo $1
 
 python3.9 -m venv "$base/venv"
 source "$base/venv/bin/activate"

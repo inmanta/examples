@@ -13,7 +13,12 @@ base=$(pwd)
 python3.9 -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
-pip install inmanta
+if [ -n "$1" ]; then
+  pip install --pre inmanta=="$1"
+else
+  pip install inmanta
+fi
+
 inmanta -vvvv project install
 
 inmanta-cli --host 172.30.0.3 project create -n test

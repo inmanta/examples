@@ -130,3 +130,5 @@ dmypy.json
 
 # Inmanta cache
 *.cfcache
+
+.idea/*

@@ -65,9 +65,10 @@ pipeline {
                         sh '''
                             # Cleanup before starting
                             cd "Networking/SR Linux"
-                            sudo rm -rf clab-srlinux
+                            sudo clab destroy --cleanup -t containerlab/topology.yml
+                            # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
+                            sudo docker network rm -f inmanta_mgmt
                             rm -f *.log
-                            sudo clab destroy -t containerlab/topology.yml
                             rm -f .inmanta
                         '''
                     }
@@ -92,8 +93,9 @@ pipeline {
                 always {
                     sh '''
                         cd "Networking/SR Linux"
-                        sudo clab destroy -t containerlab/topology.yml
-                        sudo rm -rf clab-srlinux
+                        sudo clab destroy --cleanup -t containerlab/topology.yml
+                        # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
+                        sudo docker network rm -f inmanta_mgmt
                     '''
                     archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
                 }

@@ -44,7 +44,7 @@ def convert_python_version_to_docker_tag(String pythonVersion) {
             return pythonVersion
         }
         // Is it a three-dotted version number
-        def matcher = pythonVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
+        matcher = pythonVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
         if (matcher.matches()) {
             def major = matcher.group(1)
             def minor = matcher.group(2)

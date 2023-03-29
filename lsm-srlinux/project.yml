@@ -1,5 +1,5 @@
 name: LSM SR Linux Example
-description: Provides and example of a LSM use case with SR Linux.
+description: Provides an example of a LSM use case with SR Linux.
 author: Inmanta
 author_email: code@inmanta.com
 license: ASL 2.0
@@ -10,6 +10,6 @@ repo:
   - type: package
     url: https://packages.inmanta.com/public/quickstart/python/simple/
   - type: package
-    url: https://packages.inmanta.com/<orchestrator-password>/inmanta-service-orchestrator-6-stable/python/simple/
+    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 install_mode: release
 requires:

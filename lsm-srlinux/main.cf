@@ -35,7 +35,7 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
             mgmt_ip = self.router_ip,
             yang_credentials = yang::Credentials(
                 username = "admin",
-                password = "admin"
+                password = "NokiaSrl1!"
             )
         )
 

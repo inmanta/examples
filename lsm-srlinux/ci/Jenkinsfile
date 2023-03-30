@@ -11,7 +11,6 @@ def update_project_yml(String pythonVersion, String token) {
     def yamlDct = readYaml file: fileName
     yamlDct['repo'][1]['url'] = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     writeYaml file: fileName, data: yamlDct, overwrite: true
-    echo readFile(fileName)
 }
 
 
@@ -28,7 +27,6 @@ def update_topology(String pythonVersion) {
         def yamlDct = readYaml file: fileName
         yamlDct['topology']['nodes']['inmanta-server']['image'] = "containers.inmanta.com/containers/service-orchestrator:${dockerTag}"
         writeYaml file: fileName, data: yamlDct, overwrite: true
-        echo readFile(fileName)
     }
 }
 

@@ -63,23 +63,14 @@ def convert_python_version_to_docker_tag(String pythonVersion) {
 
 /**
 * Returns the script that tears down the lab environment.
-*
-* @param removeLogs: True iff the log present on disk will be removed.
 */
-def get_tear_down_script(Boolean removeLogs) {
-   result = '''
+def get_tear_down_script() {
+   return '''
        cd "${WORKSPACE}/lsm-srlinux"
        sudo clab destroy --cleanup -t containerlab/topology.yml
        # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
        sudo docker network rm -f inmanta_mgmt
    ''' 
-   if(removeLogs){
-       result += '''
-           rm -f *.log
-           rm -f .inmanta
-       '''
-   }
-   return result
 }
 
 
@@ -122,7 +113,7 @@ pipeline {
                         }
                         script {
                             // Cleanup before starting
-                            sh(script: get_tear_down_script(false))
+                            sh(script: get_tear_down_script())
                         }
                     }
                 }
@@ -158,9 +149,8 @@ pipeline {
             post {
                 always {
                     script{
-                        sh(script: get_tear_down_script(true))
+                        sh(script: get_tear_down_script())
                     }
-                    archiveArtifacts artifacts: '${env.WORKSPACE}/lsm-srlinux/*.log'
                 }
             }
         }

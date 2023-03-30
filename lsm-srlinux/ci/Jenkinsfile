@@ -125,18 +125,24 @@ pipeline {
                     steps {
                         script {
                             withCredentials([
+                                // Credentials to access the containers repository on Cloudsmith.
                                 usernamePassword(
                                     credentialsId: "cloudsmith-docker-token",
-                                    usernameVariable: "CLOUDSMITH_USERNAME",
-                                    passwordVariable: "CLOUDSMITH_TOKEN"
+                                    usernameVariable: "CLOUDSMITH_DOCKER_USERNAME",
+                                    passwordVariable: "CLOUDSMITH_DOCKER_TOKEN"
+                                ),
+                                // Credentials to access the inmanta-service-orchestrator-* repositories on Cloudsmith.
+                                string(
+                                    credentialsId: "cloudsmith-token",
+                                    variable: "CLOUDSMITH_PKGS_TOKEN",
                                 ),
                             ]) {
 
                                 update_topology(env.version)
-                                update_project_yml(env.version, env.CLOUDSMITH_TOKEN)
+                                update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
                                 sh '''
                                     cd "${WORKSPACE}/lsm-srlinux"
-                                    echo "${CLOUDSMITH_TOKEN}" | sudo docker login -u "${CLOUDSMITH_USERNAME}" --password-stdin containers.inmanta.com
+                                    echo "${CLOUDSMITH_DOCKER_TOKEN}" | sudo docker login -u "${CLOUDSMITH_DOCKER_USERNAME}" --password-stdin containers.inmanta.com
                                     # Ensure we have the latest version of the srlinux image
                                     sudo docker pull ghcr.io/nokia/srlinux:latest
 

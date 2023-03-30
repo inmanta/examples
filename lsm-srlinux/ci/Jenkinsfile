@@ -22,12 +22,10 @@ def update_project_yml(String pythonVersion, String token) {
 */
 def update_topology(String pythonVersion) {
     def dockerTag = convert_python_version_to_docker_tag(pythonVersion)
-    if (dockerTag != '') {
-        def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
-        def yamlDct = readYaml file: fileName
-        yamlDct['topology']['nodes']['inmanta-server']['image'] = "containers.inmanta.com/containers/service-orchestrator:${dockerTag}"
-        writeYaml file: fileName, data: yamlDct, overwrite: true
-    }
+    def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
+    def yamlDct = readYaml file: fileName
+    yamlDct['topology']['nodes']['inmanta-server']['image'] = "containers.inmanta.com/containers/service-orchestrator:${dockerTag}"
+    writeYaml file: fileName, data: yamlDct, overwrite: true
 }
 
 
@@ -35,29 +33,26 @@ def update_topology(String pythonVersion) {
 * Convert the Python version of the inmanta-service-orchestrator package to the docker tag of the associated docker image.
 */
 def convert_python_version_to_docker_tag(String pythonVersion) {
-    if (pythonVersion) {
-        def matcher = pythonVersion =~ /(\d+)/
-        // Is it a version number consisting of a single number
-        if (matcher.matches()) {
-            return pythonVersion
-        }
-        // Is it a three-dotted version number
-        matcher = pythonVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
-        if (matcher.matches()) {
-            def major = matcher.group(1)
-            def minor = matcher.group(2)
-            def patch = matcher.group(3)
-            def rc = matcher.group(4)
-            def formattedVersion = "${major}.${minor}.${patch}"
-            if (rc) {
-                formattedVersion += "-${rc}"
-            }
-            return formattedVersion
-        } else {
-            error("Invalid version format: ${pythonVersion}")
-        }
+    def matcher = pythonVersion =~ /(\d+)/
+    // Is it a version number consisting of a single number
+    if (matcher.matches()) {
+        return pythonVersion
     }
-    return ''
+    // Is it a three-dotted version number
+    matcher = pythonVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
+    if (matcher.matches()) {
+        def major = matcher.group(1)
+        def minor = matcher.group(2)
+        def patch = matcher.group(3)
+        def rc = matcher.group(4)
+        def formattedVersion = "${major}.${minor}.${patch}"
+        if (rc) {
+            formattedVersion += "-${rc}"
+        }
+        return formattedVersion
+    } else {
+        error("Invalid version format: ${pythonVersion}")
+    }
 }
 
 

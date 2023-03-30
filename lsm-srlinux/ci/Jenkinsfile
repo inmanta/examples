@@ -109,9 +109,10 @@ pipeline {
             stages {
                 stage('Cleanup') {
                     steps {
-                        // Cleanup before starting
-                        def teardownScript = get_tear_down_script(remove_logs: true)
-                        sh(script: teardownScript)
+                        script {
+                            // Cleanup before starting
+                            sh(script: get_tear_down_script(remove_logs: true))
+                        }
                     }
                 }
                 stage('Build') {
@@ -141,8 +142,9 @@ pipeline {
             }
             post {
                 always {
-                    def teardownScript = get_tear_down_script(remove_logs: false)
-                    sh(script: teardownScript)
+                    script{
+                        sh(script: get_tear_down_script(remove_logs: false))
+                    }
                     archiveArtifacts artifacts: '${env.WORKSPACE}/lsm-srlinux/*.log'
                 }
             }

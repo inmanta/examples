@@ -1,6 +1,11 @@
 #!/bin/sh
-environment=$(egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o .inmanta)
-dir=/var/lib/inmanta/server/environments/$environment
+
+if [ -z "${1}" ]; then
+   echo "Usage: $0 <environment_id>" >&2
+   exit 1
+fi
+
+dir="/var/lib/inmanta/server/environments/${1}"
 
 mkdir $dir
 cp -r /code/* $dir

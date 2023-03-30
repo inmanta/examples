@@ -33,7 +33,7 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
-    subprocess.check_call("sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh", shell=True)
+    subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
 
     # Export service definition
     print("Exporting service definition")

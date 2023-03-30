@@ -157,7 +157,7 @@ pipeline {
                                     fi
 
                                     sudo clab deploy -t containerlab/topology.yml --reconfigure
-                                    python ci/do_test_deployment_and_verify.py
+                                    python -u ci/do_test_deployment_and_verify.py
                                 '''
                             }
                         }

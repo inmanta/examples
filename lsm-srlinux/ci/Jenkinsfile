@@ -135,7 +135,7 @@ pipeline {
                                 update_project_yml(env.version, env.CLOUDSMITH_TOKEN)
                                 sh '''
                                     cd "${WORKSPACE}/lsm-srlinux"
-                                    sudo docker login -u "${CLOUDSMITH_USERNAME}" -p "${CLOUDSMITH_TOKEN}" containers.inmanta.com
+                                    echo "${CLOUDSMITH_TOKEN}" | sudo docker login -u "${CLOUDSMITH_USERNAME}" --password-stdin containers.inmanta.com
                                     # Ensure we have the latest version of the srlinux image
                                     sudo docker pull ghcr.io/nokia/srlinux:latest
                                     sudo clab deploy -t containerlab/topology.yml --reconfigure

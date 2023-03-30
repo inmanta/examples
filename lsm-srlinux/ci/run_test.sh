@@ -15,6 +15,7 @@ base=$(pwd)
 python3 -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
+pip install -U pip
 if [ -n "$1" ]; then
   pip install --pre inmanta-service-orchestrator=="$1" pytest-inmanta-extensions=="$1"
 else

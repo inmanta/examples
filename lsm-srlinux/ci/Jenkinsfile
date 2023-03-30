@@ -144,9 +144,9 @@ pipeline {
                                     source "venv/bin/activate"
                                     pip install -U pip
                                     if [ -n "${version}" ]; then
-                                        pip install --pre inmanta-service-orchestrator=="${version}" pytest-inmanta-extension
+                                        pip install --pre pytest-inmanta-extension inmanta-service-orchestrator=="${version}"
                                     else
-                                        pip install inmanta-service-orchestrator pytest-inmanta-extensions
+                                        pip install pytest-inmanta-extension inmanta-service-orchestrator
                                     fi
 
                                     sudo clab deploy -t containerlab/topology.yml --reconfigure

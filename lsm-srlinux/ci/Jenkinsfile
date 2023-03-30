@@ -6,8 +6,8 @@
 * @param token: The token to connect to the private Python package repository for the Inmanta project.
 */
 def update_project_yml(String pythonVersion, String token) {
-    def majorVersion = pythonVersion.split('.')[0]
-    def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/project.yml"
+    def majorVersion = pythonVersion.split('\\.')[0]
+    def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName
     yamlDct['repo'][1]['url'] = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     writeYaml file: fileName, data: yamlDct, overwrite: true
@@ -109,9 +109,22 @@ pipeline {
             stages {
                 stage('Cleanup') {
                     steps {
+                        withCredentials([
+                            file(credentialsId: 'JENKINS_JWE', variable: 'ENTITLEMENTS_FILE'),
+                            file(credentialsId: 'JENKINS_LICENSE', variable: 'LICENSE_KEY_FILE'),
+                        ]) {
+                            sh '''
+                                cd "${WORKSPACE}/lsm-srlinux/containerlab"
+                                mkdir resources
+                                cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
+                                cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license
+                                # The inmanta container is running as a different user then Jenkins
+                                chmod 444 resources/com.inmanta.jwe resources/com.inmanta.license
+                            '''
+                        }
                         script {
                             // Cleanup before starting
-                            sh(script: get_tear_down_script(remove_logs: true))
+                            sh(script: get_tear_down_script(false))
                         }
                     }
                 }
@@ -120,22 +133,26 @@ pipeline {
                         timeout(time: 1, unit: 'HOURS')
                     }
                     steps {
-                        withCredentials([
-                            string(
-                                credentialsId: 'cloudsmith-token',
-                                variable: 'CLOUDSMITH_TOKEN',
-                            ),
-                        ]) {
-                            update_topology(pythonVersion: env.version)
-                            update_project_yml(pythonVersion: env.version, token: env.CLOUDSMITH_TOKEN)
-                            sh '''
-                                cd "${WORKSPACE}/lsm-srlinux"
-                                sudo docker login containers.inmanta.com -u containers -p ${CLOUDSMITH_TOKEN}
-                                # Ensure we have the latest version of the srlinux image
-                                sudo docker pull ghcr.io/nokia/srlinux:latest
-                                sudo clab deploy -t containerlab/topology.yml --reconfigure
-                                ci/run_test.sh ${version}
-                            '''
+                        script {
+                            withCredentials([
+                                usernamePassword(
+                                    credentialsId: "cloudsmith-docker-token",
+                                    usernameVariable: "CLOUDSMITH_USERNAME",
+                                    passwordVariable: "CLOUDSMITH_TOKEN"
+                                ),
+                            ]) {
+
+                                update_topology(env.version)
+                                update_project_yml(env.version, env.CLOUDSMITH_TOKEN)
+                                sh '''
+                                    cd "${WORKSPACE}/lsm-srlinux"
+                                    sudo docker login -u "${CLOUDSMITH_USERNAME}" -p "${CLOUDSMITH_TOKEN}" containers.inmanta.com
+                                    # Ensure we have the latest version of the srlinux image
+                                    sudo docker pull ghcr.io/nokia/srlinux:latest
+                                    sudo clab deploy -t containerlab/topology.yml --reconfigure
+                                    ci/run_test.sh ${version}
+                                '''
+                            }
                         }
                     }
                 }
@@ -143,7 +160,7 @@ pipeline {
             post {
                 always {
                     script{
-                        sh(script: get_tear_down_script(remove_logs: false))
+                        sh(script: get_tear_down_script(true))
                     }
                     archiveArtifacts artifacts: '${env.WORKSPACE}/lsm-srlinux/*.log'
                 }
@@ -156,3 +173,4 @@ pipeline {
         }
     }
 }
+

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # wait for inmanta dashboard to be up
 echo "Waiting until the Inmanta server has finished starting"
 until $(curl --output /dev/null --silent --head --fail http://172.30.0.3:8888/console/); do
@@ -26,7 +27,7 @@ inmanta-cli --host 172.30.0.3 project create -n test
 inmanta-cli --host 172.30.0.3 environment create -p test -n lsm-srlinux --save
 
 # Add project directory to environment directory on server
-sudo docker exec -ti -w /code clab-srlinux-inmanta-server  /code/setup.sh
+sudo docker exec -w /code clab-srlinux-inmanta-server  /code/setup.sh
 
 export INMANTA_HOST="172.30.0.3"
 export INMANTA_PORT="8888"

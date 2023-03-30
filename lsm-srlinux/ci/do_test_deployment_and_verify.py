@@ -1,5 +1,5 @@
-import os
 import asyncio
+import subprocess
 
 from inmanta.protocol.endpoints import Client
 from inmanta.config import Config
@@ -10,23 +10,30 @@ from inmanta_lsm import methods
 
 
 async def main():
-    # Process input parameters
-    server_host = os.environ.get("INMANTA_HOST")
-    if not server_host:
-        raise Exception("Environment variable INMANTA_HOST not set.")
-    server_port = os.environ.get("INMANTA_PORT")
-    if not server_port:
-        raise Exception("Environment variable INMANTA_PORT not set.")
-    environment_id = os.environ["INMANTA_ENVIRONMENT_ID"]
-    if not environment_id:
-        raise Exception("Environment variable INMANTA_ENVIRONMENT_ID not set.")
-
     # Create client
-    Config.set("client_rest_transport", "host", server_host)
-    Config.set("client_rest_transport", "port", server_port)
+    Config.set("client_rest_transport", "host", "172.30.0.3")
+    Config.set("client_rest_transport", "port", "8888")
     client = Client(name="client")
 
-    service_entity_name = "interface-ip-assignment"
+    async def is_inmanta_server_up() -> bool:
+        result = await client.get_server_status()
+        return result.code == 200
+
+    print("Waiting until Inmanta server has finished starting...")
+    await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
+
+    print("Creating project env-test")
+    result = await client.create_project("env-test")
+    assert result.code == 200
+    project_id = result.result["project"]["id"]
+
+    print("Creating environment dev in project env-test")
+    result = await client.create_environment(project_id=project_id, name="dev")
+    assert result.code == 200
+    environment_id = result.result["environment"]["id"]
+
+    # Add project directory to environment directory on server
+    subprocess.check_call("sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh", shell=True)
 
     # Export service definition
     print("Exporting service definition")
@@ -44,6 +51,7 @@ async def main():
 
     # Create service instance
     print("Creating service instance")
+    service_entity_name = "interface-ip-assignment"
     result = await client.lsm_services_create(
         tid=environment_id,
         service_entity=service_entity_name,

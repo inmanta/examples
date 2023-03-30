@@ -144,7 +144,7 @@ pipeline {
                                     source "venv/bin/activate"
                                     pip install -U pip
                                     if [ -n "${version}" ]; then
-                                        pip install --pre inmanta-service-orchestrator=="${version}" pytest-inmanta-extension"
+                                        pip install --pre inmanta-service-orchestrator=="${version}" pytest-inmanta-extension
                                     else
                                         pip install inmanta-service-orchestrator pytest-inmanta-extensions
                                     fi

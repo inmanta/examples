@@ -105,6 +105,8 @@ pipeline {
                         ]) {
                             sh '''
                                 cd "${WORKSPACE}/lsm-srlinux/containerlab"
+                                # The `clab destroy` command expects the com.inmanta.jwe and
+                                # com.inmanta.license files to exist in disk.
                                 mkdir resources
                                 cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
                                 cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license

@@ -19,7 +19,7 @@ async def main():
         result = await client.get_server_status()
         return result.code == 200
 
-    print("Waiting until Inmanta server has finished starting...")
+    print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
 
     print("Creating project env-test")
@@ -46,7 +46,7 @@ async def main():
         assert result.code == 200
         return len(result.result["data"]) > 0
 
-    print("Waiting until service definition is available in catalog...")
+    print("Waiting until the service definition is available in the catalog...")
     await retry_limited(is_service_definition_available, timeout=600, interval=1)
 
     # Create service instance
@@ -75,7 +75,7 @@ async def main():
         assert result.code == 200
         return result.result["data"]["state"] == "up"
 
-    print("Waiting until service instance goes into the up state...")
+    print("Waiting until the service instance goes into the up state...")
     await retry_limited(is_service_instance_up, timeout=600, interval=1)
 
 

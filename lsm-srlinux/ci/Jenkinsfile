@@ -15,7 +15,7 @@ def update_project_yml(String pythonVersion, String token) {
 
 
 /**
-* Updates the topology.yml so that the lab environement 
+* Updates the topology.yml so that the lab environment
 * uses the same version as the specified Python package of the ISO product
 *
 * @param pythonVersion: The python version of the inmanta-service-orchestrator package of the orchestrator we are running against.
@@ -81,6 +81,10 @@ pipeline {
         string(name: 'version', defaultValue: '6', description: 'Run the lsm quickstart against the specified version of the Python package of the ISO product.\nIf left empty it will run against iso6.\nThe version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1 or 6')
     }
 
+    environment {
+        PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
+    }
+
     triggers {
         cron(BRANCH_NAME == "master" ? "H H(2-5) * * *": "")
     }
@@ -90,86 +94,70 @@ pipeline {
     }
 
     stages {
-        stage('Build And Test') {
-
-            environment {
-                PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
-            }
-
-            stages {
-                stage('Cleanup') {
-                    steps {
-                        withCredentials([
-                            file(credentialsId: 'JENKINS_JWE', variable: 'ENTITLEMENTS_FILE'),
-                            file(credentialsId: 'JENKINS_LICENSE', variable: 'LICENSE_KEY_FILE'),
-                        ]) {
-                            sh '''
-                                cd "${WORKSPACE}/lsm-srlinux/containerlab"
-                                # The `clab destroy` command expects the com.inmanta.jwe and
-                                # com.inmanta.license files to exist in disk.
-                                mkdir resources
-                                cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
-                                cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license
-                                # The inmanta container is running as a different user then Jenkins
-                                chmod 444 resources/com.inmanta.jwe resources/com.inmanta.license
-                            '''
-                        }
-                        script {
-                            // Cleanup before starting
-                            sh(script: get_tear_down_script())
-                        }
-                    }
+        stage('Cleanup') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'JENKINS_JWE', variable: 'ENTITLEMENTS_FILE'),
+                    file(credentialsId: 'JENKINS_LICENSE', variable: 'LICENSE_KEY_FILE'),
+                ]) {
+                    sh '''
+                        cd "${WORKSPACE}/lsm-srlinux/containerlab"
+                        # The `clab destroy` command expects the com.inmanta.jwe and
+                        # com.inmanta.license files to exist in disk.
+                        mkdir resources
+                        cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
+                        cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license
+                        # The inmanta container is running as a different user then Jenkins
+                        chmod 444 resources/com.inmanta.jwe resources/com.inmanta.license
+                    '''
                 }
-                stage('Build') {
-                    options {
-                        timeout(time: 1, unit: 'HOURS')
-                    }
-                    steps {
-                        script {
-                            withCredentials([
-                                // Credentials to access the containers repository on Cloudsmith.
-                                usernamePassword(
-                                    credentialsId: "cloudsmith-docker-token",
-                                    usernameVariable: "CLOUDSMITH_DOCKER_USERNAME",
-                                    passwordVariable: "CLOUDSMITH_DOCKER_TOKEN"
-                                ),
-                                // Credentials to access the inmanta-service-orchestrator-* repositories on Cloudsmith.
-                                string(
-                                    credentialsId: "cloudsmith-token",
-                                    variable: "CLOUDSMITH_PKGS_TOKEN",
-                                ),
-                            ]) {
-
-                                update_topology(env.version)
-                                update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
-                                sh '''
-                                    cd "${WORKSPACE}/lsm-srlinux"
-                                    echo "${CLOUDSMITH_DOCKER_TOKEN}" | sudo docker login -u "${CLOUDSMITH_DOCKER_USERNAME}" --password-stdin containers.inmanta.com
-                                    # Ensure we have the latest version of the srlinux image
-                                    sudo docker pull ghcr.io/nokia/srlinux:latest
-
-                                    # Create python environment
-                                    python3 -m venv venv
-                                    source "venv/bin/activate"
-                                    pip install -U pip
-                                    if [ -n "${version}" ]; then
-                                        pip install --pre pytest-inmanta-extensions "inmanta-service-orchestrator==${version}"
-                                    else
-                                        pip install pytest-inmanta-extensions inmanta-service-orchestrator
-                                    fi
-
-                                    sudo clab deploy -t containerlab/topology.yml --reconfigure
-                                    python -u ci/do_test_deployment_and_verify.py
-                                '''
-                            }
-                        }
-                    }
+                script {
+                    // Cleanup before starting
+                    sh(script: get_tear_down_script())
                 }
             }
-            post {
-                always {
-                    script{
-                        sh(script: get_tear_down_script())
+        }
+        stage('Build') {
+            options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            steps {
+                script {
+                    withCredentials([
+                        // Credentials to access the containers repository on Cloudsmith.
+                        usernamePassword(
+                            credentialsId: "cloudsmith-docker-token",
+                            usernameVariable: "CLOUDSMITH_DOCKER_USERNAME",
+                            passwordVariable: "CLOUDSMITH_DOCKER_TOKEN"
+                        ),
+                        // Credentials to access the inmanta-service-orchestrator-* repositories on Cloudsmith.
+                        string(
+                            credentialsId: "cloudsmith-token",
+                            variable: "CLOUDSMITH_PKGS_TOKEN",
+                        ),
+                    ]) {
+
+                        update_topology(env.version)
+                        update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
+                        sh '''
+                            cd "${WORKSPACE}/lsm-srlinux"
+                            echo "${CLOUDSMITH_DOCKER_TOKEN}" | sudo docker login -u "${CLOUDSMITH_DOCKER_USERNAME}" --password-stdin containers.inmanta.com
+                            # Ensure we have the latest version of the srlinux image
+                            sudo docker pull ghcr.io/nokia/srlinux:latest
+
+                            # Create python environment
+                            python3 -m venv venv
+                            source "venv/bin/activate"
+                            pip install -U pip
+                            if [ -n "${version}" ]; then
+                                pip install --pre pytest-inmanta-extensions "inmanta-service-orchestrator==${version}"
+                            else
+                                pip install pytest-inmanta-extensions inmanta-service-orchestrator
+                            fi
+
+                            sudo clab deploy -t containerlab/topology.yml --reconfigure
+                            python -u ci/do_test_deployment_and_verify.py
+                        '''
                     }
                 }
             }
@@ -177,6 +165,9 @@ pipeline {
     }
     post {
         always {
+            script{
+                sh(script: get_tear_down_script())
+            }
             deleteDir()
         }
     }

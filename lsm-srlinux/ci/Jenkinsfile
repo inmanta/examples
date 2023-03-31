@@ -138,7 +138,7 @@ pipeline {
                             variable: "CLOUDSMITH_PKGS_TOKEN",
                         ),
                     ]) {
-                        # update_topology validates whether the given version has a valid format
+                        // update_topology validates whether the given version has a valid format
                         update_topology(env.version)
                         update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
                         sh '''

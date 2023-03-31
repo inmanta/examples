@@ -133,7 +133,6 @@ pipeline {
                             variable: "CLOUDSMITH_PKGS_TOKEN",
                         ),
                     ]) {
-
                         update_topology(env.version)
                         update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
                         sh '''
@@ -146,11 +145,7 @@ pipeline {
                             python3 -m venv venv
                             source "venv/bin/activate"
                             pip install -U pip
-                            if [ -n "${version}" ]; then
-                                pip install --pre "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator==${version}"
-                            else
-                                pip install "inmanta-core[pytest-inmanta-extensions] inmanta-service-orchestrator
-                            fi
+                            pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator==${version}"
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             python -u ci/do_test_deployment_and_verify.py

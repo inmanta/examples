@@ -46,10 +46,10 @@ def convert_iso_version_to_docker_tag(String isoProductVersion) {
         def major = matcher.group(1)
         def minor = matcher.group(2)
         def patch = matcher.group(3)
-        def rc = matcher.group(4)
+        def isRcVersion = matcher.group(4)
         def formattedVersion = "${major}.${minor}.${patch}"
-        if (rc) {
-            formattedVersion += "-${rc}"
+        if (isRcVersion) {
+            formattedVersion += "-rc"
         }
         return formattedVersion
     } else {

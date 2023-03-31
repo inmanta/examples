@@ -2,11 +2,11 @@
 * Set the repo URL in the project.yml, that references the private Python package repository, correctly based on the 
 * given iso version and token.
 * 
-* @param pythonVersion: The python version of the inmanta-service-orchestrator package of the orchestrator we are running against.
+* @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 * @param token: The token to connect to the private Python package repository for the Inmanta project.
 */
-def update_project_yml(String pythonVersion, String token) {
-    def majorVersion = pythonVersion.split('\\.')[0]
+def update_project_yml(String isoProductVersion, String token) {
+    def majorVersion = isoProductVersion.split('\\.')[0]
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName
     yamlDct['repo'][1]['url'] = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
@@ -18,10 +18,10 @@ def update_project_yml(String pythonVersion, String token) {
 * Updates the topology.yml so that the lab environment
 * uses the same version as the specified Python package of the ISO product
 *
-* @param pythonVersion: The python version of the inmanta-service-orchestrator package of the orchestrator we are running against.
+* @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 */
-def update_topology(String pythonVersion) {
-    def dockerTag = convert_python_version_to_docker_tag(pythonVersion)
+def update_topology(String isoProductVersion) {
+    def dockerTag = convert_iso_version_to_docker_tag(isoProductVersion)
     def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
     def yamlDct = readYaml file: fileName
     yamlDct['topology']['nodes']['inmanta-server']['image'] = "containers.inmanta.com/containers/service-orchestrator:${dockerTag}"
@@ -30,16 +30,18 @@ def update_topology(String pythonVersion) {
 
 
 /**
-* Convert the Python version of the inmanta-service-orchestrator package to the docker tag of the associated docker image.
+* Convert the version of the inmanta-service-orchestrator Python package to the docker tag of the associated docker image.
+*
+* @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 */
-def convert_python_version_to_docker_tag(String pythonVersion) {
-    def matcher = pythonVersion =~ /(\d+)/
+def convert_iso_version_to_docker_tag(String isoProductVersion) {
+    def matcher = isoProductVersion =~ /(\d+)/
     // Is it a version number consisting of a single number
     if (matcher.matches()) {
-        return pythonVersion
+        return isoProductVersion
     }
     // Is it a three-dotted version number
-    matcher = pythonVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
+    matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
     if (matcher.matches()) {
         def major = matcher.group(1)
         def minor = matcher.group(2)
@@ -51,7 +53,7 @@ def convert_python_version_to_docker_tag(String pythonVersion) {
         }
         return formattedVersion
     } else {
-        error("Invalid version format: ${pythonVersion}")
+        error("Invalid version format: ${isoProductVersion}")
     }
 }
 

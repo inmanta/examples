@@ -152,7 +152,7 @@ pipeline {
                             pip install -U pip
                             if [[ ${version} == *dev ]]; then
                                 major_version=${version::-3}
-                                pip install --pre "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator~=${major_version}.0"
+                                pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator~=${major_version}.0.dev"
                             else
                                 pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator==${version}"
                             fi

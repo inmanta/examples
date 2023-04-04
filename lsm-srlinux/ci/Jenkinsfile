@@ -86,7 +86,7 @@ pipeline {
     agent any
     
     parameters {
-        string(name: 'version', defaultValue: '6dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1, 6 or 6dev.')
+        string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1, 6 or 6dev.')
     }
 
     environment {
@@ -94,7 +94,7 @@ pipeline {
     }
 
     triggers {
-        parameterizedCron(BRANCH_NAME == 'master' ? "H H(2-5) * * * %version=6dev" : "")
+        parameterizedCron(BRANCH_NAME == 'master' ? "H H(2-5) * * * %version=7dev" : "")
     }
 
     options {

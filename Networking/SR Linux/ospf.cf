@@ -11,6 +11,7 @@ import yang
 
 
 
+
 ######## Leaf 1 ########
 
 leaf1 = nokia_srlinux::GnmiDevice(
@@ -49,46 +50,28 @@ leaf1_eth1_subint_address = srsubinterface::Ipv4(
 # |network instance| #
 
 leaf1_net_instance = nokia_srlinux::NetworkInstance(
-    device = leaf1,
-    name = "default",
+    device=leaf1,
+    name="default",
+    interface=[
+        nokia_srlinux::network_instance::Interface(name="ethernet-1/1.0"),
+    ],
+    protocols=nokia_srlinux::network_instance::Protocols(
+        ospf=nokia_srlinux::network_instance::protocols::Ospf(
+            instance=nokia_srlinux::network_instance::protocols::ospf::Instance(
+                name="1",
+                router_id="10.20.30.210",
+                admin_state="enable",
+                version="ospf-v2",
+                area=nokia_srlinux::network_instance::protocols::ospf::instance::Area(
+                    area_id="0.0.0.0",
+                    interface=nokia_srlinux::network_instance::protocols::ospf::instance::area::Interface(
+                        interface_name = "ethernet-1/1.0",
+                    ),
+                ),
+            ),
+        ),
+    ),
 )
-
-leaf1_net_instance_int1 = srnetinstance::Interface(
-    parent_network_instance = leaf1_net_instance,
-    name = "ethernet-1/1.0"
-)
-
-# |OSPF| #
-
-leaf1_protocols = srnetinstance::Protocols(
-    parent_network_instance = leaf1_net_instance,
-    ospf = leaf1_ospf
-)
-
-leaf1_ospf_instance = srospf::Instance(
-        parent_ospf = leaf1_ospf,
-        name = "1",
-        router_id = "10.20.30.210",
-        admin_state = "enable",
-        version = "ospf-v2"
-)
-
-leaf1_ospf = srprotocols::Ospf(
-    parent_protocols = leaf1_protocols,
-    instance = leaf1_ospf_instance
-)
-
-leaf1_ospf_area = srospfinstance::Area(
-    parent_instance = leaf1_ospf_instance,
-    area_id = "0.0.0.0",
-)
-
-leaf1_ospf_int1 = srospfarea::Interface(
-    parent_area = leaf1_ospf_area,
-    interface_name = "ethernet-1/1.0",
-)
-
-########################
 
 
 ######## Leaf 2 ########

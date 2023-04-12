@@ -71,14 +71,16 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
 
 /**
 * Returns the script that tears down the lab environment.
+*
+* @param strict: If false, allow the cleanup to fail, e.g. because the containers do not yet exist.
 */
-def get_tear_down_script() {
-   return '''
-       cd "${WORKSPACE}/lsm-srlinux"
-       sudo clab destroy --cleanup -t containerlab/topology.yml
+def get_tear_down_script(boolean strict = true) {
+   return """
+       cd '${env.WORKSPACE}/lsm-srlinux'
+       sudo clab destroy --cleanup -t containerlab/topology.yml ${strict ? '' : '| true'}
        # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
        sudo docker network rm -f inmanta_mgmt
-   ''' 
+   """
 }
 
 
@@ -121,7 +123,7 @@ pipeline {
                 }
                 script {
                     // Cleanup before starting
-                    sh(script: get_tear_down_script())
+                    sh(script: get_tear_down_script(false))
                 }
             }
         }

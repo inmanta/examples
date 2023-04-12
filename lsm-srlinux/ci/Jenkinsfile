@@ -77,7 +77,7 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
 def get_tear_down_script(boolean strict = true) {
    return """
        cd '${env.WORKSPACE}/lsm-srlinux'
-       sudo clab destroy --cleanup -t containerlab/topology.yml ${strict ? '' : '| true'}
+       sudo clab destroy --cleanup -t containerlab/topology.yml ${strict ? '' : '|| true'}
        # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
        sudo docker network rm -f inmanta_mgmt
    """

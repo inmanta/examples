@@ -15,27 +15,27 @@ import yang
 ######## Leaf 1 ########
 
 leaf1 = nokia_srlinux::GnmiDevice(
-    auto_agent = true,
-    name = "leaf1",
-    mgmt_ip = "172.30.0.210",
-    yang_credentials = yang::Credentials(
-        username = "admin",
-        password = "NokiaSrl1!"
+    auto_agent=true,
+    name="leaf1",
+    mgmt_ip="172.30.0.210",
+    yang_credentials=yang::Credentials(
+        username="admin",
+        password="NokiaSrl1!"
     ),
 )
 
 # |interface configuration| #
 
 leaf1_eth1 = nokia_srlinux::Interface(
-    device = leaf1,
-    name = "ethernet-1/1",
-    mtu = 9000,
-    subinterface = [
+    device=leaf1,
+    name="ethernet-1/1",
+    mtu=9000,
+    subinterface=[
         srinterface::Subinterface(
-            x_index = 0,
-            ipv4 = srsubinterface::Ipv4(
-                address = sripv4::Address(
-                    ip_prefix = "10.10.11.2/30"
+            x_index=0,
+            ipv4=srsubinterface::Ipv4(
+                address=sripv4::Address(
+                    ip_prefix="10.10.11.2/30",
                 ),
             ),
         ),
@@ -48,102 +48,86 @@ leaf1_net_instance = nokia_srlinux::NetworkInstance(
     device=leaf1,
     name="default",
     interface=[
-        nokia_srlinux::network_instance::Interface(name="ethernet-1/1.0"),
+        srnetinstance::Interface(name="ethernet-1/1.0"),
     ],
-    protocols=nokia_srlinux::network_instance::Protocols(
-        ospf=nokia_srlinux::network_instance::protocols::Ospf(
-            instance=nokia_srlinux::network_instance::protocols::ospf::Instance(
-                name="1",
-                router_id="10.20.30.210",
-                admin_state="enable",
-                version="ospf-v2",
-                area=nokia_srlinux::network_instance::protocols::ospf::instance::Area(
-                    area_id="0.0.0.0",
-                    interface=nokia_srlinux::network_instance::protocols::ospf::instance::area::Interface(
-                        interface_name = "ethernet-1/1.0",
-                    ),
-                ),
-            ),
+    protocols=srnetinstance::Protocols(),
+)
+
+# |OSPF| #
+
+leaf1_net_instance.protocols.ospf = srprotocols::Ospf(
+    instance=srospf::Instance(
+        name="1",
+        router_id="10.20.30.210",
+        admin_state="enable",
+        version="ospf-v2",
+        area=srospfinstance::Area(
+            area_id="0.0.0.0",
+            interface=[
+                srospfarea::Interface(interface_name="ethernet-1/1.0"),
+            ]
         ),
     ),
 )
 
+########################
 
 ######## Leaf 2 ########
 
 leaf2 = nokia_srlinux::GnmiDevice(
-    auto_agent = true,
-    name = "leaf2",
-    mgmt_ip = "172.30.0.220",
-    yang_credentials = yang::Credentials(
-        username = "admin",
-        password = "NokiaSrl1!"
-    )
+    auto_agent=true,
+    name="leaf2",
+    mgmt_ip="172.30.0.220",
+    yang_credentials=yang::Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
 )
 
 # |interface configuration| #
 
 leaf2_eth1 = nokia_srlinux::Interface(
-    device = leaf2,
-    name = "ethernet-1/1",
-    mtu = 9000,
-    subinterface = [leaf2_eth1_subint]
-)
-
-leaf2_eth1_subint = srinterface::Subinterface(
-    parent_interface = leaf2_eth1,
-    x_index = 0,
-    ipv4 = leaf2_eth1_subint_address
-)
-
-leaf2_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = leaf2_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = leaf2_eth1_subint_address,
-        ip_prefix = "10.10.21.2/30"
-    )
+    device=leaf2,
+    name="ethernet-1/1",
+    mtu=9000,
+    subinterface=[
+        srinterface::Subinterface(
+            x_index=0,
+            ipv4=srsubinterface::Ipv4(
+                address=sripv4::Address(
+                    ip_prefix="10.10.21.2/30",
+                ),
+            ),
+        ),
+    ],
 )
 
 # |network instance| #
 
 leaf2_net_instance = nokia_srlinux::NetworkInstance(
-    device = leaf2,
-    name = "default",
-)
-
-leaf2_net_instance_int1 = srnetinstance::Interface(
-    parent_network_instance = leaf2_net_instance,
-    name = "ethernet-1/1.0"
+    device=leaf2,
+    name="default",
+    interface=[
+        srnetinstance::Interface(name="ethernet-1/1.0"),
+    ],
+    protocols=srnetinstance::Protocols(),
 )
 
 # |OSPF| #
 
-leaf2_protocols = srnetinstance::Protocols(
-    parent_network_instance = leaf2_net_instance,
-    ospf = leaf2_ospf
-)
-
-leaf2_ospf_instance = srospf::Instance(
-        parent_ospf = leaf2_ospf,
-        name = "1",
-        router_id = "10.20.30.220",
-        admin_state = "enable",
-        version = "ospf-v2"
-)
-
-leaf2_ospf = srprotocols::Ospf(
-    parent_protocols = leaf2_protocols,
-    instance = leaf2_ospf_instance
-)
-
-leaf2_ospf_area = srospfinstance::Area(
-    parent_instance = leaf2_ospf_instance,
-    area_id = "0.0.0.0",
-)
-
-leaf2_ospf_int1 = srospfarea::Interface(
-    parent_area = leaf2_ospf_area,
-    interface_name = "ethernet-1/1.0",
+leaf1_net_instance.protocols.ospf = srprotocols::Ospf(
+    instance=srospf::Instance(
+        name="1",
+        router_id="10.20.30.220",
+        admin_state="enable",
+        version="ospf-v2",
+        area=srospfinstance::Area(
+            area_id="0.0.0.0",
+            interface=[
+                srospfarea::Interface(interface_name="ethernet-1/1.0"),
+            ]
+        ),
+    ),
 )
 
 
@@ -154,13 +138,13 @@ leaf2_ospf_int1 = srospfarea::Interface(
 ######## Spine ########
 
 spine = nokia_srlinux::GnmiDevice(
-    auto_agent = true,
-    name = "spine",
-    mgmt_ip = "172.30.0.100",
-    yang_credentials = yang::Credentials(
-        username = "admin",
-        password = "NokiaSrl1!"
-    )
+    auto_agent=true,
+    name="spine",
+    mgmt_ip="172.30.0.100",
+    yang_credentials=yang::Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
 )
 
 # |interface configuration| #
@@ -168,99 +152,66 @@ spine = nokia_srlinux::GnmiDevice(
     # |ethernet 1| #
 
 spine_eth1 = nokia_srlinux::Interface(
-    device = spine,
-    name = "ethernet-1/1",
-    mtu = 9000,
-    subinterface = [spine_eth1_subint]
-)
-
-spine_eth1_subint = srinterface::Subinterface(
-    parent_interface = spine_eth1,
-    x_index = 0,
-    ipv4 = spine_eth1_subint_address
-)
-
-spine_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = spine_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = spine_eth1_subint_address,
-        ip_prefix = "10.10.11.1/30"
-    )
+    device=spine,
+    name="ethernet-1/1",
+    mtu=9000,
+    subinterface=[
+        srinterface::Subinterface(
+            x_index=0,
+            ipv4=srsubinterface::Ipv4(
+                address=sripv4::Address(ip_prefix="10.10.11.1/30"),
+            ),
+        ),
+    ],
 )
 
     # |ethernet 2| #
 
 spine_eth2 = nokia_srlinux::Interface(
-    device = spine,
-    name = "ethernet-1/2",
-    mtu = 9000,
-    subinterface = [spine_eth2_subint]
+    device=spine,
+    name="ethernet-1/2",
+    mtu=9000,
+    subinterface=[
+        srinterface::Subinterface(
+            x_index=0,
+            ipv4=srsubinterface::Ipv4(
+                address=sripv4::Address(ip_prefix="10.10.21.1/30"),
+            ),
+        ),
+    ],
 )
 
-spine_eth2_subint = srinterface::Subinterface(
-    parent_interface = spine_eth2,
-    x_index = 0,
-    ipv4 = spine_eth2_subint_address
-)
-
-spine_eth2_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = spine_eth2_subint,
-    address = sripv4::Address(
-        parent_ipv4 = spine_eth2_subint_address,
-        ip_prefix = "10.10.21.1/30"
-    )
-)
 
 # |network instance| #
 
 spine_net_instance = nokia_srlinux::NetworkInstance(
-    device = spine,
-    name = "default",
+    device=spine,
+    name="default",
+    interface=[
+        srnetinstance::Interface(name="ethernet-1/1.0"),
+        srnetinstance::Interface(name="ethernet-1/2.0"),
+    ],
+    protocols=srnetinstance::Protocols(),
 )
 
-spine_net_instance_int1 = srnetinstance::Interface(
-    parent_network_instance = spine_net_instance,
-    name = "ethernet-1/1.0"
-)
 
-spine_net_instance_int2 = srnetinstance::Interface(
-    parent_network_instance = spine_net_instance,
-    name = "ethernet-1/2.0"
-)
 
 # |OSPF| #
 
-spine_protocols = srnetinstance::Protocols(
-    parent_network_instance = spine_net_instance,
-    ospf = spine_ospf
-)
-
-spine_ospf_instance = srospf::Instance(
-        parent_ospf = spine_ospf,
-        name = "1",
-        router_id = "10.20.30.100",
-        admin_state = "enable",
-        version = "ospf-v2"
-)
-
-spine_ospf = srprotocols::Ospf(
-    parent_protocols = spine_protocols,
-    instance = spine_ospf_instance
-)
-
-spine_ospf_area = srospfinstance::Area(
-    parent_instance = spine_ospf_instance,
-    area_id = "0.0.0.0",
-)
-
-spine_ospf_int1 = srospfarea::Interface(
-    parent_area = spine_ospf_area,
-    interface_name = "ethernet-1/1.0",
-)
-
-spine_ospf_int2 = srospfarea::Interface(
-    parent_area = spine_ospf_area,
-    interface_name = "ethernet-1/2.0",
+spine_net_instance.protocols.ospf = srprotocols::Ospf(
+    instance=srospf::Instance(
+        name="1",
+        router_id="10.20.30.100",
+        admin_state="enable",
+        version="ospf-v2",
+        area=srospfinstance::Area(
+            area_id="0.0.0.0",
+            interface=[
+                srospfarea::Interface(interface_name = "ethernet-1/1.0"),
+                srospfarea::Interface(interface_name = "ethernet-1/2.0"),
+            ],
+        )
+    ),
 )
 
 ########################

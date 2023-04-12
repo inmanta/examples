@@ -21,7 +21,7 @@ leaf1 = nokia_srlinux::GnmiDevice(
     yang_credentials = yang::Credentials(
         username = "admin",
         password = "NokiaSrl1!"
-    )
+    ),
 )
 
 # |interface configuration| #
@@ -30,21 +30,16 @@ leaf1_eth1 = nokia_srlinux::Interface(
     device = leaf1,
     name = "ethernet-1/1",
     mtu = 9000,
-    subinterface = [leaf1_eth1_subint]
-)
-
-leaf1_eth1_subint = srinterface::Subinterface(
-    parent_interface = leaf1_eth1,
-    x_index = 0,
-    ipv4 = leaf1_eth1_subint_address
-)
-
-leaf1_eth1_subint_address = srsubinterface::Ipv4(
-    parent_subinterface = leaf1_eth1_subint,
-    address = sripv4::Address(
-        parent_ipv4 = leaf1_eth1_subint_address,
-        ip_prefix = "10.10.11.2/30"
-    )
+    subinterface = [
+        srinterface::Subinterface(
+            x_index = 0,
+            ipv4 = srsubinterface::Ipv4(
+                address = sripv4::Address(
+                    ip_prefix = "10.10.11.2/30"
+                ),
+            ),
+        ),
+    ],
 )
 
 # |network instance| #

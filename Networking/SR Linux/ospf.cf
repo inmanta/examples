@@ -115,7 +115,7 @@ leaf2_net_instance = nokia_srlinux::NetworkInstance(
 
 # |OSPF| #
 
-leaf1_net_instance.protocols.ospf = srprotocols::Ospf(
+leaf2_net_instance.protocols.ospf = srprotocols::Ospf(
     instance=srospf::Instance(
         name="1",
         router_id="10.20.30.220",

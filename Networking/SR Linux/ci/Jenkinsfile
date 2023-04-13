@@ -65,7 +65,7 @@ pipeline {
                         sh '''
                             # Cleanup before starting
                             cd "Networking/SR Linux"
-                            sudo clab destroy --cleanup -t containerlab/topology.yml
+                            sudo clab destroy --cleanup -t containerlab/topology.yml || true
                             # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
                             sudo docker network rm -f inmanta_mgmt
                             rm -f *.log

@@ -31,35 +31,35 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
 
     device = srlinux::GnmiDevice(
             auto_agent = true,
-            name = self.router_name,
-            mgmt_ip = self.router_ip,
-            yang_credentials = yang::Credentials(
-                username = "admin",
-                password = "NokiaSrl1!"
+            name=self.router_name,
+            mgmt_ip=self.router_ip,
+            yang_credentials=yang::Credentials(
+                username="admin",
+                password="NokiaSrl1!"
             )
         )
 
     resource = srlinux::Resource(
         device=device,
-        identifier = self.instance_id
+        identifier=self.instance_id
     )
 
     self.resources += resource.yang_resource
 
     interface = srlinux::Interface(
-        device = device,
-        name = self.interface_name,
-        resource = resource,
-        mtu = 9000,
-        subinterface = srinterface::Subinterface(
-             x_index = 0,
+        device=device,
+        name=self.interface_name,
+        resource=resource,
+        mtu=9000,
+        subinterface=srinterface::Subinterface(
+             x_index=0,
              ipv4=srsubinterface::Ipv4(
-                 address = sripv4::Address(
-                     ip_prefix = self.address
+                 address=sripv4::Address(
+                     ip_prefix=self.address,
                   ),
              ),
-         ),           
-         comanaged = false
+         ),
+         comanaged=false,
     )
 
 end

@@ -101,11 +101,14 @@ pipeline {
 
     options {
         disableConcurrentBuilds()
+        skipDefaultCheckout()
     }
 
     stages {
         stage('Cleanup') {
             steps {
+                deleteDir()
+                checkout scm
                 withCredentials([
                     file(credentialsId: 'JENKINS_JWE', variable: 'ENTITLEMENTS_FILE'),
                     file(credentialsId: 'JENKINS_LICENSE', variable: 'LICENSE_KEY_FILE'),

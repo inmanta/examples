@@ -1,7 +1,7 @@
 /**
-* Set the repo URL in the project.yml, that references the private Python package repository, correctly based on the 
+* Set the repo URL in the project.yml, that references the private Python package repository, correctly based on the
 * given iso version and token.
-* 
+*
 * @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 * @param token: The token to connect to the private Python package repository for the Inmanta project.
 */
@@ -15,7 +15,7 @@ def update_project_yml(String isoProductVersion, String token) {
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName
-    yamlDct['repo'][1]['url'] = pythonPackageRepoUrl
+    yamlDct['repo'][0]['url'] = pythonPackageRepoUrl
     writeYaml file: fileName, data: yamlDct, overwrite: true
 }
 
@@ -86,7 +86,7 @@ def get_tear_down_script(boolean strict = true) {
 
 pipeline {
     agent any
-    
+
     parameters {
         string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1, 6 or 6dev.')
     }

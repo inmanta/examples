@@ -74,8 +74,6 @@ modulepath: libs
 downloadpath: libs
 repo:
 - type: package
-    url: https://packages.inmanta.com/public/quickstart/python/simple/
-- type: package
     url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 install_mode: release
 requires:
@@ -174,7 +172,7 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
                      ip_prefix = self.address
                   ),
              ),
-         ),           
+         ),
          comanaged = false
     )
 
@@ -298,7 +296,7 @@ changes.
 Check the interface configuration via the following command.
 
 ``` {.}
-A:spine# list interface 
+A:spine# list interface
     interface ethernet-1/1 {
     }
     interface ethernet-1/2 {
@@ -312,7 +310,7 @@ A:spine# list interface
             ipv6 {
                 dhcp-client {
                 }
-            } 
+            }
         }
     }
 ```
@@ -338,7 +336,7 @@ different states of its lifecycle: start -\> acknowledged -\> creating
 successfully. Verify the configuration on the SR Linux \"spine\" router.
 
 ``` {.}
-A:spine# list interface 
+A:spine# list interface
     interface ethernet-1/1 {
         subinterface 0 {
             ipv4 {

@@ -8,8 +8,6 @@ modulepath: libs
 downloadpath: libs
 repo:
   - type: package
-    url: https://packages.inmanta.com/public/quickstart/python/simple/
-  - type: package
     url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 install_mode: release
 requires:

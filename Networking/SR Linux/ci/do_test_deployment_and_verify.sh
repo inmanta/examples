@@ -24,28 +24,32 @@ inmanta -vvvv project install
 inmanta-cli --host 172.30.0.3 project create -n test
 inmanta-cli --host 172.30.0.3 environment create -p test -n SR_Linux --save
 
+function export_and_assert_successful_deploy() {
+   local cf_file=$1
+   local exported_version=$2
+   inmanta -vvv export -f ${cf_file}
+
+   # Wait until deployment finishes
+   while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
+
+   # Verify outcome of deployment
+   list_version_output=$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux)
+   if [ -z "$(echo "${list_version_output}" |grep '^|' |cut -d '|' -f 3,8 |grep "${exported_version}" |grep -i success)" ]; then
+      echo "${cf_file} was not deployed successfully"
+      echo ""
+      echo "${list_version_output}"
+      exit 1
+   fi
+}
+
 # test main
 inmanta -vvv export -f main.cf
 
 # test interfaces
-inmanta -vvv export -f interfaces.cf
-
-while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
-
-if [ -z "$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux |grep '^|' |cut -d '|' -f 3,8 |grep '2' |grep -i success)" ]; then
-   echo "interfaces.cf was not deployed successfully"
-   exit 1
-fi
+export_and_assert_successful_deploy "interfaces.cf" 2
 
 # test ospf
-inmanta -vvv export -f ospf.cf
-
-while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
-
-if [ -z "$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux |grep '^|' |cut -d '|' -f 3,8 |grep '3' |grep -i success)" ]; then
-   echo "ospf.cf was not deployed successfully"
-   exit 1
-fi
+export_and_assert_successful_deploy "ospf.cf" 3
 
 # fetch logs
 sudo docker logs clab-srlinux-inmanta-server >server.log

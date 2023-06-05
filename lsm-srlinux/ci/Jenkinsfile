@@ -88,7 +88,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1, 6 or 6dev.')
+        string(name: 'version', defaultValue: '7', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1rc20230217144359, 6.1.1rc, 6.1.1, 6 or 6dev.')
     }
 
     environment {
@@ -157,7 +157,7 @@ pipeline {
                             pip install -U pip
                             if [[ ${version} == *dev ]]; then
                                 major_version=${version::-3}
-                                pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator~=${major_version}.0.dev"
+                                pip install --pre "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator~=${major_version}.0.dev"
                             else
                                 pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator==${version}"
                             fi

@@ -1,12 +1,12 @@
-import srlinux
-import srlinux::interface as srinterface
-import srlinux::interface::subinterface as srsubinterface
-import srlinux::interface::subinterface::ipv4 as sripv4
-import srlinux::network_instance as srnetinstance
-import srlinux::network_instance::protocols as srprotocols
-import srlinux::network_instance::protocols::ospf as srospf
-import srlinux::network_instance::protocols::ospf::instance as srospfinstance
-import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import nokia_srlinux
+import nokia_srlinux::interface as srinterface
+import nokia_srlinux::interface::subinterface as srsubinterface
+import nokia_srlinux::interface::subinterface::ipv4 as sripv4
+import nokia_srlinux::network_instance as srnetinstance
+import nokia_srlinux::network_instance::protocols as srprotocols
+import nokia_srlinux::network_instance::protocols::ospf as srospf
+import nokia_srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 import ip
 
@@ -34,8 +34,8 @@ entity OspfPeerInterface:
     int id = 1
 end
 
-Router.host [1] -- srlinux::GnmiDevice
-Router.router_net_instance [1] -- srlinux::NetworkInstance 
+Router.host [1] -- nokia_srlinux::GnmiDevice
+Router.router_net_instance [1] -- nokia_srlinux::NetworkInstance 
 Router.router_ospf_area [1] -- srospfinstance::Area 
 
 Router.ospf_network [0:] -- PeerNetwork.routers [2]
@@ -46,7 +46,7 @@ Router.ospf_client_peering [0:] -- OspfPeerInterface.router [1]
 
 implementation router_config for Router:
 
-    self.host = srlinux::GnmiDevice(
+    self.host = nokia_srlinux::GnmiDevice(
         auto_agent = true,
         name = self.name, 
         mgmt_ip = self.mgmt_ip,
@@ -58,7 +58,7 @@ implementation router_config for Router:
 
     # |network instance| #
 
-    self.router_net_instance = srlinux::NetworkInstance(
+    self.router_net_instance = nokia_srlinux::NetworkInstance(
         device = self.host,
         name = "default",
         router_id = self.loopback_ip
@@ -91,7 +91,7 @@ implementation router_config for Router:
 
     # |loopback configuration| #
 
-    router_lo = srlinux::Interface(
+    router_lo = nokia_srlinux::Interface(
         device = self.host,
         name = "lo1", 
         subinterface = [router_lo_subint]
@@ -142,7 +142,7 @@ implementation ospf_peer_config for OspfPeerInterface:
     router_ip = ip::ipindex(self.network, self.id)
     netmask = ip::ipnet(self.network, "prefixlen")
     
-    router_eth = srlinux::Interface(
+    router_eth = nokia_srlinux::Interface(
         device = self.router.host,
         name = self.router_port, 
         mtu = 9000

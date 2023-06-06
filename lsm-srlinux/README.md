@@ -112,10 +112,10 @@ The full orchestration model to assign an IP-address to an interface of
 a SR Linux router, is shown below.
 
 ``` {.inmanta}
-import srlinux
-import srlinux::interface as srinterface
-import srlinux::interface::subinterface as srsubinterface
-import srlinux::interface::subinterface::ipv4 as sripv4
+import nokia_srlinux
+import nokia_srlinux::interface as srinterface
+import nokia_srlinux::interface::subinterface as srsubinterface
+import nokia_srlinux::interface::subinterface::ipv4 as sripv4
 import yang
 import lsm
 import lsm::fsm
@@ -143,7 +143,7 @@ implement InterfaceIPAssignment using parents, interfaceIPAssignment
 
 implementation interfaceIPAssignment for InterfaceIPAssignment:
 
-    device = srlinux::GnmiDevice(
+    device = nokia_srlinux::GnmiDevice(
             auto_agent = true,
             name = self.router_name,
             mgmt_ip = self.router_ip,
@@ -153,14 +153,14 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
             )
         )
 
-    resource = srlinux::Resource(
+    resource = nokia_srlinux::Resource(
         device=device,
         identifier = self.instance_id
     )
 
     self.resources += resource.yang_resource
 
-    interface = srlinux::Interface(
+    interface = nokia_srlinux::Interface(
         device = device,
         name = self.interface_name,
         resource = resource,

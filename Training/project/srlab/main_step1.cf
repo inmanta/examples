@@ -1,12 +1,12 @@
-import srlinux
-import srlinux::interface as srinterface
-import srlinux::interface::subinterface as srsubinterface
-import srlinux::interface::subinterface::ipv4 as sripv4
-import srlinux::network_instance as srnetinstance
-import srlinux::network_instance::protocols as srprotocols
-import srlinux::network_instance::protocols::ospf as srospf
-import srlinux::network_instance::protocols::ospf::instance as srospfinstance
-import srlinux::network_instance::protocols::ospf::instance::area as srospfarea
+import nokia_srlinux
+import nokia_srlinux::interface as srinterface
+import nokia_srlinux::interface::subinterface as srsubinterface
+import nokia_srlinux::interface::subinterface::ipv4 as sripv4
+import nokia_srlinux::network_instance as srnetinstance
+import nokia_srlinux::network_instance::protocols as srprotocols
+import nokia_srlinux::network_instance::protocols::ospf as srospf
+import nokia_srlinux::network_instance::protocols::ospf::instance as srospfinstance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area as srospfarea
 import yang
 
 """
@@ -17,7 +17,7 @@ The later models will do the complete configuration.
 loopback_ip = "10.1.1.1"
 mgmt_ip = "10.0.0.5"
 
-router = srlinux::GnmiDevice(
+router = nokia_srlinux::GnmiDevice(
     auto_agent = true,
     name = "R1", 
     mgmt_ip = mgmt_ip,
@@ -29,7 +29,7 @@ router = srlinux::GnmiDevice(
 
 # |network instance| #
 
-router_net_instance = srlinux::NetworkInstance(
+router_net_instance = nokia_srlinux::NetworkInstance(
     device = router,
     name = "default",
     router_id = loopback_ip
@@ -62,7 +62,7 @@ router_ospf_area = srospfinstance::Area(
 
 # |loopback configuration| #
 
-router_lo = srlinux::Interface(
+router_lo = nokia_srlinux::Interface(
     device = router,
     name = "lo1", 
     subinterface = [router_lo_subint]
@@ -89,7 +89,7 @@ router_lo_subint_address = srsubinterface::Ipv4(
 port_name1 = "ethernet-1/1"
 port_ip1 = "10.1.0.1/30"
 
-router_eth1 = srlinux::Interface(
+router_eth1 = nokia_srlinux::Interface(
     device = router,
     name = port_name1, 
     mtu = 9000
@@ -126,7 +126,7 @@ router_ospf_int1 = srospfarea::Interface(
 port_name2 = "ethernet-1/2"
 port_ip2 = "10.1.0.5/30"
 
-router_eth2 = srlinux::Interface(
+router_eth2 = nokia_srlinux::Interface(
     device = router,
     name = port_name2, 
     mtu = 9000
@@ -163,7 +163,7 @@ router_ospf_int2 = srospfarea::Interface(
 port_name3 = "ethernet-1/3"
 port_ip3 = "10.1.0.13/30"
 
-router_eth3 = srlinux::Interface(
+router_eth3 = nokia_srlinux::Interface(
     device = router,
     name = port_name3, 
     mtu = 9000
@@ -200,7 +200,7 @@ router_ospf_int3 = srospfarea::Interface(
 port_name4 = "ethernet-1/4"
 port_ip4 = "10.0.1.1/24"
 
-router_eth4 = srlinux::Interface(
+router_eth4 = nokia_srlinux::Interface(
     device = router,
     name = port_name4, 
     mtu = 9000

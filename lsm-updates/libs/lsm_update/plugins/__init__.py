@@ -73,6 +73,10 @@ def previous_lsm_attributes(
     """
     Return 'previous' attributes when applying the update if any
     of the attributes changed.
+
+    :attr assignment: the instance dictionary, as returned by lsm::all
+    :attr attributes: the attributes we want in the output
+
     """
     try:
         return _diff_attributes_based_on_assignment_state(
@@ -141,7 +145,7 @@ def embedded_entities_paired(
     try:
         old, new = _diff_attributes_based_on_assignment_state(
             parent_assignment,
-            lambda x,y:(x,y)
+            lambda x,y:(x,y) # just get old and new
         )
         old_by_key = map_by_key(old)
         new_by_key = map_by_key(new)

@@ -1,6 +1,6 @@
-# From Inventory
+# LSM Updates
 
-This simple project illustrates how process updates in LSM models.
+This simple project illustrates how process updates in LSM models for entities and embedded entities.
 
 Updates come in four basic level of complexity
 

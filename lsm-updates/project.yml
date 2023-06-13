@@ -1,0 +1,12 @@
+name: lsm_updates
+description:  A model that processes updates with cleanup
+author: Inmanta
+author_email: code@inmanta.com
+license: ASL 2.0
+copyright: 2021 Inmanta
+modulepath: libs
+downloadpath: libs
+repo:
+    - git@github.com:inmanta/{}.git
+install_mode: master
+requires:

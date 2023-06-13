@@ -1,0 +1,2 @@
+inmanta-dev-dependencies[module]
+pytest-inmanta-lsm

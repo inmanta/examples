@@ -1,0 +1,8 @@
+author: Inmanta
+author_email: code@inmanta.com
+description: 
+license: Inmanta EULA
+copyright: 2023 Inmanta
+name: lsm_update
+version: 0.0.1
+compiler_version: 2019.3

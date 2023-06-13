@@ -9,7 +9,7 @@ end
 
 File.resource [1] -- std::testing::NullResource
 
-implementation dummy for  File:
+implementation dummy for File:
    self.resource = std::testing::NullResource(name="{{path}}: {{purged}}")
 end
 

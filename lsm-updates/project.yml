@@ -7,6 +7,7 @@ copyright: 2021 Inmanta
 modulepath: libs
 downloadpath: libs
 repo:
-    - git@github.com:inmanta/{}.git
+  - type: package
+    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 install_mode: master
 requires:

@@ -31,7 +31,7 @@ For example,
  - but we will have to explicitly clean up the old one
 
 
-This requires detecting the update in the model an emitting cleanup resources. 
+This requires detecting the update in the model and emitting cleanup resources. 
 
 ## There is an update procedure that has conflicting states
 

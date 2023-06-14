@@ -2,14 +2,14 @@
 
 This simple project illustrates how to process updates to service instance in LSM for entities and embedded entities.
 
-Updates come in four basic levels of complexity
+Updates come in three basic levels of complexity
 
 1. the config naturally overwrites. 
 2. old config has to be removed explicitly
 3. there is an update procedure that has conflicting states
 
 The three types are explained below.
-This project will focus on the second type.
+This project will focus on the second level.
 
 
 ## The config naturally overwrites

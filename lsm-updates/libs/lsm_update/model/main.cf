@@ -1,0 +1,61 @@
+import lsm::fsm
+import lsm
+
+import lsm_update::api
+
+# Service defintion
+fileservice = lsm::ServiceEntityBindingV2(
+    service_entity="lsm_update::api::FileService",
+    lifecycle=lsm::fsm::simple,
+    service_entity_name="fileservice",
+)
+
+
+# Service builder
+for assignment in lsm::all(fileservice):
+    # Update logic for ServiceEntities: find updated values for fields that require cleanup
+    updated = previous_lsm_attributes(assignment, ["path"])
+
+    instance = lsm_update::api::FileService(
+        instance_id=assignment["id"],
+        entity_binding=fileservice,
+        path = assignment["attributes"]["path"],
+        content = assignment["attributes"]["content"],
+    )
+
+    if "path" in updated:
+        # remove the old path
+        # We create a second instance of the service, that is _purged_by_updated
+        # The underlying indexes make sure they share the lsm::LifecycleTransfer
+        lsm_update::api::FileService(
+            instance_id=assignment["id"],
+            entity_binding=fileservice,
+            path = updated["path"],
+            content = assignment["attributes"]["content"],
+            _purged_by_updated = true
+        )
+    end
+
+    for embedded in embedded_entities_paired(assignment,"sub_files","path"):
+        # Update logic for EmbeddedEntities: make pairs of old and new
+        old = embedded["old"]
+        new = embedded["new"]
+        if new != null:
+            # we have to add one
+            lsm_update::api::EmbeddedFile(
+                path = new["path"],
+                content = new["content"],
+                _parent = instance,
+            )     
+        end
+        if old != null:
+           # we have to remove one
+            lsm_update::api::EmbeddedFile(
+                path = old["path"],
+                content = old["content"],
+                _parent = instance,
+                _purged_by_updated = true
+            )    
+        end
+    end                    
+end

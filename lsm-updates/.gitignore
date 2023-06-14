@@ -1,0 +1,6 @@
+state
+.env
+data
+dump
+.inmanta
+libs/lsm

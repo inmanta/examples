@@ -1,0 +1,16 @@
+import std::testing
+
+entity File:
+    """ Resource to mimick files, in fact a dummy that deploys nothing"""
+    string path
+    string content
+    bool purged
+end
+
+File.resource [1] -- std::testing::NullResource
+
+implementation dummy for File:
+   self.resource = std::testing::NullResource(name="{{path}}: {{purged}}")
+end
+
+implement File using dummy

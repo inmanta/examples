@@ -1,0 +1,59 @@
+import lsm
+import lsm_update::resources
+
+"""
+This file contains the defintion of the service, and its implementation
+"""
+
+entity BaseFileService:
+    """ shared superclass """
+    string path
+
+    string content
+    lsm::attribute_modifier content__modifier="rw+"
+    
+    bool _purged_by_updated = false 
+    # This field is used to control update behavior
+end
+
+entity FileService extends lsm::ServiceEntity, BaseFileService:
+    """ A dummy service to manage files """
+    lsm::attribute_modifier path__modifier="rw+"
+end
+
+implement FileService using parents
+implement FileService using place_files
+
+FileService.sub_files [0:] lsm::__rwplus__ EmbeddedFile._parent [1]
+
+entity EmbeddedFile extends lsm::EmbeddedEntity, lsm::ServiceBase, BaseFileService:
+    """ The same service, but as embedded entity """
+    lsm::attribute_modifier path__modifier="rw"
+end
+
+index EmbeddedFile(_parent, path)
+
+
+
+implement EmbeddedFile using parents # we use the lsm::ServiceBase to wire up the resources and purge_resources correctly
+implement EmbeddedFile using place_files, wire_parent
+
+implementation place_files for BaseFileService:
+    """
+    Implementation for placing and removing files
+    """
+    file = lsm_update::resources::File(
+        path = self.path,
+        content = self.content,
+        purged = self.purge_resources or self._purged_by_updated
+        # We purge if either the service is purged or this instance is purged by update
+    )
+    self.resources += file.resource
+end
+
+implementation wire_parent for EmbeddedFile:
+    # Here we connect our _parent to the parent of lsm::ServiceBase
+    self.parent = self._parent
+end
+
+

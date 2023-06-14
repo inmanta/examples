@@ -52,7 +52,7 @@ implementation place_files for BaseFileService:
 end
 
 implementation wire_parent for EmbeddedFile:
-    # Here we conntect our _parent to the parent of lsm::ServiceBase
+    # Here we connect our _parent to the parent of lsm::ServiceBase
     self.parent = self._parent
 end
 

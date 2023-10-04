@@ -163,7 +163,7 @@ pipeline {
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
                             # TODO: does the >=0.dev make sense for stable iso as well?
-                            pip install "inmanta-service-orchestrator${constraint}" inmanta-dev-dependencies[extension] 'inmanta-core>=0.dev'
+                            pip install "inmanta-service-orchestrator${constraint}" inmanta-dev-dependencies[extension]
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             python -u ci/do_test_deployment_and_verify.py

@@ -154,11 +154,14 @@ pipeline {
                             source "venv/bin/activate"
                             pip install -U pip
                             if [[ ${version} == *dev ]]; then
-                                major_version=${version::-3}
-                                pip install --pre "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator~=${major_version}.0.dev"
+                                constraint="~=${version::-3}.0.dev"
                             else
-                                pip install "inmanta-core[pytest-inmanta-extensions]" "inmanta-service-orchestrator==${version}"
+                                # allow nothing to float by adding fourth floating digit
+                                constraint="==${version}"
                             fi
+                            # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
+                            # help pip find matching candidates (see inmanta/infra-tickets#180)
+                            pip install "inmanta-service-orchestrator${constraint} inmanta-dev-dependencies[extension]"
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             python -u ci/do_test_deployment_and_verify.py

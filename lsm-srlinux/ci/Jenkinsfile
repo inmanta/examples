@@ -150,7 +150,8 @@ pipeline {
                             sudo docker pull ghcr.io/nokia/srlinux:latest
 
                             # Create python environment
-                            python3 -m venv venv
+                            # TODO: use irt to determine version?
+                            python3.9 -m venv venv
                             source "venv/bin/activate"
                             pip install -U pip
                             if [[ ${version} == *dev ]]; then

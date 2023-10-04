@@ -161,7 +161,7 @@ pipeline {
                             fi
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
-                            pip install "inmanta-service-orchestrator${constraint} inmanta-dev-dependencies[extension]"
+                            pip install "inmanta-service-orchestrator${constraint}" 'inmanta-dev-dependencies[extension]'
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             python -u ci/do_test_deployment_and_verify.py

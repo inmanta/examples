@@ -153,7 +153,9 @@ pipeline {
                             # TODO: use irt to determine version?
                             python3.9 -m venv venv
                             source "venv/bin/activate"
-                            pip install -U pip
+                            # TODO: remove this
+                            git clone https://github.com/sanderr/pip.git -b issue/11924-requirements-on-extras
+                            pip install -e ./pip/
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else

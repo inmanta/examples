@@ -150,12 +150,10 @@ pipeline {
                             sudo docker pull ghcr.io/nokia/srlinux:latest
 
                             # Create python environment
-                            # TODO: use irt to determine version?
+                            # TODO: use irt to determine version? -> same for OSS
                             python3.9 -m venv venv
                             source "venv/bin/activate"
-                            # TODO: remove this
-                            git clone https://github.com/sanderr/pip.git -b issue/11924-requirements-on-extras
-                            pip install -e ./pip/
+                            pip install -U pip
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else

@@ -84,8 +84,8 @@ pipeline {
                             sudo docker pull ghcr.io/nokia/srlinux:latest
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
-                            python_version = $(docker inspect clab-srlinux-inmanta-server  | grep PYTHON_VERSION |  cut -d"=" -f2- | cut -d'"' -f1)
-                            ci/do_test_deployment_and_verify.sh ${version} ${python_version}
+                            python_version=$(docker inspect clab-srlinux-inmanta-server  | grep PYTHON_VERSION |  cut -d"=" -f2- | cut -d'"' -f1)
+                            ci/do_test_deployment_and_verify.sh ${python_version} ${version}
                         '''
                     }
                 }

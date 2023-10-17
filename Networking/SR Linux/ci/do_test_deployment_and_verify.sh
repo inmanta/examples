@@ -10,11 +10,11 @@ set -ex
 base=$(pwd)
 
 
-python"$2" -m venv "$base/venv"
+python"$1" -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
-if [ -n "$1" ]; then
-  pip install --pre inmanta=="$1"
+if [ -n "$2" ]; then
+  pip install --pre inmanta=="$2"
 else
   pip install inmanta
 fi

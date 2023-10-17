@@ -151,7 +151,7 @@ pipeline {
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
-                            python_version=$(docker inspect clab-srlinux-inmanta-server  | grep PYTHON_VERSION |  cut -d"=" -f2- | cut -d'"' -f1)
+                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
 
                             # Create python environment
                             python${python_version} -m venv venv

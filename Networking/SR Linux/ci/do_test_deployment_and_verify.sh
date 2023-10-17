@@ -10,7 +10,7 @@ set -ex
 base=$(pwd)
 
 
-python3.9 -m venv "$base/venv"
+python"$2" -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
 if [ -n "$1" ]; then

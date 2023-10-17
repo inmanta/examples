@@ -1,5 +1,5 @@
 /**@
-* Updates the topology.yml so that the lab environement 
+* Updates the topology.yml so that the lab environement
 * uses the same version as the specified Python package of the OSS product
 */
 def update_topology() {
@@ -40,7 +40,6 @@ def convert_python_version_to_docker_tag() {
 
 pipeline {
     agent any
-    
     parameters {
         string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest stable version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1 or 2022.4')
     }
@@ -84,7 +83,9 @@ pipeline {
                             # Ensure we have the latest version of the srlinux image
                             sudo docker pull ghcr.io/nokia/srlinux:latest
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
-                            ci/do_test_deployment_and_verify.sh ${version}
+                            # Get python version used to build the container
+                            python_version = $(docker inspect clab-srlinux-inmanta-server  | grep PYTHON_VERSION |  cut -d"=" -f2- | cut -d'"' -f1)
+                            ci/do_test_deployment_and_verify.sh ${version} ${python_version}
                         '''
                     }
                 }

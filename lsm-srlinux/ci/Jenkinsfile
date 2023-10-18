@@ -149,8 +149,12 @@ pipeline {
                             # Ensure we have the latest version of the srlinux image
                             sudo docker pull ghcr.io/nokia/srlinux:latest
 
+                            sudo clab deploy -t containerlab/topology.yml --reconfigure
+                            # Get python version used to build the container
+                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
+
                             # Create python environment
-                            python3 -m venv venv
+                            python${python_version} -m venv venv
                             source "venv/bin/activate"
                             pip install -U pip
                             if [[ ${version} == *dev ]]; then
@@ -163,7 +167,6 @@ pipeline {
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
                             pip install "inmanta-service-orchestrator${constraint}" inmanta-dev-dependencies[extension]
 
-                            sudo clab deploy -t containerlab/topology.yml --reconfigure
                             python -u ci/do_test_deployment_and_verify.py
                         '''
                     }

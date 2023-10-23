@@ -157,6 +157,10 @@ pipeline {
                             python${python_version} -m venv venv
                             source "venv/bin/activate"
                             pip install -U pip
+
+                            # Get inmanta version from the container
+                            inmanta_version = $(docker inspect --format='{{index .ContainerConfig.Labels "com.inmanta.version"}}')
+                            echo "inm_version=$inmanta_version"
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else

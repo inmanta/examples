@@ -159,13 +159,13 @@ pipeline {
                             pip install -U pip
 
                             # Get inmanta version from the container
-                            inmanta_version = $(docker inspect --format='{{index .ContainerConfig.Labels "com.inmanta.version"}}')
+                            inmanta_version=$(docker inspect --format='{{index .Config.Labels "com.inmanta.version"}}' clab-srlinux-inmanta-server)
                             echo "inm_version=$inmanta_version"
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else
                                 # allow nothing to float by adding fourth floating digit
-                                constraint="==${version}"
+                                constraint="==${inmanta_version}"
                             fi
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)

@@ -94,7 +94,7 @@ pipeline {
     }
 
     triggers {
-        parameterizedCron(BRANCH_NAME == 'master' ? "H H(2-5) * * * %version=7dev" : "")
+        parameterizedCron(BRANCH_NAME == 'master' ? "H H(2-5) * * * " : "")
     }
 
     options {

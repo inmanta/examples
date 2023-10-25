@@ -158,15 +158,16 @@ pipeline {
                             source "venv/bin/activate"
                             pip install -U pip
 
-                            # Get inmanta version from the container
-                            inmanta_version=$(docker inspect --format='{{index .Config.Labels "com.inmanta.version"}}' clab-srlinux-inmanta-server)
-                            echo "inmanta_version=$inmanta_version"
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else
                                 # Make sure we're using the right version for the product.
                                 # e.g. if env.version==6, we can use it to get the container since the latest image for this version is always tagged '6'
                                 # but we can't use it as is for the product because it would be interpreted as '6.0.0' which is not the latest version.
+                                # Get inmanta version from the container
+                                inmanta_version=$(docker inspect --format='{{index .Config.Labels "com.inmanta.version"}}' clab-srlinux-inmanta-server)
+                                echo "inmanta_version=$inmanta_version"
+
                                 constraint="==${inmanta_version}"
                             fi
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to

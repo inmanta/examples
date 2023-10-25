@@ -160,7 +160,7 @@ pipeline {
 
                             # Get inmanta version from the container
                             inmanta_version=$(docker inspect --format='{{index .Config.Labels "com.inmanta.version"}}' clab-srlinux-inmanta-server)
-                            echo "inm_version=$inmanta_version"
+                            echo "inmanta_version=$inmanta_version"
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             else

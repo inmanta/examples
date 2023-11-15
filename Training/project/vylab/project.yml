@@ -10,10 +10,7 @@ install_mode: release
 repo:
     - type: package
       url: https://packages.inmanta.com/public/quickstart/python/simple/
-    - type: package
-      url: https://pypi.org/simple/
     - type: git
       url: https://github.com/inmanta/
 pip:
   index_url: https://packages.inmanta.com/public/quickstart/python/simple/
-  extra_index_url: ["https://pypi.org/simple/"]

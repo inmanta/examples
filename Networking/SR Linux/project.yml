@@ -7,10 +7,10 @@ copyright: 2022 Inmanta
 modulepath: libs
 downloadpath: libs
 install_mode: release
-# The repo block is for ISO6
+# The repo block is for ISO6, inmanta-core<=10.0
 repo:
   - type: package
     url: https://packages.inmanta.com/public/quickstart/python/simple/
-# The pip block is for ISO7 and up
+# The pip block is for ISO7 and up, inmanta-core>10.0
 pip:
   index_url: https://packages.inmanta.com/public/quickstart/python/simple/

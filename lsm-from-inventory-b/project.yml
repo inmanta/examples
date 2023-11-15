@@ -6,7 +6,11 @@ license: ASL 2.0
 copyright: 2021 Inmanta
 modulepath: libs
 downloadpath: libs
-repo:
-    - git@github.com:inmanta/{}.git
 install_mode: master
-requires:
+# The repo block is for ISO6
+repo:
+  - type: package
+    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
+# The pip block is for ISO7 and up
+pip:
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/

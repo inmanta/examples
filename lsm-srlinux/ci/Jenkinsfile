@@ -16,6 +16,7 @@ def update_project_yml(String isoProductVersion, String token) {
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName
     yamlDct['repo'][0]['url'] = pythonPackageRepoUrl
+    yamlDct['pip']['index_url'] = pythonPackageRepoUrl
     writeYaml file: fileName, data: yamlDct, overwrite: true
 }
 

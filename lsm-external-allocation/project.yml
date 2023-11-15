@@ -10,3 +10,5 @@ repo:
     - git@github.com:inmanta/{}.git
 install_mode: release
 requires:
+pip:
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/

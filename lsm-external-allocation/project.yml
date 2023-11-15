@@ -14,6 +14,7 @@ repo:
   - type: package
     url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 # The pip block is for ISO7 and up, inmanta-core>10.0
-# replace <token> with your inmanta access token
+# This example requires licensed modules, 
+# replace <token> with inmanta access token you received with your license
 pip:
   index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-7-stable/python/simple/

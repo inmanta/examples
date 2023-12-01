@@ -74,12 +74,13 @@ entity Interface:
 
     bool purged = false
 end
+Interface.resource [1] -- nokia_srlinux::Resource
 Interface.router [1] -- Router.interfaces [0:]
 
 index Interface(router, name)
 
 implementation intf_refinement for Interface:
-    resource = nokia_srlinux::Resource(
+    self.resource = nokia_srlinux::Resource(
         device=self.router.device,
         identifier=f"intf-{self.name}",
     )
@@ -97,7 +98,7 @@ implementation intf_refinement for Interface:
                     ip_prefix=self.ipv4_address,
                 ),
             ),
-            resource=resource,
+            resource=self.resource,
             purged=self.purged,
             comanaged=false,
         ),
@@ -111,7 +112,7 @@ implementation intf_refinement for Interface:
         admin_state="enable",
         interface=nokia_srlinux::network_instance::Interface(
             name=f"{self.name}.0",
-            resource=resource,
+            resource=self.resource,
             purged=self.purged,
             comanaged=false,
         ),
@@ -140,16 +141,26 @@ entity Ospf:
     bool purged = false
 end
 Ospf.router [1] -- Router.ospf [0:1]
+Ospf.resource [1] -- nokia_srlinux::Resource
 Ospf.interfaces [0:] -- Interface
 
 index Ospf(router, area_id)
 
 
 implementation ospf_refinement for Ospf:
-    resource = nokia_srlinux::Resource(
+    self.resource = nokia_srlinux::Resource(
         device=self.router.device,
-        identifier=f"ospf-{self.area_id}"
+        identifier=f"ospf-{self.area_id}",
     )
+
+    # We should configure ospf before any interface deletion and after any interface creation
+    # Ideally the interface resource should take care of adding itself in ther ospf area, but
+    # we can't have resource sub-labelling in yang at the moment.
+    # https://code.inmanta.com/solutions/modules/yang/-/issues/110
+    purged_intfs = [intf.resource.yang_resource for intf in self.interfaces if intf.purged]
+    current_intfs = [intf.resource.yang_resource for intf in self.interfaces if not intf.purged]
+    self.resource.yang_resource.requires += current_intfs
+    self.resource.yang_resource.provides += purged_intfs
 
     nokia_srlinux::NetworkInstance(
         device=self.router.device,
@@ -173,7 +184,7 @@ implementation ospf_refinement for Ospf:
                             for interface in self.interfaces
                             if not interface.purged
                         ],
-                        resource=resource,
+                        resource=self.resource,
                         purged=self.purged,
                         comanaged=false,
                     ),

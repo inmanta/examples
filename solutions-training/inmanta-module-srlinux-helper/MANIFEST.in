@@ -1,0 +1,5 @@
+include inmanta_plugins/srlinux_helper/setup.cfg
+include inmanta_plugins/srlinux_helper/py.typed
+recursive-include inmanta_plugins/srlinux_helper/model *.cf
+graft inmanta_plugins/srlinux_helper/files
+graft inmanta_plugins/srlinux_helper/templates

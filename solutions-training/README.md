@@ -69,3 +69,8 @@ For this training, the `project` already exists, this is the folder you are curr
 4. Open the orchestrator resource view, and see all the elements of the desired state, being deployed.  Once again, click around to see what is happening.
     ![Alt text](images/orchestrator-resources-page.png)
 
+
+## Test network connectivity
+
+1. Configure the subscribers
+2. Run ping from one subscriber to the other

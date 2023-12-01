@@ -3,7 +3,11 @@
 The topology file in this folder will deploy the following:
 - An inmanta orchestrator together with a database
 - Two routers (srlinux)
-- Two susbcribers (nfv-test-api), basic containers containing some nice networking tools
+- Two subscribers (nfv-test-api), basic containers containing some nice networking tools
+
+The diagram below shows the desired ip plan we will configure.  When deploying the lab with containerlab, only the management network will be configured.
+
+![Desired network topology](topology.png)
 
 ## Start the lab
 ```console
@@ -47,7 +51,7 @@ INFO[0000] Serving static files from directory: /etc/containerlab/templates/grap
 INFO[0000] Serving topology graph on http://0.0.0.0:50080
 
 ```
-![Alt text](image.png)
+![Clab topology overview](image.png)
 
 ## Check the mgmt ips
 ```console

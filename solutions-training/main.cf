@@ -13,14 +13,14 @@ router_east = srlinux_helper::Router(
 east_to_west = srlinux_helper::Interface(
     router=router_east,
     name="ethernet-1/1",
-    ipv4_address="10.0.1.2/30",
+    ipv4_address="10.0.1.1/30",
 )
 
 # Set up the interface to susbcriber east
 east_to_sub = srlinux_helper::Interface(
     router=router_east,
     name="ethernet-1/2",
-    ipv4_address="10.0.2.1/30",
+    ipv4_address="10.1.1.1/30",
 )
 
 # Enable ospf on those two interfaces
@@ -43,7 +43,7 @@ router_west = srlinux_helper::Router(
 west_to_east = srlinux_helper::Interface(
     router=router_west,
     name="ethernet-1/1",
-    ipv4_address="10.0.1.1/30",
+    ipv4_address="10.0.1.2/30",
 )
 
 # Set up the interface to subscriber west

@@ -1,0 +1,12 @@
+
+[config]
+fact-expire = 1800
+environment=85551bc2-bcbc-46bc-8bc2-3f241424f926
+
+[compiler_rest_transport]
+host=172.30.0.3
+port=8888
+
+[cmdline_rest_transport]
+host=172.30.0.3
+port=8888

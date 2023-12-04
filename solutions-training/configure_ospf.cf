@@ -58,7 +58,7 @@ srlinux_helper::Ospf(
     router=router_west,
     area_id="1.1.1.1",
     interfaces=[
-        srlinux_helper::Interface[device=router_west, name="ethernet-1/1"],
-        srlinux_helper::Interface[device=router_west, name="ethernet-1/2"],
+        srlinux_helper::Interface[router=router_west, name="ethernet-1/1"],
+        srlinux_helper::Interface[router=router_west, name="ethernet-1/2"],
     ],
 )

@@ -1,0 +1,24 @@
+import srlinux_helper
+
+
+### Configure router east ###
+router_east = srlinux_helper::Router(
+    name="router-east",
+    address="172.30.0.4",
+    username="admin",
+    password="NokiaSrl1!",
+)
+
+# Set up the interface to router west
+east_to_west = srlinux_helper::Interface(
+    router=router_east,
+    name="ethernet-1/1",
+    ipv4_address="10.0.1.1/30",
+)
+
+# Set up the interface to susbcriber east
+east_to_sub = srlinux_helper::Interface(
+    router=router_east,
+    name="ethernet-1/2",
+    ipv4_address="10.1.1.1/30",
+)

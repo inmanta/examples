@@ -58,12 +58,12 @@ For this training, the `project` already exists, this is the folder you are curr
 
 2. Compile the model of the project.  The compiler will verify that our model is correct, and can be serialized into resources which can later be sent to the orchestrator, as instruction of "what to do".
     ```console
-    (env) $ inmanta compile
+    (env) $ inmanta compile -f configure_ospf.cf
     ```
 
 3. Export the resources to the orchestrator, the exporter will take the output of the compiler and send it to the orchestrator.  For each resource it receives, the orchestrator will then have as mission to deploy them, ensuring their desired state is enforced.
     ```console
-    (env) $ inmanta export
+    (env) $ inmanta export -f configure_ospf.cf
     ```
 
 4. Open the orchestrator resource view, and see all the elements of the desired state, being deployed.  Once again, click around to see what is happening.

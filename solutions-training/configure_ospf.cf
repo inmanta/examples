@@ -1,0 +1,64 @@
+import srlinux_helper
+
+
+### Configure router east ###
+router_east = srlinux_helper::Router(
+    name="router-east",
+    address="172.30.0.4",
+    username="admin",
+    password="NokiaSrl1!",
+)
+
+# Set up the interface to router west
+east_to_west = srlinux_helper::Interface(
+    router=router_east,
+    name="ethernet-1/1",
+    ipv4_address="10.0.1.1/30",
+)
+
+# Set up the interface to susbcriber east
+east_to_sub = srlinux_helper::Interface(
+    router=router_east,
+    name="ethernet-1/2",
+    ipv4_address="10.1.1.1/30",
+)
+
+# Enable ospf on those two interfaces, access interfaces using variable
+srlinux_helper::Ospf(
+    router=router_east,
+    area_id="1.1.1.1",
+    interfaces=[east_to_west, east_to_sub],
+)
+
+
+### Configure router west ###
+router_west = srlinux_helper::Router(
+    name="router-west",
+    address="172.30.0.5",
+    username="admin",
+    password="NokiaSrl1!",
+)
+
+# Set up the interface to router east
+west_to_east = srlinux_helper::Interface(
+    router=router_west,
+    name="ethernet-1/1",
+    ipv4_address="10.0.1.2/30",
+)
+
+# Set up the interface to subscriber west
+west_to_sub = srlinux_helper::Interface(
+    router=router_west,
+    name="ethernet-1/2",
+    ipv4_address="10.1.2.1/30",
+)
+
+# Enable ospf on those two interfaces, access interfaces using index lookup
+srlinux_helper::Ospf(
+    router=router_west,
+    area_id="1.1.1.1",
+    interfaces=[
+        srlinux_helper::Interface[router=router_west, name="ethernet-1/1"],
+        srlinux_helper::Interface[router=router_west, name="ethernet-1/2"],
+    ],
+)

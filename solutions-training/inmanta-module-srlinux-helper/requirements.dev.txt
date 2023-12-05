@@ -1,0 +1,3 @@
+inmanta-core>=6
+inmanta-dev-dependencies[module]
+pytest-inmanta>=2

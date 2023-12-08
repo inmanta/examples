@@ -54,13 +54,13 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
         return "code.inmanta.com:4567/solutions/containers/service-orchestrator:${matcher.group(1)}-dev"
     }
     // Is it a three-dotted version number
-    matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
+    matcher = isoProductVersion =~ /(\d+)(\.\d+)?(\.\d+)?(rc)?(\d*)/
     if (matcher.matches()) {
         def major = matcher.group(1)
-        def minor = matcher.group(2)
-        def patch = matcher.group(3)
+        def minor = matcher.group(2) == null ? ".0" : matcher.group(2)
+        def patch = matcher.group(3) == null ? ".0" : matcher.group(3)
         def isRcVersion = matcher.group(4)
-        def formattedVersion = "${major}.${minor}.${patch}"
+        def formattedVersion = "${major}${minor}${patch}"
         if (isRcVersion) {
             formattedVersion += "-rc"
         }

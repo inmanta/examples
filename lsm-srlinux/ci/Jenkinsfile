@@ -7,12 +7,13 @@
 */
 def update_project_yml(String isoProductVersion, String token) {
     def pythonPackageRepoUrl = ""
-    if(isoProductVersion.endsWith("dev")){
+    if (isoProductVersion.endsWith("dev")) {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/dev"
+    else if (isoProductVersion.endsWith("rc")) {
+        pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/next"
     } else{
         def majorVersion = isoProductVersion.split('\\.')[0]
-        def flavor = isoProductVersion.endsWith("rc") ? "next" : "stable"
-        pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-${flavor}/python/simple/"
+        pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName

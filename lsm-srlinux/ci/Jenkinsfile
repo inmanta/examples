@@ -11,7 +11,8 @@ def update_project_yml(String isoProductVersion, String token) {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/dev"
     } else{
         def majorVersion = isoProductVersion.split('\\.')[0]
-        pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
+        def flavor = isoProductVersion.endsWith("rc") ? "next" : "stable"
+        pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-${flavor}/python/simple/"
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
     def yamlDct = readYaml file: fileName
@@ -161,6 +162,8 @@ pipeline {
 
                             if [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
+                            elif [[ ${version} == *rc ]]; then
+                                constraint="~=${version::-2}.0rc"
                             else
                                 # Make sure we're using the right version for the product.
                                 # e.g. if env.version==6, we can use it to get the container since the latest image for this version is always tagged '6'

@@ -55,13 +55,13 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
         return "code.inmanta.com:4567/solutions/containers/service-orchestrator:${matcher.group(1)}-dev"
     }
     // Is it a three-dotted version number
-    matcher = isoProductVersion =~ /(\d+)(\.\d+)?(\.\d+)?(rc)?(\d*)/
+    matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
     if (matcher.matches()) {
         def major = matcher.group(1)
-        def minor = matcher.group(2) == null ? ".0" : matcher.group(2)
-        def patch = matcher.group(3) == null ? ".0" : matcher.group(3)
+        def minor = matcher.group(2)
+        def patch = matcher.group(3)
         def isRcVersion = matcher.group(4)
-        def formattedVersion = "${major}${minor}${patch}"
+        def formattedVersion = "${major}.${minor}.${patch}"
         if (isRcVersion) {
             formattedVersion += "-rc"
         }
@@ -89,7 +89,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1, 6 or 6dev.')
+        string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1, 6, 6dev or 6.5.0rc.')
     }
 
     environment {
@@ -165,15 +165,12 @@ pipeline {
                                 constraint="~=${version::-3}.0.dev"
                             elif [[ ${version} == *rc ]]; then
                                 constraint="~=${version::-2}.0rc"
+                            elif [[ ${version} = *.*.* ]]; then
+                                # use exact version if fully specified, e.g. 6.0.0 or 6.5.0rc20231208092517
+                                constraint="==${version}"
                             else
-                                # Make sure we're using the right version for the product.
-                                # e.g. if env.version==6, we can use it to get the container since the latest image for this version is always tagged '6'
-                                # but we can't use it as is for the product because it would be interpreted as '6.0.0' which is not the latest version.
-                                # Get inmanta version from the container
-                                inmanta_version=$(docker inspect --format='{{index .Config.Labels "com.inmanta.version"}}' clab-srlinux-inmanta-server)
-                                echo "inmanta_version=$inmanta_version"
-
-                                constraint="==${inmanta_version}"
+                                # allow unspecified digits to float, e.g. 6 -> ~=6.0
+                                constraint="~=${version}.0"
                             fi
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)

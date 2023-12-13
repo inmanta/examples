@@ -15,4 +15,4 @@ repo:
     url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 # The pip block is for ISO7 and up, inmanta-core>10.0
 pip:
-  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-8-stable/python/simple/
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-7-stable/python/simple/

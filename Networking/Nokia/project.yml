@@ -17,4 +17,4 @@ repo:
 # This example requires licensed modules, 
 # replace <token> with inmanta access token you received with your license
 pip:
-  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-8-stable/python/simple/
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-7-stable/python/simple/

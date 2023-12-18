@@ -1,0 +1,30 @@
+import srlinux_helper
+
+
+# This file refers to a file named `topology.yml` at the root of the `files`
+# directory, in the `srlinux_helper` module.
+topology_file = "srlinux_helper/topology.yml"
+
+
+### Load all routers ###
+for router_data in srlinux_helper::get_srlinux_routers(topology_file):
+    router = srlinux_helper::Router(**router_data)
+end
+
+
+### Load all router interfaces ###
+for interface_data in srlinux_helper::get_srlinux_interfaces(topology_file):
+    router = srlinux_helper::Router[name=interface_data["router"]]
+    interface = srlinux_helper::Interface(
+        name=interface_data["name"],
+        ipv4_address=interface_data["ipv4_address"],
+        router=router,
+    )
+
+    # Add the interface to the ospf area
+    ospf = srlinux_helper::Ospf(
+        router=router,
+        area_id="1.1.1.1",
+    )
+    ospf.interfaces += interface
+end

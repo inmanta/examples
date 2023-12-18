@@ -140,7 +140,7 @@ entity Ospf:
 
     bool purged = false
 end
-Ospf.router [1] -- Router.ospf [0:1]
+Ospf.router [1] -- Router
 Ospf.resource [1] -- nokia_srlinux::Resource
 Ospf.interfaces [0:] -- Interface
 

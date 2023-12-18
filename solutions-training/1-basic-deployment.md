@@ -35,7 +35,7 @@ The model we compiled and sent to the orchestrator is the one in [configure_ospf
 
 1. The `Router` entities.
     ```
-    router_east = srlinux_helper::Router(
+    srlinux_helper::Router(
         name="router-east",
         address="172.30.0.4",
         username="admin",
@@ -43,11 +43,11 @@ The model we compiled and sent to the orchestrator is the one in [configure_ospf
     )
     ```
 
-    These entities represent the devices on which we want to push config.  They don't result in any config themself, but all the resources we will deploy will be attached to one of them.
+    These entities represent the devices on which we want to push config.  They don't result in any config them-self, but all the resources we will deploy will be attached to one of them.
 
 2. The `Interface` entities.
     ```
-    east_to_west = srlinux_helper::Interface(
+    srlinux_helper::Interface(
         router=router_east,
         name="ethernet-1/1",
         ipv4_address="10.0.1.1/30",
@@ -71,7 +71,7 @@ The model we compiled and sent to the orchestrator is the one in [configure_ospf
 All of these components will form our desired state.  Take some time to play with them, and see how easy it is to deploy some changes on the different devices.  You can for example:
 - Set the `purged` attribute to `true` for any interface or ospf configuration, then observe that the corresponding configuration has disappeared on the device.
 - Change an ip address and see it change on the interface.
-- Change the `aread_id`, and observe that the resource will fail to deploy... but why?  Well, when that change is made, we will tell the router that we want an ospf area with the given id, attached to the given interfaces.  But these interfaces are also part of the previous area, that we never told the router to remove.  Any how to make this work?  Give it a try and ask for help if you can't figure it out!
+- Change the `area_id`, and observe that the resource will fail to deploy... but why?  Well, when that change is made, we will tell the router that we want an ospf area with the given id, attached to the given interfaces.  But these interfaces are also part of the previous area, that we never told the router to remove.  Any how to make this work?  Give it a try and ask for help if you can't figure it out!
 
 
 > **Next:**

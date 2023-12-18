@@ -15,3 +15,89 @@
 
     Contact: code@inmanta.com
 """
+import ipaddress
+import re
+
+import inmanta_plugins.std
+import yaml
+
+import inmanta.plugins
+
+
+@inmanta.plugins.plugin()
+def get_srlinux_routers(ctx: inmanta.plugins.Context, topology_file: "string") -> "dict[]":  # type: ignore
+    """
+    Read a clab topology file at a given path and extract all the srlinux
+    routers from it, and return them as a dict that can be used in the model.
+
+    :param topology_file: Path to the topology file that should be loaded.
+    """
+    content = inmanta_plugins.std.source(ctx, topology_file)
+    parsed_content = yaml.safe_load(content)
+
+    return [
+        {
+            "name": k,
+            "address": v["mgmt-ipv4"],
+            "username": "admin",
+            "password": "NokiaSrl1!",
+        }
+        for k, v in parsed_content["topology"]["nodes"].items()
+        if v["kind"] == "srl"
+    ]
+
+
+@inmanta.plugins.plugin()
+def get_srlinux_interfaces(ctx: inmanta.plugins.Context, topology_file: "string") -> "dict[]":  # type: ignore
+    """
+    Read a clab topology file at a given path and extract all the links that each srlinux
+    router has with any device.  For each link, assign a /30 network, and pick one ip for
+    this router and one for the device on the other side.
+
+    :param topology_file: Path to the topology file that should be loaded.
+    """
+    content = inmanta_plugins.std.source(ctx, topology_file)
+    parsed_content = yaml.safe_load(content)
+
+    # Get all routers names
+    routers = [
+        name
+        for name, dev in parsed_content["topology"]["nodes"].items()
+        if dev["kind"] == "srl"
+    ]
+
+    # Iterable of all networks we can use for the links defined in the topology
+    links_network = ipaddress.IPv4Network("10.0.0.0/16").subnets(new_prefix=30)
+
+    # List of all router interfaces we want to configure with our model
+    interfaces: list[dict] = list()
+
+    for link in parsed_content["topology"]["links"]:
+        net = next(links_network)
+
+        for ep, addr in zip(link["endpoints"], net.hosts(), strict=True):
+            dev, intf = ep.split(":")
+            intf_addr = str(addr) + "/" + str(net.prefixlen)
+
+            if dev in routers:
+                # This is a router, add to the list of interfaces the
+                # config that needs to be pushed to the device
+                interfaces.append(
+                    {
+                        "router": dev,
+                        "name": re.sub(
+                            r"e(\d+)-(\d+)",
+                            lambda match: f"ethernet-{match.group(1)}/{match.group(2)}",
+                            intf,
+                        ),
+                        "ipv4_address": intf_addr,
+                    }
+                )
+            else:
+                # This is not a router, the ip should be configured manually
+                # Let's print the command here
+                print(
+                    f"docker exec -ti clab-{parsed_content['name']}-{dev} ip link add {intf_addr} dev {intf}"
+                )
+
+    return interfaces

@@ -96,6 +96,8 @@ Type 'help' (and press <ENTER>) if you need any help using this.
 A:router-east#
 ```
 
+> :bulb: If you are prompted for a password, find the default user and password in the documentation of containerlab: https://containerlab.dev/manual/kinds/srl/
+
 ## Accessing the subscribers
 ```console
 $ docker exec -ti clab-srlinux-subscriber-east bash

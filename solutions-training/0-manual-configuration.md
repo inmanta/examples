@@ -73,6 +73,8 @@ For srlinux cli documentation, see https://documentation.nokia.com/srlinux/SR_Li
     A:router-east#
     ```
 
+    > :bulb: You can also use `commit stay` to stay in candidate mode.
+
 5. Check the status of the interface we just configured using the `show` command.
     ```console
     --{ + running }--[  ]--

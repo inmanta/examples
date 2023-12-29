@@ -19,6 +19,16 @@ else
   pip install inmanta
 fi
 
+if [ -n "$2" ]; then
+    if [[ "$2" == *dev* ]]; then
+        pip install --pre inmanta"$2"
+    else
+        pip install inmanta"$2"
+    fi
+else
+    pip install inmanta
+fi
+
 inmanta -vvvv project install
 
 inmanta-cli --host 172.30.0.3 project create -n test

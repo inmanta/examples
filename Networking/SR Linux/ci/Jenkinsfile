@@ -86,16 +86,23 @@ pipeline {
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
 
-                            if [[ ${version} == *dev ]]; then
-                                constraint="~=${version::-3}.0.dev"
-                            elif [[ ${version} == *rc ]]; then
-                                constraint="~=${version::-2}.0rc"
-                            elif [[ ${version} = *.*.* ]]; then
-                                # use exact version if fully specified, e.g. 6.0.0 or 6.5.0rc20231208092517
-                                constraint="==${version}"
+                            if [ -n "$version" ]; then
+                                if [[ $version == *dev ]]; then
+                                    # Handle development versions
+                                    constraint="~=${version::-3}.0.dev"
+                                elif [[ $version == *rc ]]; then
+                                    # Handle release candidate versions
+                                    constraint="~=${version::-2}.0rc"
+                                elif [[ $version == *.*.* ]]; then
+                                    # Use exact version if fully specified, e.g., 6.0.0 or 6.5.0rc20231208092517
+                                    constraint="==${version}"
+                                else
+                                    # Allow unspecified digits to float, e.g., 6 -> ~=6.0
+                                    constraint="~=${version}.0"
+                                fi
                             else
-                                # allow unspecified digits to float, e.g. 6 -> ~=6.0
-                                constraint="~=${version}.0"
+                                # Leave constraint undefined if version is not defined
+                                constraint=""
                             fi
 
                             ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}

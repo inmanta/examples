@@ -27,7 +27,7 @@ def convert_python_version_to_docker_tag() {
                 formattedVersion += "${patch}"
             }
             if (rc) {
-                formattedVersion += "-${rc}"
+                formattedVersion += "-rc"
             }
             return formattedVersion
         } else {

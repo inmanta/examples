@@ -14,17 +14,26 @@ def update_topology() {
 
 
 def convert_python_version_to_docker_tag(version){
-    matcher = re.match(r'(\d{4})\.(\d+)(\.\d+)?(rc\d*)?', version)
-    if matcher:
-        year, minor, patch, rc = matcher.groups()
-        formattedVersion = f"{year}.{minor}"
-        if patch:
-            formattedVersion += patch
-        if rc:
-            formattedVersion += f"-{rc}"
-        return formattedVersion
-    else:
-        raise ValueError(f"Invalid version format: {version}")
+    if (version) {
+        def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc\d*)?/
+        if (matcher.matches()) {
+            def year = matcher.group(1)
+            def minor = matcher.group(2)
+            def patch = matcher.group(3)
+            def rc = matcher.group(4)
+            def formattedVersion = "${year}.${minor}"
+            if (patch) {
+                formattedVersion += "${patch}"
+            }
+            if (rc) {
+                formattedVersion += "-${rc}"
+            }
+            return formattedVersion
+        } else {
+            error("Invalid version format: ${version}")
+        }
+    }
+    return 'latest'
 }
 
 pipeline {

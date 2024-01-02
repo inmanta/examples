@@ -91,10 +91,10 @@ pipeline {
                                 if [[ $version == *.*.* ]]; then
                                     # Use exact version if fully specified
                                     constraint="==${version}"
-                                elif [[ "$2" =~ rc[0-9]{14}$ ]]; then
+                                elif [[ $version =~ rc[0-9]{14}$ ]]; then
                                     # Handle full release candidate versions with timestamp
                                     constraint= "==${version}"
-                                elif [[ "$2" == *rc ]]; then
+                                elif [[ $version == *rc ]]; then
                                     # Handle shorthand release candidate versions
                                     constraint="~=${version::-2}.0rc"
                                 else

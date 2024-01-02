@@ -1,13 +1,13 @@
 name: training
 mgmt:
   network: inmanta_mgmt
-  ipv4_subnet: 10.0.0.0/24
+  ipv4-subnet: 10.0.0.0/24
 topology:
   nodes:
     R1:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.0.0.5
+      mgmt-ipv4: 10.0.0.5
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules
@@ -15,7 +15,7 @@ topology:
     C1:
       kind: linux
       image: praqma/network-multitool:latest
-      mgmt_ipv4: 10.0.0.205
+      mgmt-ipv4: 10.0.0.205
       entrypoint: /bin/bash
       cmd: /opt/config_ip 10.0.1.2 eth1 10.0.1.1 30
       binds:
@@ -23,7 +23,7 @@ topology:
     R2:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.0.0.6
+      mgmt-ipv4: 10.0.0.6
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules
@@ -31,7 +31,7 @@ topology:
     C2:
       kind: linux
       image: praqma/network-multitool:latest
-      mgmt_ipv4: 10.0.0.206
+      mgmt-ipv4: 10.0.0.206
       entrypoint: /bin/bash
       cmd: /opt/config_ip 10.0.2.2 eth1 10.0.2.1 30
       binds:
@@ -39,7 +39,7 @@ topology:
     R3:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.0.0.7
+      mgmt-ipv4: 10.0.0.7
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules
@@ -47,7 +47,7 @@ topology:
     C3:
       kind: linux
       image: praqma/network-multitool:latest
-      mgmt_ipv4: 10.0.0.207
+      mgmt-ipv4: 10.0.0.207
       entrypoint: /bin/bash
       cmd: /opt/config_ip 10.0.3.2 eth1 10.0.3.1 30
       binds:
@@ -55,7 +55,7 @@ topology:
     R4:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.0.0.8
+      mgmt-ipv4: 10.0.0.8
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules
@@ -63,7 +63,7 @@ topology:
     C4:
       kind: linux
       image: praqma/network-multitool:latest
-      mgmt_ipv4: 10.0.0.208
+      mgmt-ipv4: 10.0.0.208
       entrypoint: /bin/bash
       cmd: /opt/config_ip 10.0.4.2 eth1 10.0.4.1 30
       binds:
@@ -74,7 +74,7 @@ topology:
       env:
         POSTGRES_USER: inmanta
         POSTGRES_PASSWORD: inmanta
-      mgmt_ipv4: 10.0.0.100
+      mgmt-ipv4: 10.0.0.100
     orchestrator:
       kind: linux
       image: ghcr.io/inmanta/orchestrator:latest
@@ -83,7 +83,7 @@ topology:
       cmd: server --wait-for-host clab-training-pgmaster --wait-for-port 5432
       ports:
         - "8888:8888"
-      mgmt_ipv4: 10.0.0.102
+      mgmt-ipv4: 10.0.0.102
   links:
     - endpoints: ["R1:eth1", "R2:eth1"]
     - endpoints: ["R1:eth2", "R3:eth1"]

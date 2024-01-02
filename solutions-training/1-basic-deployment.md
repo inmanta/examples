@@ -5,7 +5,7 @@
 To tell the orchestrator what to do, we need to create a desired state for it to apply.  We do this by creating a `project` (locally), which contains a `model` (you can see the top level of the model in the [main.cf](main.cf) file), `compiling` it, and `exporting` its `resources` to the orchestrator.  
 For this training, the `project` already exists, this is the folder you are currently working one.  An inmanta `project` is recognized by the  [project.yml file](https://docs.inmanta.com/community/dev/reference/projectyml.html#project-yml) at its root.  
 
-1. Install the project, and its dependencies.  Due to the specific setup of this project, you need to install the `srlinux_helper` module manually, as it is currently not released anywhere.
+1. Install the project, and its dependencies.  Due to the specific setup of this project, you need to install the `srlinux_helper` module.
     ```console
     (env) $ pip install -e inmanta-module-srlinux-helper
     (env) $ inmanta project install
@@ -43,7 +43,7 @@ The model we compiled and sent to the orchestrator is the one in [configure_ospf
     )
     ```
 
-    These entities represent the devices on which we want to push config.  They don't result in any config them-self, but all the resources we will deploy will be attached to one of them.
+    These entities represent the devices on which we want to push config.  They don't result in any config themselves, but all the resources we will deploy will be attached to one of them.
 
 2. The `Interface` entities.
     ```

@@ -25,16 +25,6 @@ import inmanta.plugins
 
 
 @inmanta.plugins.plugin()
-def load_yaml(source: "string") -> "dict":  # type: ignore
-    """
-    Parse the given yaml payload and return it as a dict.
-
-    :param source: The raw yaml data, as a string.
-    """
-    return yaml.safe_load(source)
-
-
-@inmanta.plugins.plugin()
 def dict_keys(data: "dict") -> "string[]":  # type: ignore
     """
     Create a list with all the keys of a dict.  This allows us to easily

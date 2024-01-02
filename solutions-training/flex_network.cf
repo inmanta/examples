@@ -1,10 +1,11 @@
 import srlinux_helper
+import yaml
 
 
 # This file refers to a file named `topology.yml` at the root of the `files`
 # directory, in the `srlinux_helper` module.
 topology_file = "srlinux_helper/topology.yml"
-topology = srlinux_helper::load_yaml(std::source(topology_file))
+topology = yaml::loads(std::source(topology_file))
 
 ### Load all routers ###
 for node_name in srlinux_helper::dict_keys(topology["topology"]["nodes"]):

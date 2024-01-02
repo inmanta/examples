@@ -35,7 +35,6 @@ def convert_python_version_to_docker_tag() {
         }
     }
     return 'latest'
-
 }
 
 pipeline {
@@ -131,5 +130,3 @@ pipeline {
         }
     }
 }
-def convert_python_version_to_docker_tag() {
-    def version = env.version

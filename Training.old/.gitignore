@@ -1,0 +1,6 @@
+# Files created by the running routers
+resources/R*/config/archive
+
+# Files created by clab when starting the lab
+clab-*
+*.bak

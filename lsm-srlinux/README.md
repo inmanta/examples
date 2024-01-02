@@ -65,18 +65,25 @@ This folder contains a project.yml, which looks like this:
 
 ``` {.}
 name: LSM SR Linux Example
-description: Provides and example of a LSM use case with SR Linux.
+description: Provides an example of a LSM use case with SR Linux.
 author: Inmanta
 author_email: code@inmanta.com
 license: ASL 2.0
 copyright: 2022 Inmanta
 modulepath: libs
 downloadpath: libs
-repo:
-- type: package
-    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
 install_mode: release
-requires:
+# The repo block is for ISO6, inmanta-core<=10.0
+# This example requires licensed modules,
+# replace <token> with inmanta access token you received with your license
+repo:
+  - type: package
+    url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-6-stable/python/simple/
+# The pip block is for ISO7 and up, inmanta-core>10.0
+# This example requires licensed modules,
+# replace <token> with inmanta access token you received with your license
+pip:
+  index_url: https://packages.inmanta.com/<token>/inmanta-service-orchestrator-7-stable/python/simple/
 ```
 
 > **_NOTE:_**

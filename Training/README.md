@@ -1,4 +1,4 @@
-# Solutions training
+# Inmanta training
 
 The goal of this training is multiple:
 1. Discover clab as a development tool, to manage a development lab

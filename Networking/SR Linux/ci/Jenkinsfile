@@ -90,21 +90,23 @@ pipeline {
                             if [ -n "$version" ]; then
                                 if [[ $version == *.*.* ]]; then
                                     # Use exact version if fully specified
-                                    constraint="==${version}"
-                                elif [[ $version =~ rc[0-9]{14}$ ]]; then
-                                    # Handle full release candidate versions with timestamp
-                                    constraint= "==${version}"
+                                    constraint="==$version"
+                                elif [[ $version =~ [0-9]{4}\\.[0-9]rc[0-9]{14}$ ]]; then
+                                    # Handle release candidate versions with timestamp
+                                    # Note the double backslash to escape the dot in Groovy
+                                    constraint="==$version"
                                 elif [[ $version == *rc ]]; then
                                     # Handle shorthand release candidate versions
-                                    constraint="~=${version::-2}.0rc"
+                                    constraint="~=$version"
                                 else
                                     # Allow unspecified digits to float, e.g., 6 -> ~=6.0
-                                    constraint="~=${version}.0"
+                                    constraint="~=$version.0"
                                 fi
                             else
                                 # Leave constraint undefined if version is not defined
                                 constraint=""
                             fi
+                            
 
                             ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
                         '''

@@ -15,6 +15,7 @@ def update_topology() {
 
 def convert_python_version_to_docker_tag() {
     def version = env.version
+    version = version.replaceAll("\\s","")
     if (version) {
         def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc\d*)?(\.dev\d*)?/
         if (matcher.matches()) {

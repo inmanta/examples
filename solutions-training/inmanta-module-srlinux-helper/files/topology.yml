@@ -9,8 +9,6 @@ topology:
     inmanta-server:
       kind: linux
       image: ghcr.io/inmanta/orchestrator:latest
-      binds:
-          - ..:/code
       mgmt-ipv4: 172.30.0.3
       cmd: "server --wait-for-host inmanta_db --wait-for-port 5432"
     inmanta_db:

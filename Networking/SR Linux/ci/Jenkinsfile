@@ -92,7 +92,6 @@ pipeline {
                                     constraint="==$version"
                                 elif [[ $version =~ [0-9]{4}\\.[0-9]rc[0-9]{14}$ ]]; then
                                     # Handle release candidate versions with timestamp
-                                    # Note the double backslash to escape the dot in Groovy
                                     constraint="==$version"
                                 elif [[ $version == *rc ]]; then
                                     # Handle shorthand release candidate versions

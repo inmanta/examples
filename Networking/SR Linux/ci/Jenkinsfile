@@ -84,13 +84,18 @@ pipeline {
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
                             
-                            if [[ $version == *dev ]]; then
-                                constraint="~=${version::-3}.0.dev"
-                            elif [[ $version == *rc ]]; then
-                                constraint="~=${version::-2}.0rc"
+                            if [ -n "$version" ]; then
+                                if [[ $version == *dev ]]; then
+                                    constraint="~=${version::-3}.0.dev"
+                                elif [[ $version == *rc ]]; then
+                                    constraint="~=${version::-2}.0rc"
+                                else
+                                    # Use exact version
+                                    constraint="==$version"
+                                fi
                             else
-                                # Use exact version
-                                constraint="==$version"
+                                # Leave constraint undefined if version is not defined
+                                constraint=""
                             fi
                             
                             ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}

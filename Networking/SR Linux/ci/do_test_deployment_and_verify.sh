@@ -14,11 +14,7 @@ python"$1" -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
 if [ -n "$2" ]; then
-    if [[ "$2" == *dev* ]]; then
-        pip install --pre inmanta"$2"
-    else
-        pip install inmanta"$2"
-    fi
+    pip install inmanta"$2"
 else
     pip install inmanta
 fi

@@ -85,27 +85,16 @@ pipeline {
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
-
-                            if [ -n "$version" ]; then
-                                if [[ $version == *.*.* ]]; then
-                                    # Use exact version if fully specified
-                                    constraint="==$version"
-                                elif [[ $version =~ [0-9]{4}\\.[0-9]rc[0-9]{14}$ ]]; then
-                                    # Handle release candidate versions with timestamp
-                                    constraint="==$version"
-                                elif [[ $version == *rc ]]; then
-                                    # Handle shorthand release candidate versions
-                                    constraint="~=$version"
-                                else
-                                    # Allow unspecified digits to float, e.g., 6 -> ~=6.0
-                                    constraint="~=$version.0"
-                                fi
+                            
+                            if [[ $version == *dev ]]; then
+                                constraint="~=${version::-3}.0.dev"
+                            elif [[ $version == *rc ]]; then
+                                constraint="~=${version::-2}.0rc"
                             else
-                                # Leave constraint undefined if version is not defined
-                                constraint=""
+                                # Use exact version
+                                constraint="==$version"
                             fi
                             
-
                             ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
                         '''
                     }

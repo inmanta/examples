@@ -22,9 +22,7 @@ def convert_python_version_to_docker_tag() {
             def year = matcher.group(1)
             def minor = matcher.group(2)
             def patch = matcher.group(3) ?: ""
-            def rc = matcher.group(4) ?: ""
-            def dev = matcher.group(5) ?: ""
-            
+            def rc = matcher.group(4) ?: ""            
             // Constructing the formatted version
             def formattedVersion = "${year}.${minor}${patch}"
             if (rc) {

@@ -14,9 +14,9 @@ python"$1" -m venv "$base/venv"
 source "$base/venv/bin/activate"
 
 if [ -n "$2" ]; then
-    pip install inmanta"$2"
+  pip install inmanta"$2"
 else
-    pip install inmanta
+  pip install inmanta
 fi
 
 inmanta -vvvv project install

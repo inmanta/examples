@@ -15,19 +15,18 @@ def update_topology() {
 
 def convert_python_version_to_docker_tag() {
     def version = env.version
+    version = version.replaceAll("\\s","")
     if (version) {
-        def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc)?(\d*)/
+        def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc\d*)?(\.dev\d*)?/
         if (matcher.matches()) {
             def year = matcher.group(1)
             def minor = matcher.group(2)
-            def patch = matcher.group(3)
-            def rc = matcher.group(4)
-            def formattedVersion = "${year}.${minor}"
-            if (patch) {
-                formattedVersion += "${patch}"
-            }
+            def patch = matcher.group(3) ?: ""
+            def rc = matcher.group(4) ?: ""            
+            // Constructing the formatted version
+            def formattedVersion = "${year}.${minor}${patch}"
             if (rc) {
-                formattedVersion += "-${rc}"
+                formattedVersion += "-rc"
             }
             return formattedVersion
         } else {
@@ -35,7 +34,6 @@ def convert_python_version_to_docker_tag() {
         }
     }
     return 'latest'
-
 }
 
 pipeline {
@@ -85,7 +83,22 @@ pipeline {
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
-                            ci/do_test_deployment_and_verify.sh ${python_version} ${version}
+                            
+                            if [ -n "$version" ]; then
+                                if [[ $version == *dev ]]; then
+                                    constraint="~=${version::-3}.0.dev"
+                                elif [[ $version == *rc ]]; then
+                                    constraint="~=${version::-2}.0rc"
+                                else
+                                    # Use exact version
+                                    constraint="==$version"
+                                fi
+                            else
+                                # Leave constraint undefined if version is not defined
+                                constraint=""
+                            fi
+                            
+                            ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
                         '''
                     }
                 }

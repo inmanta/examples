@@ -1,0 +1,118 @@
+"""
+    Copyright 2023 Inmanta
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    Contact: code@inmanta.com
+"""
+
+entity Subscriber extends std::PurgeableResource:
+    string name
+    std::ipv4_interface mgmt_ip
+    string? interface = null
+    std::ipv4_interface? ip = null
+    std::ipv4_interface? gateway = null
+end
+
+entity Interface extends std::PurgeableResource:
+    string name
+    int mtu = 1500
+end
+
+entity Gateway extends std::PurgeableResource:
+    std::ipv4_interface ip
+end
+
+entity InterfaceIp  extends std::PurgeableResource:
+    std::ipv4_interface ip
+end
+
+Subscriber.agent_config [1] -- std::AgentConfig
+Subscriber.interfaces [0:] -- Interface.subscriber [1]
+
+Interface.routes[0:] -- Gateway.interface [1] 
+Interface.ips [0:] -- InterfaceIp.interface [1]
+
+
+index Subscriber(name)
+index Interface(subscriber, name)
+index Gateway(interface)
+index InterfaceIp(interface, ip)
+
+
+implementation emit_agent for Subscriber:
+    self.agent_config = std::AgentConfig(
+        agentname=self.name,
+        autostart=true,
+    )
+end
+implementation setup_subscriber for Subscriber:
+    if self.interface != null:
+        itf = Interface(
+            name = self.interface,
+            requires = self,
+            subscriber = self
+        )
+        if self.ip != null:
+            ip_on_itf = InterfaceIp(
+                ip=self.ip,
+                requires = itf,
+                interface = itf,
+            )
+            if self.gateway != null:
+                Gateway(
+                    ip=self.gateway,
+                    requires = ip_on_itf,
+                    interface = itf,
+                )
+            end
+        end
+    end
+end
+implement Subscriber using emit_agent, setup_subscriber
+
+implement Interface using std::none
+
+implement Gateway using std::none
+
+implement InterfaceIp using std::none
+
+
+
+
+entity InterfaceConfig:
+    # Wrapper
+    string interface
+    std::ipv4_interface ip
+    std::ipv4_interface gateway
+end
+InterfaceConfig.subscriber [1] -- Subscriber
+index InterfaceConfig(subscriber, interface)
+implementation config_sub for InterfaceConfig:
+    itf = Interface(
+        name = self.interface,
+        requires = self.subscriber,
+        subscriber = self.subscriber
+    )
+    ip_on_itf = InterfaceIp(
+        ip=self.ip,
+        requires = itf,
+        interface = itf,
+    )
+    Gateway(
+        ip=self.gateway,
+        requires = ip_on_itf,
+        interface = itf,
+    )
+end
+implement InterfaceConfig using config_sub

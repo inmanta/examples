@@ -20,3 +20,19 @@ Building a resource and a handler to configure such subscriber is out of the sco
 3. In this module, create an entity to represent a subscriber, and one to represent a subscriber interface, construct all those entities using the plugin.
 4. For each interface, create an implementation which prints the command that should be entered on the device, to setup the link properly (similarly to what is printed out by the `srlinux_helper::get_srlinux_interfaces` plugin, you can push it further).
 5. Come back later when you know how to build a handler and create your own subscriber interface resource!
+
+## Final step
+
+The final step of automation for this lab will be to automate the subscribers. They have a documented API that you can find at <http://{subscriber-ip}:8080/api/v2/docs>. This API allows us to modify the interfaces and routes of the subscribers.
+
+![alt](images/subscriber-api.png)
+
+An example module is shown in the [subscriber folder](./subscriber/). In particular, you can take a look at the [model](./subscriber/model/_init.cf) and the [handlers](./subscriber/inmanta_plugins/subscriber/__init__.py). There are several comments indicating the documentation reference.
+
+To install it you can use
+
+    ```console
+    (env) $ pip install -e subscriber
+    ```
+
+And run the file [full_flex_network.cf](./full_flex_network.cf).

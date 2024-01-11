@@ -1,0 +1,94 @@
+# With srlinux
+
+import srlinux_helper
+import subscriber
+
+### Helper
+entity InterRouterLink:
+    string interface_a
+    string interface_b
+    std::ipv4_interface ip_a
+    std::ipv4_interface ip_b
+end
+InterRouterLink.router_a [1] -- srlinux_helper::Router
+InterRouterLink.router_b [1] -- srlinux_helper::Router
+
+implementation emit_interface for InterRouterLink:
+    a_to_b = srlinux_helper::Interface(
+        router=self.router_a,
+        name=self.interface_a,
+        ipv4_address=self.ip_a,
+    )
+    b_to_a = srlinux_helper::Interface(
+        router=self.router_b,
+        name=self.interface_b,
+        ipv4_address=self.ip_b,
+    )
+end
+
+implement InterRouterLink using emit_interface
+
+topology = subscriber::topo_from_yml("topology.yml")
+
+### Configure routers
+for router in topology["routers"]:
+    srlinux_helper::Router(
+        name=router["name"],
+        address=router["mgmt-ip"],
+        username="admin",
+        password="NokiaSrl1!",
+    )
+end
+
+### Configure subscribers
+for subscriber in topology["subscribers"]:
+    subscriber::Subscriber(
+        name=subscriber["name"],
+        mgmt_ip=subscriber["mgmt-ip"]
+    )
+end
+
+## Routes
+
+### Route between routers
+
+for route in topology["routes"]["r2r"]:
+    InterRouterLink(
+        router_a=srlinux_helper::Router[name=route["router_name_a"]],
+        ip_a=route["ip_a"],
+        interface_a=route["interface_a"],
+        router_b=srlinux_helper::Router[name=route["router_name_b"]],
+        ip_b=route["ip_b"],
+        interface_b=route["interface_b"],
+    )
+end
+
+### Route to subscribers
+
+for cfg in topology["routes"]["r2s"]:
+    srlinux_helper::Interface(
+        router=srlinux_helper::Router[name=cfg["router_name"]],
+        name=cfg["router_interface"],
+        ipv4_address=cfg["router_address"],
+    )
+    subscriber::InterfaceConfig(
+        subscriber=subscriber::Subscriber[name=cfg["subscriber_name"]],
+        interface=cfg["subscriber_interface"],
+        ip=cfg["subscriber_address"],
+        gateway=cfg["subscriber_gateway"],
+    )
+end
+
+### OSPF
+
+
+for router_interfaces in topology["routers_interfaces"]:
+    srlinux_helper::Ospf(
+        router=srlinux_helper::Router[name=router_interfaces["router"]],
+        area_id="1.1.1.1",
+        interfaces=[
+            srlinux_helper::Interface[router=srlinux_helper::Router[name=router_interfaces["router"]], name=interface]
+            for interface in router_interfaces["interfaces"]
+        ],
+    )
+end

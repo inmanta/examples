@@ -1,0 +1,39 @@
+import srlinux_helper
+import yaml
+
+
+# This file refers to a file named `topology.yml` at the root of the `files`
+# directory, in the `srlinux_helper` module.
+topology_file = "srlinux_helper/topology.yml"
+topology = yaml::loads(std::source(topology_file))
+
+### Load all routers ###
+for node_name in srlinux_helper::dict_keys(topology["topology"]["nodes"]):
+    node = topology["topology"]["nodes"][node_name]
+    if node["kind"] == "srl":
+        srlinux_helper::Router(
+            name=node_name,
+            address=node["mgmt-ipv4"],
+            username="admin",
+            password="NokiaSrl1!",
+        )
+    end
+end
+
+
+### Load all router interfaces ###
+for interface_data in srlinux_helper::get_srlinux_interfaces(topology_file):
+    router = srlinux_helper::Router[name=interface_data["router"]]
+    interface = srlinux_helper::Interface(
+        name=interface_data["name"],
+        ipv4_address=interface_data["ipv4_address"],
+        router=router,
+    )
+
+    # Add the interface to the ospf area
+    ospf = srlinux_helper::Ospf(
+        router=router,
+        area_id="1.1.1.1",
+    )
+    ospf.interfaces += interface
+end

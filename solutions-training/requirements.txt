@@ -1,2 +1,0 @@
-inmanta-module-yang
-inmanta-module-nokia-srlinux==23.10.0

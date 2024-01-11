@@ -1,4 +1,0 @@
-inmanta-module-yaml
-inmanta-module-yang
-inmanta-module-srlinux
-inmanta-module-ip

@@ -2,20 +2,20 @@ name: vyosclab
 mgmt:
   bridge: inmantabridge
   network: inmanta_mgmt
-  ipv4_subnet: 10.11.12.0/24
+  ipv4-subnet: 10.11.12.0/24
 topology:
   nodes:
     vyos1:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.11.12.100
+      mgmt-ipv4: 10.11.12.100
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules
     vyos2:
       kind: linux
       image: vyos/vyos:1.2.8
-      mgmt_ipv4: 10.11.12.200
+      mgmt-ipv4: 10.11.12.200
       cmd: /sbin/init
       binds:
         - /lib/modules:/lib/modules

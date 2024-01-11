@@ -25,26 +25,15 @@ import inmanta.plugins
 
 
 @inmanta.plugins.plugin()
-def get_srlinux_routers(ctx: inmanta.plugins.Context, topology_file: "string") -> "dict[]":  # type: ignore
+def dict_keys(data: "dict") -> "string[]":  # type: ignore
     """
-    Read a clab topology file at a given path and extract all the srlinux
-    routers from it, and return them as a dict that can be used in the model.
+    Create a list with all the keys of a dict.  This allows us to easily
+    iterate over all the items in a dict, which the Inmanta DSL doesn't provide
+    any native mechanism for. (at least not yet)
 
-    :param topology_file: Path to the topology file that should be loaded.
+    :param data: The dict to get all the keys of.
     """
-    content = inmanta_plugins.std.source(ctx, topology_file)
-    parsed_content = yaml.safe_load(content)
-
-    return [
-        {
-            "name": k,
-            "address": v["mgmt-ipv4"],
-            "username": "admin",
-            "password": "NokiaSrl1!",
-        }
-        for k, v in parsed_content["topology"]["nodes"].items()
-        if v["kind"] == "srl"
-    ]
+    return list(data.keys())
 
 
 @inmanta.plugins.plugin()

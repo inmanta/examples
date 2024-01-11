@@ -21,7 +21,7 @@ Self contained examples for managing various types of network equipment:
 
 The training lab is a sandbox to learn the Inmanta modeling language.
 
-In this repo, we provide the same lab environment on both SR Linux and vyos with basic examples.
+In this repo, we provide a lab environment based on SRLinux in which you can easily deploy config manually and with the orchestrator.
 
 [For more information continue here.](Training/README.md)
 

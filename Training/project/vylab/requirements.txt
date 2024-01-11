@@ -1,2 +1,0 @@
-inmanta-module-yaml
-inmanta-module-ip

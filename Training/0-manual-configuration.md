@@ -118,7 +118,7 @@ For srlinux cli documentation, see https://documentation.nokia.com/srlinux/SR_Li
 
 1. Configure the interface manually.  The subscribers containers are simple linux hosts, as for most linux hosts, we can simply use the `ip` command.
     ```console
-    (app-root) bash-4.4# ip a add 10.1.1.2/30 dev eth1
+    (app-root) bash-4.4# ip address add 10.1.1.2/30 dev eth1
     (app-root) bash-4.4#
     ```
 
@@ -164,6 +164,7 @@ At the moment, we can not ping from one subscriber to the other, we still need t
     > - We use ospf-v2 as our links are configured with ipv4 addresses, and ospf-v3 doesn't support that.
     > - We created one area, in which we include all our interfaces, the id of such area doesn't really mather as it is the only one we will ever configure.
     > - We used as router-id the same ip as the mgmt ip for our router.  We could have chosen anything as long as it stays unique amongst the routers we are configuring.
+    > - We add the interfaces to the subscribers in the ospf instance configuration, while we don't actually speak ospf with the subscribers (we don't configure it on the subscriber side).  This simplifies the configuration, as the routes to the subscribers will automatically be shared.
 
 2. Configure a static route on each subscriber, to make it use the the link toward the router to reach the other subscriber.
     ```console

@@ -31,7 +31,7 @@ implement InterRouterLink using emit_interface
 
 ### Get a dictionnary from the config
 
-topology = subscriber::topo_from_yml("lab/topology.yml")
+topology = subscriber::topo_from_yml("topology.yml")
 
 ### Configure routers
 for router in topology["routers"]:

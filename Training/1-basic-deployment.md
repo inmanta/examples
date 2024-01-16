@@ -3,7 +3,7 @@
 ## Initial deployment
 
 To tell the orchestrator what to do, we need to create a desired state for it to apply.  We do this by creating a `project` (locally), which contains a `model` (you can see the top level of the model in the [main.cf](main.cf) file), `compiling` it, and `exporting` its `resources` to the orchestrator.  
-For this training, the `project` already exists, this is the folder you are currently working one.  An inmanta `project` is recognized by the  [project.yml file](https://docs.inmanta.com/community/dev/reference/projectyml.html#project-yml) at its root.
+For this training, the `project` already exists, this is the folder you are currently working on.  An inmanta `project` is recognized by the  [project.yml file](https://docs.inmanta.com/community/dev/reference/projectyml.html#project-yml) at its root.
 
 Please make sure that the orchestrator is running and that the project and environment were created like instructed on the [README.md](README.md). Don't forget to include your access token on the repository url on the [project.yml file](project.yml)
 

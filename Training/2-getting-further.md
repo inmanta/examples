@@ -16,7 +16,7 @@ This model is becoming very nice, but there is still something we can not do: co
 
 Building a resource and a handler to configure such subscriber is out of the scope of this training, but you can already do the following:
 1. Create a new module, in which we will mock, and later, implement, the interactions with the subscribers.
-> :bulb: You can use the [inmanta module template](https://docs.inmanta.com/community/latest/model_developers/module_creation.html#create-a-new-source-module).
+> :bulb: You can use the [inmanta module template](https://docs.inmanta.com/community/latest/model_developers/module_creation.html#create-a-new-source-module) to create a new module easily.
 2. In this module, create a plugin, which similarly to `srlinux_helper::get_srlinux_interfaces`, loads all the subscriber interfaces and their addresses.
 3. In this module, create an entity to represent a subscriber, and one to represent a subscriber interface, construct all those entities using the plugin.
 4. For each interface, create an implementation which prints the command that should be entered on the device, to setup the link properly (similarly to what is printed out by the `srlinux_helper::get_srlinux_interfaces` plugin, you can push it further).

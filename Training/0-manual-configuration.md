@@ -1,6 +1,6 @@
 # Manual configuration
 
-Despite already being deployed, the routers and subscribers are still not connected to each other. We can atest this using `ping`. Here we try to ping from subscriber-east to router-east:
+Despite already being deployed, the routers and subscribers are still not connected to each other. We can test this using `ping`. Here we try to ping from subscriber-east to router-east:
 
 ```console
 $ docker exec -ti clab-srlinux-subscriber-east bash
@@ -128,7 +128,7 @@ For srlinux cli documentation, see https://documentation.nokia.com/srlinux/SR_Li
 ## Configure the network manually - Subscribers
 
 1. Configure the interface manually.  The subscribers containers are simple linux hosts, as for most linux hosts, we can simply use the `ip` command.
-So on subscriber east we would execute this command.
+On subscriber east we will execute the following command:
     ```console
     (app-root) bash-4.4# ip address add 10.1.1.2/30 dev eth1
     (app-root) bash-4.4#

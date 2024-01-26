@@ -81,6 +81,9 @@ def get_tear_down_script(boolean strict = true) {
    return """
        cd '${env.WORKSPACE}/lsm-srlinux'
        sudo clab destroy --cleanup -t containerlab/topology.yml ${strict ? '' : '|| true'}
+       # The files in the containerlab/pgdata directory are not owned by Jenkins,
+       # because they are created by the user inside the container.
+       sudo rm -rf containerlab/pgdata
    """
 }
 

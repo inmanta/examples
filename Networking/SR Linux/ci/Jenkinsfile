@@ -108,6 +108,9 @@ pipeline {
                     sh '''
                         cd "Networking/SR Linux"
                         sudo clab destroy --cleanup -t containerlab/topology.yml
+                        # The files in the containerlab/pgdata directory are not owned by Jenkins,
+                        # because they are created by the user inside the container.
+                        sudo rm -rf containerlab/pgdata
                         # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
                         sudo docker network rm -f inmanta_mgmt
                     '''

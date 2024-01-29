@@ -117,3 +117,5 @@ INFO[0000] Removed container: clab-srlinux-inmanta-server
 INFO[0000] Removed container: clab-srlinux-inmanta_db   
 INFO[0000] Removing containerlab host entries from /etc/hosts file
 ```
+The data directory of the PostgreSQL database is mapped to the host. This way no data is lost when the PostgreSQL container restart. Remove the `pgdata/pgdata` directory (`rm -rf pgdata/pgdata`) to remove the PostgreSQL data as well.
+

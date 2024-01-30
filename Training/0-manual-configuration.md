@@ -1,6 +1,17 @@
 # Manual configuration
 
-Let's see how to configure our lab manually.
+Despite already being deployed, the routers and subscribers are still not connected to each other. We can test this using `ping`. Here we try to ping from subscriber-east to router-east:
+
+```console
+$ docker exec -ti clab-srlinux-subscriber-east bash
+(app-root) bash-4.4# ping 10.1.1.1
+PING 10.1.1.1 (10.1.1.1) 56(84) bytes of data.
+^C
+--- 10.1.1.1 ping statistics ---
+10 packets transmitted, 0 received, 100% packet loss, time 9212ms
+```
+
+In this file we will configure the network manually, so that all routers and subscribers are connected and reachable anywhere in the network.
 
 For srlinux cli documentation, see https://documentation.nokia.com/srlinux/SR_Linux_HTML_R21-11/SysMgmt_Guide/cli-interface.html
 
@@ -117,12 +128,14 @@ For srlinux cli documentation, see https://documentation.nokia.com/srlinux/SR_Li
 ## Configure the network manually - Subscribers
 
 1. Configure the interface manually.  The subscribers containers are simple linux hosts, as for most linux hosts, we can simply use the `ip` command.
+On subscriber east we will execute the following command:
     ```console
     (app-root) bash-4.4# ip address add 10.1.1.2/30 dev eth1
     (app-root) bash-4.4#
     ```
 
-2. Repeat for subscriber west.
+2. Repeat for subscriber west with the correct ip.
+> :bulb: Check the topology image above to find the correct ip for subscriber west.
 
 3. Test connectivity in between subscriber and router.  Let's use the `ping` command again, on the subscriber side this time.
     ```console

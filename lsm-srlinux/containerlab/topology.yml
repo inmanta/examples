@@ -25,7 +25,10 @@ topology:
       env:
         POSTGRES_USER: inmanta
         POSTGRES_PASSWORD: inmanta
+        PGDATA: /var/lib/postgresql/data/pgdata
       mgmt-ipv4: 172.30.0.2
+      binds:
+        - ./pgdata:/var/lib/postgresql/data
     spine:
       kind: srl
       type: ixrd3

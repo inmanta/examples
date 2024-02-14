@@ -38,7 +38,7 @@ async def main():
     # Export service definition
     print("Exporting service definition")
     result = await client.lsm_export_service_definition(tid=environment_id)
-    assert result.code == 200
+    assert result.code == 200, result.result
 
     # Wait until service type is added to the catalog
     async def is_service_definition_available() -> bool:

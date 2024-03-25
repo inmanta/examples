@@ -1,0 +1,9 @@
+pipeline_template: ci/modules/Jenkinsfile-integration-tests
+env_vars:
+  INMANTA_LSM_CONTAINER: true
+  INMANTA_LSM_CONTAINER_IMAGE: code.inmanta.com:4567/solutions/containers/service-orchestrator:dev
+  INMANTA_LSM_CONTAINER_LICENSE_FILE: /etc/inmanta/license/jenkins.inmanta.com.license
+  INMANTA_LSM_CONTAINER_JWE_FILE: /etc/inmanta/license/jenkins.inmanta.com.jwe
+  INMANTA_LSM_PARTIAL_COMPILE: true
+  INMANTA_MODULE_REPO: package:https://artifacts.internal.inmanta.com/inmanta/dev/+simple
+mypy_mode: fail

@@ -33,6 +33,8 @@ def test_multi_services(
     Triggering compiles for all the states of the service lifecycle, and making sure
     that all the emitted resources (in the shared or the owned sets) don't violate
     any of the rules set by the orchestrator.
+
+    https://docs.inmanta.com/inmanta-service-orchestrator/7/model_developers/resource_sets.html#partial-compiles
     """
     lsm_project.partial_compile = True
 

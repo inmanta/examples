@@ -2,6 +2,8 @@
 :copyright: 2024 Inmanta
 :contact: code@inmanta.com
 :license: Inmanta EULA
+
+This module validates and parses the config file using pydantic.
 """
 
 import pathlib

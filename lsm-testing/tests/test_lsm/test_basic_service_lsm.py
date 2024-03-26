@@ -17,7 +17,11 @@ async def service_lifecycle(
     name: str,
 ) -> None:
     """
-    Test the full lifecycle of our service.
+    Test the full lifecycle of our service.  This helper function is meant to
+    run next to itself for two main reasons:
+    1. Test interference in between multiple instances of the same service.
+    2. Speed up testing of different usage of the same service, by testing
+        them in parallel, instead of one at a time.
 
     :param remote_orchestrator: The remote orchestrator where we can create our
         service.
@@ -85,4 +89,16 @@ def test_service_lifecycle(
         for i in range(5)
     ]
 
-    pytest_inmanta_lsm.util.sync_execute_scenarios(*services)
+    pytest_inmanta_lsm.util.sync_execute_scenarios(
+        *services,
+        # When development is at a far enough stage, and the service being
+        # developed is stable enough, it makes sense to parallelize the testing
+        # of all these different scenarios.  At the beginning of a project, when
+        # your ci is not yet rock stable, it makes sense to execute all these
+        # scenarios one at a time, to make it easier to investigate when something
+        # is not going as expected.  It does mean that you will not be testing
+        # the interference in between services anymore.
+        # To make these scenario run one after the other, simply set the sequential
+        # parameter to True.  No other change required.
+        sequential=False,
+    )

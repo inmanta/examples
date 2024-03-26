@@ -6,23 +6,22 @@
 
 import copy
 import logging
-import re
 
 import pytest_inmanta_lsm.lsm_project
 
 LOGGER = logging.getLogger(__name__)
 
 SHARED_RESOURCES = [
-    re.compile(r"std::AgentConfig\[.*\]"),
-    re.compile(r"std::Directory\[localhost,path=/tmp/orders\]"),
-    re.compile(r"std::Directory\[localhost,path=/tmp/items\]"),
+    r"std::AgentConfig\[.*\]",
+    r"std::Directory\[localhost,path=/tmp/orders\]",
+    r"std::Directory\[localhost,path=/tmp/items\]",
 ]
 OWNED_RESOURCES = [
-    re.compile(r"std::Directory\[localhost,path=/tmp/orders/.*\]"),
-    re.compile(r"std::File\[localhost,path=/tmp/orders/.*\]"),
-    re.compile(r"std::Symlink\[localhost,target=/tmp/orders/.*\]"),
-    re.compile(r"std::File\[localhost,path=/tmp/items/.*\]"),
-    re.compile(r"lsm::LifecycleTransfer\[.*\]"),
+    r"std::Directory\[localhost,path=/tmp/orders/.*\]",
+    r"std::File\[localhost,path=/tmp/orders/.*\]",
+    r"std::Symlink\[localhost,target=/tmp/orders/.*\]",
+    r"std::File\[localhost,path=/tmp/items/.*\]",
+    r"lsm::LifecycleTransfer\[.*\]",
 ]
 
 

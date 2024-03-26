@@ -6,15 +6,13 @@
 
 import copy
 import logging
-import re
 
 import pytest_inmanta_lsm.lsm_project
 
 LOGGER = logging.getLogger(__name__)
 
-SHARED_RESOURCES = []
 OWNED_RESOURCES = [
-    re.compile(r"lsm::LifecycleTransfer\[.*\]"),
+    r"lsm::LifecycleTransfer\[.*\]",
 ]
 
 
@@ -53,23 +51,17 @@ def test_multi_services(
     for service in services:
         assert service.state == "creating"
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
         service.state = "failed"
         service.version += 1
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
         service.state = "up"
         service.version += 1
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
     # Update all the services
     for service in services:
@@ -83,36 +75,26 @@ def test_multi_services(
 
         assert service.state == "update_inprogress"
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
         service.state = "update_failed"
         service.version += 1
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
         service.state = "up"
         service.version += 1
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
     # Delete all the services
     for service in services:
         service.state = "deleting"
         service.version += 1
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)
 
         service.state = "terminated"
         service.deleted = True
         lsm_project.compile(service_id=service.id, validation=False)
-        lsm_project.post_partial_compile_validation(
-            service.id, SHARED_RESOURCES, OWNED_RESOURCES
-        )
+        lsm_project.post_partial_compile_validation(service.id, [], OWNED_RESOURCES)

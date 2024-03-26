@@ -19,6 +19,8 @@ def test_service_validation(
         """
     )
 
+    assert lsm_project.service_entities is not None
+
     # We should have exported only our service
     assert lsm_project.service_entities.keys() == {"ImportantCustomerService"}
 

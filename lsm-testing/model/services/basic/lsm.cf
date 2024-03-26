@@ -1,0 +1,49 @@
+"""
+    :copyright: 2024 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+
+    This module defines the api binding, which exposes our service to
+    the lsm api, and handles the service unrolling, to instanciate in our
+    model, each service instance in the inventory.
+
+    The logic is separated from the service definition, to allow to import
+    this module without exposing its service on the lsm api.  This allows
+    for example, to reuse our service as a building block for another service
+    in another module.
+"""
+import lsm
+import lsm::fsm
+import lsm::allocators
+import config
+import integration_example
+
+basic_service_binding = lsm::ServiceEntityBindingV2(
+    service_entity="integration_example::services::basic::BasicService",
+    service_entity_name="BasicService",
+    service_identity="name",
+    owner=null,
+    lifecycle=lsm::fsm::simple,
+)
+
+
+for assignment in lsm::all(basic_service_binding):
+    attributes = assignment["attributes"]
+
+    service = BasicService(
+        instance_id=assignment["id"],
+        entity_binding=basic_service_binding,
+        name=attributes["name"],
+        description=attributes["description"],
+        uniqueId=lsm::allocators::get_first_free_integer(
+            service,
+            "uniqueId",
+            range_start=config::get_config_value_as_int(integration_example::conf, "basic_service.unique_id_range.start"),
+            range_end=config::get_config_value_as_int(integration_example::conf, "basic_service.unique_id_range.end"),
+            used_values=lsm::allocators::get_used_values(
+                basic_service_binding,
+                "uniqueId",
+            ),
+        ),
+    )
+end

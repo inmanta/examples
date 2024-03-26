@@ -1,0 +1,5 @@
+include inmanta_plugins/integration_example/setup.cfg
+include inmanta_plugins/integration_example/py.typed
+recursive-include inmanta_plugins/integration_example/model *.cf
+graft inmanta_plugins/integration_example/files
+graft inmanta_plugins/integration_example/templates

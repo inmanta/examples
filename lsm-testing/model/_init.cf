@@ -1,0 +1,12 @@
+"""
+    :copyright: 2024 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+"""
+import integration_example
+import integration_example::config
+
+
+# This value holds the config for this module in the project it is being used in
+# It can be passed on to all the `get_config_*` plugins of the config module
+conf = integration_example::config::get_config()

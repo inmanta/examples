@@ -1,0 +1,35 @@
+"""
+    :copyright: 2024 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+
+    This module defines the BasicService service.  This service doesn't do
+    anything, so its implementation is completely empty.
+"""
+import lsm
+
+
+entity BasicService extends lsm::ServiceEntity:
+    """
+    BasicService, which doesn't do anything, it can be created, updated
+    and deleted, without any side-effect on any system.
+
+    :attr name: The name to give to this instance of the service.
+    :attr description: A description of the service instance, can be
+        updated when required.
+    :attr uniqueId: Read-Only. A unique integer number that will be assigned to this
+        service, provided by the api.
+    """
+    std::ascii_word name
+    lsm::attribute_modifier name__modifier = "rw"
+
+    string? description = null
+    lsm::attribute_modifier description__modifier = "rw+"
+
+    int? uniqueId = null
+    lsm::attribute_modifier uniqueId__modifier = "r"
+end
+
+index BasicService(name)
+
+implement BasicService using parents

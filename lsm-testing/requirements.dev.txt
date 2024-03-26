@@ -1,0 +1,5 @@
+inmanta-core>=6
+inmanta-dev-dependencies[module]
+pytest-inmanta>=2
+pytest-inmanta-lsm>=3.3.0.dev0
+types-PyYAML

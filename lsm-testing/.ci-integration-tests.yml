@@ -5,6 +5,8 @@ env_vars:
   INMANTA_LSM_CONTAINER_LICENSE_FILE: /etc/inmanta/license/jenkins.inmanta.com.license
   INMANTA_LSM_CONTAINER_JWE_FILE: /etc/inmanta/license/jenkins.inmanta.com.jwe
   INMANTA_LSM_PARTIAL_COMPILE: true
-  INMANTA_MODULE_REPO: package:https://artifacts.internal.inmanta.com/inmanta/dev/+simple
 mypy_mode: fail
+
+# This module doesn't have its own repo, the module_path option ensures that the generic
+# module ci can still be used with it.
 module_path: lsm-testing

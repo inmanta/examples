@@ -2,7 +2,7 @@
 
 This module is an example of fully functional integration module, offering two lsm services:
 - `BasicService`: this service doesn't do anything, and has a very simple definition.
-- `ImportantCustomerService`: this service manages some file on the orchestrator file system, and has a more advances definition.
+- `ImportantCustomerService`: this service manages some file on the orchestrator file system, and has a more advanced definition.
 
 The point of this module is to illustrate how to test integration modules.  The module tests, located in the `tests` folder follow and illustrate the recommended guidelines for testing such module.
 

@@ -43,3 +43,5 @@ mypy-tests:
 
 .PHONY: mypy
 mypy: mypy-plugins mypy-tests
+
+ci-mypy: mypy

@@ -23,6 +23,12 @@ async def service_lifecycle(
     2. Speed up testing of different usage of the same service, by testing
         them in parallel, instead of one at a time.
 
+    Typically, such a test scenario would also run some checks to make sure that
+    the deployment of the service had the expected effect on the system it configures.
+    For example, for network connectivity services, run a ping through the connection
+    that the service deploys.  Given the trivial aspect of this service, we didn't
+    do it here.
+
     :param remote_orchestrator: The remote orchestrator where we can create our
         service.
     :param orderId: The order id we should assign to our new service.

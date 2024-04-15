@@ -4,10 +4,10 @@
 :license: Inmanta EULA
 """
 
-from pytest_inmanta.plugin import Project
+import pytest_inmanta.plugin
 
 
-def test_basics(project: Project) -> None:
+def test_basics(project: pytest_inmanta.plugin.Project) -> None:
     """
     This test only checks if the module compiles correctly.
 

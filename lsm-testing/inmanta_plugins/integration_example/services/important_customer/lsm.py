@@ -4,12 +4,12 @@
 :license: Inmanta EULA
 """
 
-from inmanta_plugins.lsm import allocation_helpers  # type: ignore
+import inmanta_plugins.lsm.allocation_helpers  # type: ignore
 
-from inmanta import plugins
+import inmanta.plugins
 
 
-@allocation_helpers.allocator()
+@inmanta_plugins.lsm.allocation_helpers.allocator()
 def resolve_customer_info(
     service: "lsm::ServiceEntity",  # type: ignore
     attribute_path: "string",  # type: ignore
@@ -31,7 +31,7 @@ def resolve_customer_info(
     }
 
 
-@plugins.plugin()
+@inmanta.plugins.plugin()
 def removed_items(service_instance: "dict") -> "dict[]":  # type: ignore
     """
     Get all the removed items.  The removed items are items which used to be part

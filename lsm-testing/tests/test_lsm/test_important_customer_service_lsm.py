@@ -86,11 +86,7 @@ def test_service_lifecycle(
 ) -> None:
     # Compile our project
     project.compile(
-        """
-        import integration_example::services::important_customer
-        import integration_example::services::important_customer::lsm
-        """,
-        no_dedent=False,
+        "import integration_example::services::important_customer::lsm",
     )
 
     # Export the service catalog to the remote orchestrator

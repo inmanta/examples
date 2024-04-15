@@ -33,10 +33,7 @@ def test_multi_services(
     # Make sure that our service definition is valid, trigger an export
     # into our mocked catalog
     lsm_project.export_service_entities(
-        """
-        import integration_example::services::basic
-        import integration_example::services::basic::lsm
-        """
+        "import integration_example::services::basic::lsm"
     )
 
     # Create and add services to our inventory

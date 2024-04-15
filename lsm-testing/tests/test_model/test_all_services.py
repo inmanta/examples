@@ -14,9 +14,7 @@ def test_service_validation(
     # into our mocked catalog
     lsm_project.export_service_entities(
         """
-        import integration_example::services::basic
         import integration_example::services::basic::lsm
-        import integration_example::services::important_customer
         import integration_example::services::important_customer::lsm
         """
     )

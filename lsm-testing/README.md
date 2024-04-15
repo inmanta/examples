@@ -54,7 +54,7 @@ The test suite of this module cover most of the good weather scenarios for our s
 1. Validate that the service can be created, updated, and deleted.
 1. Validate that our services work in a real orchestrator, and that multiple instances of the same service can be deployed in the same environment.
 
-Some tests run locally only, and some run on a real, remote, orchestrator.  Too test all these scenarios, we heavily rely on the `pytest-inmanta-lsm` library, which is meant to make testing of such integration modules easy and reliable.
+Some tests run locally only, and some run on a real, remote, orchestrator. To test all these scenarios, we heavily rely on the `pytest-inmanta-lsm` library, which is meant to make testing of such integration modules easy and reliable.
 
 1. Set up a new virtual environment, then install the module in it. The first line assumes you have [``virtualenvwrapper``](https://virtualenvwrapper.readthedocs.io/en/latest/install.html#basic-installation)
 installed. If you don't, you can replace it with `python3 -m venv .env && source .env/bin/activate`.
@@ -78,8 +78,8 @@ pytest tests
 
 ## Types of tests
 
-This module illustrate the typical test coverage you want when developing an integration module.  Here are the different types of test it includes:
-1. Mocked test: fast test, that don't deploy any resources, but only compile the model and verify it is as expected. Uses the [lsm_project fixture](https://github.com/inmanta/pytest-inmanta-lsm?tab=readme-ov-file#second-case-mocking-the-lsm-api). These tests are used during development to iterate fast.
-1. Full test: slower test that use an actual orchestrator and actually deploy the service and take it through its lifecycle. These test verify the behavior of the actual service, as deployed in the field. These test are often slow and complicated, but give real assurance that the service is delivered correctly.
-1. Interference test: test to verify the service can run next to itself.  This is usually a refinement of the previously mentioned `Full test`, where we extend this test to run next to itself. 
-1. Partial compile test: test to verify that the model is partial compile compatible.  This is a sub-type of the previously mentioned `Mocked test` which will take a service through all the states it can have, and trigger compiles with both partial compile enabled and disabled, to make sure the service is safe to use in both scenarios.
+This module illustrates the typical test coverage you want when developing an integration module.  Here are the different types of test it includes:
+1. Mocked test: fast test that doesn't deploy any resources but only compiles the model and verifies it is as expected. Uses the [lsm_project fixture](https://github.com/inmanta/pytest-inmanta-lsm?tab=readme-ov-file#second-case-mocking-the-lsm-api). These tests are used during development to iterate fast.
+2. Full test: slower test that use an actual orchestrator and actually deploy the service and take it through its lifecycle. These test verify the behavior of the actual service, as deployed in the field. These test are often slow and complicated, but give real assurance that the service is delivered correctly.
+3. Interference test: test to verify the service can run next to itself.  This is usually a refinement of the previously mentioned `Full test`, where we extend this test to run next to itself. 
+4. Partial compile test: test to verify that the model is partial compile compatible.  This is a sub-type of the previously mentioned `Mocked test` which will take a service through all the states it can have, and trigger compiles with both partial compile enabled and disabled, to make sure the service is safe to use in both scenarios.

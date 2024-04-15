@@ -39,14 +39,14 @@ def test_multi_services(
         """
     )
 
-    # Create an add services to our inventory
+    # Create and add services to our inventory
     services = [
         lsm_project.create_service(
             service_entity_name="BasicService",
             attributes={"name": f"test-{i}"},
             auto_transfer=True,
         )
-        for i in range(0, 2)
+        for i in range(2)
     ]
 
     # Create all the orders

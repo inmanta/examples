@@ -4,7 +4,7 @@
     :license: Inmanta EULA
 
     This module defines the api binding, which exposes our service to
-    the lsm api, and handles the service unrolling, to instanciate in our
+    the lsm api, and handles the service unrolling, to instantiate in our
     model, each service instance in the inventory.
 
     The logic is separated from the service definition, to allow to import

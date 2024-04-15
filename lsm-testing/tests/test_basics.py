@@ -17,7 +17,7 @@ def test_basics(project: Project) -> None:
     1. We are using the simple project fixture, it wouldn't work as lsm::all
         needs an orchestrator (or a mocked orchestrator) to read all the
         service instances from.
-    2. We are making sure that this modules can be used by another module,
+    2. We are making sure that this module can be used by another module,
         where we might not want to export the lsm services of this module, but
         only reuse their logic.
     """

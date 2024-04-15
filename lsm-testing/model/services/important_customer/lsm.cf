@@ -8,7 +8,7 @@
     model, each service instance in the inventory.
 
     The logic is separated from the service definition, to allow to import
-    this module without exposing its service on the lsm api.  This allows
+    the integration_example module without exposing its service on the lsm api.  This allows
     for example, to reuse our service as a building block for another service
     in another module.
 """

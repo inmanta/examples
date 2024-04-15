@@ -60,7 +60,7 @@ for assignment in lsm::all(important_customer_service_binding):
                 description=item["description"],
                 serviceItemId=lsm::allocators::get_first_free_integer(
                     service,
-                    lsm::format("items[name={item_name}].serviceItemId", [], {"item_name": item["name"]}),
+                    lsm::format("items[name={name}].serviceItemId", args=[], kwargs=item),
                     range_start=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.start"),
                     range_end=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.end"),
                     used_values=lsm::allocators::get_used_values(

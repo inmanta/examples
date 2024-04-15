@@ -37,9 +37,9 @@ def test_service_validation(
         lsm_project.create_service(
             service_entity_name="ImportantCustomerService",
             attributes={
-                "orderId": f"test-{i}",
+                "order_id": f"test-{i}",
                 "documentation": {
-                    "customerReference": "some customer",
+                    "customer_reference": "some customer",
                     "description": f"This is test service {i}",
                 },
                 "items": [

@@ -31,7 +31,7 @@ async def service_lifecycle(
 
     :param remote_orchestrator: The remote orchestrator where we can create our
         service.
-    :param orderId: The order id we should assign to our new service.
+    :param order_id: The order id we should assign to our new service.
     :param items: The names of the items we should create.
     """
     instance = pytest_inmanta_lsm.remote_service_instance_async.RemoteServiceInstance(

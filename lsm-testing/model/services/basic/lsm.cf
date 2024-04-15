@@ -37,14 +37,14 @@ for assignment in lsm::all(basic_service_binding):
         description=attributes["description"],
         # For more details about allocation v3, refer to the documentation
         # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
-        uniqueId=lsm::allocators::get_first_free_integer(
+        unique_id=lsm::allocators::get_first_free_integer(
             service,
-            "uniqueId",
+            "unique_id",
             range_start=config::get_config_value_as_int(integration_example::conf, "basic_service.unique_id_range.start"),
             range_end=config::get_config_value_as_int(integration_example::conf, "basic_service.unique_id_range.end"),
             used_values=lsm::allocators::get_used_values(
                 basic_service_binding,
-                "uniqueId",
+                "unique_id",
             ),
         ),
     )

@@ -26,9 +26,9 @@ def test_service_validation(
         lsm_project.create_service(
             service_entity_name="ImportantCustomerService",
             attributes={
-                "orderId": f"test-{i}",
+                "order_id": f"test-{i}",
                 "documentation": {
-                    "customerReference": "some customer",
+                    "customer_reference": "some customer",
                     "description": f"This is test service {i}",
                 },
                 "items": [
@@ -41,21 +41,21 @@ def test_service_validation(
             auto_transfer=True,
         )
 
-    # Assert that all services have a different serviceId
+    # Assert that all services have a different service_id
     all_service_ids = {
-        service.active_attributes["serviceId"]
+        service.active_attributes["service_id"]
         for service in lsm_project.services.values()
     }
     assert len(all_service_ids) == len(lsm_project.services)
 
-    # Assert that all items have a different serviceItemId
+    # Assert that all items have a different service_item_id
     all_service_item_ids = {
-        item["serviceItemId"]
+        item["service_item_id"]
         for service in lsm_project.services.values()
         for item in service.active_attributes["items"]
     }
     all_service_items = {
-        (service.active_attributes["orderId"], item["name"])
+        (service.active_attributes["order_id"], item["name"])
         for service in lsm_project.services.values()
         for item in service.active_attributes["items"]
     }

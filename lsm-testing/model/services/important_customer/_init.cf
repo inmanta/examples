@@ -49,15 +49,15 @@ entity ImportantCustomerService extends lsm::ServiceEntity:
     This service allows to serve the given customer with the important service
     we offer.
 
-    :attr orderId: A unique identifier for this service, the form is completely free and
+    :attr order_id: A unique identifier for this service, the form is completely free and
         is left to the service user.
-    :attr serviceId: Read-only, a unique identifier for this service, provided by the api.
+    :attr service_id: Read-only, a unique identifier for this service, provided by the api.
     """
-    std::ascii_word orderId
-    lsm::attribute_modifier orderId__modifier = "rw"
+    std::ascii_word order_id
+    lsm::attribute_modifier order_id__modifier = "rw"
 
-    int? serviceId = null
-    lsm::attribute_modifier serviceId__modifier = "r"
+    int? service_id = null
+    lsm::attribute_modifier service_id__modifier = "r"
 end
 ImportantCustomerService.documentation [1] lsm::__rwplus__ ServiceDocumentation._service [1]
 """
@@ -70,9 +70,9 @@ A list of items which compose the service, items can be added and removed from t
 list.
 """
 
-index ImportantCustomerService(orderId)
+index ImportantCustomerService(order_id)
 """
-The natural identifier for a service is the user-provided orderId
+The natural identifier for a service is the user-provided order_id
 """
 
 
@@ -82,19 +82,19 @@ entity ServiceDocumentation extends lsm::EmbeddedEntity:
     customer it serves or a custom description of this particular instance of
     the service.
 
-    :attr customerReference: A reference to the customer that this service serves.
+    :attr customer_reference: A reference to the customer that this service serves.
     :attr description: More context information about the service.
-    :attr customerInfo: Read-only, customer information that we resolved thanks to
+    :attr customer_info: Read-only, customer information that we resolved thanks to
         the provided customer reference.
     """
-    string customerReference
-    lsm::attribute_modifier customerReference__modifier = "rw"
+    string customer_reference
+    lsm::attribute_modifier customer_reference__modifier = "rw"
 
     string? description = null
     lsm::attribute_modifier description__modifier = "rw+"
 
-    dict? customerInfo = null
-    lsm::attribute_modifier customerInfo__modifier = "r"
+    dict? customer_info = null
+    lsm::attribute_modifier customer_info__modifier = "r"
 end
 
 
@@ -105,7 +105,7 @@ entity ServiceItem extends lsm::EmbeddedEntity, lsm::ServiceBase:
     :attr name: The name of the item, this should be unique by service.
     :attr priority: The priority of the item.
     :attr description: A free-form description of this item.
-    :attr serviceItemId: Read-only, a unique identifier of this item across
+    :attr service_item_id: Read-only, a unique identifier of this item across
         all services in the inventory, provided by the api.
     :attr _purged: Internat attribute to mark an item as deleted (for updates
         where the item is removed from the list in the inventory).
@@ -119,8 +119,8 @@ entity ServiceItem extends lsm::EmbeddedEntity, lsm::ServiceBase:
     string? description = null
     lsm::attribute_modifier description__modifier = "rw+"
 
-    int? serviceItemId = null
-    lsm::attribute_modifier serviceItemId__modifier = "r"
+    int? service_item_id = null
+    lsm::attribute_modifier service_item_id__modifier = "r"
 
     bool _purged
 end
@@ -144,7 +144,7 @@ implementation service_file for ImportantCustomerService:
     # files.
     self._order_folder = std::Directory(
         host=localhost,
-        path=f"{orders_folder.path}/order-{self.serviceId}",
+        path=f"{orders_folder.path}/order-{self.service_id}",
         mode=755,
         owner="inmanta",
         group="inmanta",
@@ -174,15 +174,15 @@ implementation service_file for ImportantCustomerService:
         # Create a file that contains the information about our service
         self.resources += std::File(
             host=localhost,
-            path=f"{self._order_folder.path}/{self.orderId}.json",
+            path=f"{self._order_folder.path}/{self.order_id}.json",
             content=json_dumps(
                 {
-                    "orderId": self.orderId,
-                    "serviceId": self.serviceId,
+                    "order_id": self.order_id,
+                    "service_id": self.service_id,
                     "documentation": {
-                        "customerReference": self.documentation.customerReference,
+                        "customer_reference": self.documentation.customer_reference,
                         "description": self.documentation.description,
-                        "customerInfo": self.documentation.customerInfo,
+                        "customer_info": self.documentation.customer_info,
                     },
                     "itemsCount": std::len([i for i in self.items if not i._purged]),
                 },
@@ -212,13 +212,13 @@ implementation item_file for ServiceItem:
     # Create a file for the item of this service, in the global items folder
     item_file = std::File(
         host=localhost,
-        path=f"{items_folder.path}/item-{self.serviceItemId}.json",
+        path=f"{items_folder.path}/item-{self.service_item_id}.json",
         content=json_dumps(
             {
                 "name": self.name,
                 "priority": self.priority,
                 "description": self.description,
-                "serviceItemId": self.serviceItemId,
+                "service_item_id": self.service_item_id,
             },
         ),
         mode=644,

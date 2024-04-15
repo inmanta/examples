@@ -21,7 +21,7 @@ import integration_example
 important_customer_service_binding = lsm::ServiceEntityBindingV2(
     service_entity="integration_example::services::important_customer::ImportantCustomerService",
     service_entity_name="ImportantCustomerService",
-    service_identity="orderId",
+    service_identity="order_id",
     owner=null,
     lifecycle=lsm::fsm::simple,
 )
@@ -33,26 +33,26 @@ for assignment in lsm::all(important_customer_service_binding):
     service = ImportantCustomerService(
         instance_id=assignment["id"],
         entity_binding=important_customer_service_binding,
-        orderId=attributes["orderId"],
+        order_id=attributes["order_id"],
         # For more details about allocation v3, refer to the documentation
         # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
-        serviceId=lsm::allocators::get_first_free_integer(
+        service_id=lsm::allocators::get_first_free_integer(
             service,
-            "serviceId",
+            "service_id",
             range_start=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_id_range.start"),
             range_end=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_id_range.end"),
             used_values=lsm::allocators::get_used_values(
                 important_customer_service_binding,
-                "serviceId",
+                "service_id",
             ),
         ),
         documentation=ServiceDocumentation(
-            customerReference=attributes["documentation"]["customerReference"],
+            customer_reference=attributes["documentation"]["customer_reference"],
             description=attributes["documentation"]["description"],
-            customerInfo=resolve_customer_info(
+            customer_info=resolve_customer_info(
                 service,
-                "documentation.customerInfo",
-                customer_reference=service.documentation.customerReference,
+                "documentation.customer_info",
+                customer_reference=service.documentation.customer_reference,
             ),
         ),
         items=[
@@ -62,14 +62,14 @@ for assignment in lsm::all(important_customer_service_binding):
                 description=item["description"],
                 # For more details about allocation v3, refer to the documentation
                 # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
-                serviceItemId=lsm::allocators::get_first_free_integer(
+                service_item_id=lsm::allocators::get_first_free_integer(
                     service,
-                    lsm::format("items[name={name}].serviceItemId", args=[], kwargs=item),
+                    lsm::format("items[name={name}].service_item_id", args=[], kwargs=item),
                     range_start=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.start"),
                     range_end=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.end"),
                     used_values=lsm::allocators::get_used_values(
                         important_customer_service_binding,
-                        "items[name=*].serviceItemId",
+                        "items[name=*].service_item_id",
                     ),
                 ),
                 _purged=service.purge_resources,

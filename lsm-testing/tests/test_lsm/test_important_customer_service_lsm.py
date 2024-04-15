@@ -14,7 +14,7 @@ import pytest_inmanta_lsm.util
 
 async def service_lifecycle(
     remote_orchestrator: pytest_inmanta_lsm.remote_orchestrator.RemoteOrchestrator,
-    orderId: str,
+    order_id: str,
     items: list[str],
 ) -> None:
     """
@@ -32,7 +32,7 @@ async def service_lifecycle(
 
     :param remote_orchestrator: The remote orchestrator where we can create our
         service.
-    :param orderId: The order id we should assign to our new service.
+    :param order_id: The order id we should assign to our new service.
     :param items: The names of the items we should create.
     """
     instance = pytest_inmanta_lsm.remote_service_instance_async.RemoteServiceInstance(
@@ -43,9 +43,9 @@ async def service_lifecycle(
     # Create the instance with the provided parameters
     up = await instance.create(
         attributes={
-            "orderId": orderId,
+            "order_id": order_id,
             "documentation": {
-                "customerReference": "customer-1",
+                "customer_reference": "customer-1",
             },
             "items": [{"name": item} for item in items],
         },
@@ -102,7 +102,7 @@ def test_service_lifecycle(
     services = [
         service_lifecycle(
             remote_orchestrator,
-            orderId=f"test-{i}",
+            order_id=f"test-{i}",
             items=["one", "two", "three"],
         )
         for i in range(5)

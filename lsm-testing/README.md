@@ -14,13 +14,11 @@ The point of this module is to illustrate how to test integration modules.  The 
 To use this module in a project, you must simply import the `lsm` submodules which contain the definition of the service you want to use.  And add the configuration file (see next section), which can be empty.  
 To use the `BasicService`, your project model will simply look like:
 ```
-import integration_example::services::basic
 import integration_example::services::basic::lsm
 ```
 
 To use the `ImportantCustomerService`, your project model will look like:
 ```
-import integration_example::services::important_customer
 import integration_example::services::important_customer::lsm
 ```
 
@@ -48,11 +46,11 @@ important_customer_service:
 
 ## Running tests
 
-The test suite of this module cover most of the good weather scenarios for our service, and some of the bad weather ones.  The test suite does the following:
+The test suite of this module cover most of the good weather scenarios (where the service gets deployed as expected) for our service, and some of the bad weather ones (where the service encounters any kind of issue, such as failed resources, rejected compiles, etc.).  The test suite does the following:
 1. Validate that the model is valid for every state of our services.
-1. Validate that our services can safely be used with partial compile.
-1. Validate that the service can be created, updated, and deleted.
-1. Validate that our services work in a real orchestrator, and that multiple instances of the same service can be deployed in the same environment.
+2. Validate that our services can safely be used with partial compile.
+3. Validate that the service can be created, updated, and deleted.
+4. Validate that our services work in a real orchestrator, and that multiple instances of the same service can be deployed in the same environment.
 
 Some tests run locally only, and some run on a real, remote, orchestrator. To test all these scenarios, we heavily rely on the `pytest-inmanta-lsm` library, which is meant to make testing of such integration modules easy and reliable.
 

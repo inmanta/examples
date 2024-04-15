@@ -9,6 +9,8 @@ import inmanta_plugins.lsm.allocation_helpers  # type: ignore
 import inmanta.plugins
 
 
+# For more details about allocation v3, refer to the documentation
+# https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
 @inmanta_plugins.lsm.allocation_helpers.allocator()
 def resolve_customer_info(
     service: "lsm::ServiceEntity",  # type: ignore

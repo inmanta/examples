@@ -34,6 +34,8 @@ for assignment in lsm::all(important_customer_service_binding):
         instance_id=assignment["id"],
         entity_binding=important_customer_service_binding,
         orderId=attributes["orderId"],
+        # For more details about allocation v3, refer to the documentation
+        # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
         serviceId=lsm::allocators::get_first_free_integer(
             service,
             "serviceId",
@@ -58,6 +60,8 @@ for assignment in lsm::all(important_customer_service_binding):
                 name=item["name"],
                 priority=item["priority"],
                 description=item["description"],
+                # For more details about allocation v3, refer to the documentation
+                # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
                 serviceItemId=lsm::allocators::get_first_free_integer(
                     service,
                     lsm::format("items[name={name}].serviceItemId", args=[], kwargs=item),

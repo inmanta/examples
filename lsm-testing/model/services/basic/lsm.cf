@@ -35,6 +35,8 @@ for assignment in lsm::all(basic_service_binding):
         entity_binding=basic_service_binding,
         name=attributes["name"],
         description=attributes["description"],
+        # For more details about allocation v3, refer to the documentation
+        # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
         uniqueId=lsm::allocators::get_first_free_integer(
             service,
             "uniqueId",

@@ -1,0 +1,7 @@
+"""
+    :copyright: 2024 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+
+    This module exists so that we can use the plugins defined in its python peer.
+"""

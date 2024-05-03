@@ -1,0 +1,87 @@
+"""
+    :copyright: 2024 Inmanta
+    :contact: code@inmanta.com
+    :license: Inmanta EULA
+
+    This module defines the api binding, which exposes our service to
+    the lsm api, and handles the service unrolling, to instanciate in our
+    model, each service instance in the inventory.
+
+    The logic is separated from the service definition, to allow to import
+    the integration_example module without exposing its service on the lsm api.  This allows
+    for example, to reuse our service as a building block for another service
+    in another module.
+"""
+import lsm
+import lsm::fsm
+import lsm::allocators
+import config
+import integration_example
+
+important_customer_service_binding = lsm::ServiceEntityBindingV2(
+    service_entity="integration_example::services::important_customer::ImportantCustomerService",
+    service_entity_name="ImportantCustomerService",
+    service_identity="order_id",
+    owner=null,
+    lifecycle=lsm::fsm::simple,
+)
+
+
+for assignment in lsm::all(important_customer_service_binding):
+    attributes = assignment["attributes"]
+
+    service = ImportantCustomerService(
+        instance_id=assignment["id"],
+        entity_binding=important_customer_service_binding,
+        order_id=attributes["order_id"],
+        # For more details about allocation v3, refer to the documentation
+        # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
+        service_id=lsm::allocators::get_first_free_integer(
+            service,
+            "service_id",
+            range_start=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_id_range.start"),
+            range_end=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_id_range.end"),
+            used_values=lsm::allocators::get_used_values(
+                important_customer_service_binding,
+                "service_id",
+            ),
+        ),
+        documentation=ServiceDocumentation(
+            customer_reference=attributes["documentation"]["customer_reference"],
+            description=attributes["documentation"]["description"],
+            customer_info=resolve_customer_info(
+                service,
+                "documentation.customer_info",
+                customer_reference=service.documentation.customer_reference,
+            ),
+        ),
+        items=[
+            ServiceItem(
+                name=item["name"],
+                priority=item["priority"],
+                description=item["description"],
+                # For more details about allocation v3, refer to the documentation
+                # https://docs.inmanta.com/inmanta-service-orchestrator/latest/lsm/allocation/allocation_v3.html#allocation-v3
+                service_item_id=lsm::allocators::get_first_free_integer(
+                    service,
+                    lsm::format("items[name={name}].service_item_id", args=[], kwargs=item),
+                    range_start=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.start"),
+                    range_end=config::get_config_value_as_int(integration_example::conf, "important_customer_service.service_item_id_range.end"),
+                    used_values=lsm::allocators::get_used_values(
+                        important_customer_service_binding,
+                        "items[name=*].service_item_id",
+                    ),
+                ),
+                _purged=service.purge_resources,
+            )
+            for item in attributes["items"]
+        ],
+    )
+
+    # Also add all the purged items (absent from current desired state but where present
+    # in the previous desired state)
+    service.items += [
+        ServiceItem(**removed_item, _purged=true)
+        for removed_item in removed_items(assignment)
+    ]
+end

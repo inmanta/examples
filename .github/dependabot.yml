@@ -1,0 +1,7 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: /lsm-testing
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 99

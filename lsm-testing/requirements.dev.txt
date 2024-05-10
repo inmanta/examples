@@ -1,4 +1,4 @@
 inmanta-dev-dependencies[module]==2.118.0
 pytest-inmanta==2.9.0
-pytest-inmanta-lsm==3.3.0
+pytest-inmanta-lsm==3.4.0
 types-PyYAML==6.0.12.20240311

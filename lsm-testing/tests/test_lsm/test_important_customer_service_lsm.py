@@ -4,6 +4,8 @@
 :license: Inmanta EULA
 """
 
+from typing import cast
+
 import inmanta_lsm.model  # type: ignore
 import pytest_inmanta.plugin
 import pytest_inmanta_lsm.lsm_project
@@ -60,12 +62,15 @@ async def service_lifecycle(
                 edit_id="remove-item-0",
                 operation=inmanta_lsm.model.EditOperation.remove,
                 target=f"items[name={items[0]}]",
+                # The value argument is set here to make mypy happy.
+                # Otherwise the type check fails due to this bug: https://github.com/python/mypy/issues/16968
+                value=None,
             ),
             inmanta_lsm.model.PatchCallEdit(
                 edit_id="duplicate-last-item",
                 operation=inmanta_lsm.model.EditOperation.merge,
                 target="items",
-                value=[{"name": f"{items[-1]}-dup"}],
+                value=[cast(dict[str, object], {"name": f"{items[-1]}-dup"})],
             ),
             inmanta_lsm.model.PatchCallEdit(
                 edit_id="update-service-description",

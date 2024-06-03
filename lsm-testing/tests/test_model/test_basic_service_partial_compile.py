@@ -65,10 +65,10 @@ def test_multi_services(
     # Update all the services
     for service in services:
         attributes = copy.deepcopy(service.active_attributes)
-        attributes["description"] = "This is an updated description"
+        attributes["description"] = "This is an updated description"  # type: ignore
         lsm_project.update_service(
             service_id=service.id,
-            attributes=attributes,
+            attributes=attributes,  # type: ignore
             auto_transfer=True,
         )
 

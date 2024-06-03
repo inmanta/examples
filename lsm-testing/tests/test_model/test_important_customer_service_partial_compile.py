@@ -90,13 +90,15 @@ def test_multi_services(
 
     # Update all the services
     for service in services:
+        # Make mypy happy
+        assert service.active_attributes is not None
         attributes = copy.deepcopy(service.active_attributes)
         attributes["items"] = [
             # Take all the previous items except for the last one
-            *attributes["items"][:-1],
+            *attributes["items"][:-1],  # type: ignore
             # Add one new item
             {"name": "new-item"},
-        ]
+        ]  # type: ignore
         lsm_project.update_service(
             service_id=service.id,
             attributes=attributes,

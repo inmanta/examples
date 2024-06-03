@@ -4,6 +4,8 @@
 :license: Inmanta EULA
 """
 
+from typing import Optional
+
 import pytest_inmanta_lsm.lsm_project
 
 
@@ -30,8 +32,8 @@ def test_service_validation(
         )
 
     # Assert that all services have a different service_id
-    all_unique_ids = {
-        service.active_attributes["unique_id"]
+    all_unique_ids: set[Optional[int]] = {
+        service.active_attributes["unique_id"]  # type: ignore
         for service in lsm_project.services.values()
     }
     assert len(all_unique_ids) == len(lsm_project.services)

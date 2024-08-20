@@ -238,7 +238,6 @@ implementation item_file for ServiceItem:
             dst=f"{self._service._items_folder.path}/{self.name}.json",
             purged=self._purged,
             send_event=true,
-            reload=true,
             requires=[self.requires, self._service._items_folder, item_file],
             provides=self.provides,
         )

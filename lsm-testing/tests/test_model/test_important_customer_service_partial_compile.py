@@ -13,14 +13,14 @@ LOGGER = logging.getLogger(__name__)
 
 SHARED_RESOURCES = [
     r"std::AgentConfig\[.*\]",
-    r"std::Directory\[localhost,path=/tmp/orders\]",
-    r"std::Directory\[localhost,path=/tmp/items\]",
+    r"fs::Directory\[localhost,path=/tmp/orders\]",
+    r"fs::Directory\[localhost,path=/tmp/items\]",
 ]
 OWNED_RESOURCES = [
-    r"std::Directory\[localhost,path=/tmp/orders/.*\]",
-    r"std::File\[localhost,path=/tmp/orders/.*\]",
-    r"std::Symlink\[localhost,target=/tmp/orders/.*\]",
-    r"std::File\[localhost,path=/tmp/items/.*\]",
+    r"fs::Directory\[localhost,path=/tmp/orders/.*\]",
+    r"fs::File\[localhost,path=/tmp/orders/.*\]",
+    r"fs::Symlink\[localhost,dst=/tmp/orders/.*\]",
+    r"fs::File\[localhost,path=/tmp/items/.*\]",
     r"lsm::LifecycleTransfer\[.*\]",
 ]
 

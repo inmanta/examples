@@ -133,8 +133,8 @@ The natural identifier of an item within a service is its name.
 """
 
 
-ImportantCustomerService._order_folder [1] -- std::Directory
-ImportantCustomerService._items_folder [0:1] -- std::Directory
+ImportantCustomerService._order_folder [1] -- fs::Directory
+ImportantCustomerService._items_folder [0:1] -- fs::Directory
 
 
 implementation service_file for ImportantCustomerService:
@@ -238,7 +238,6 @@ implementation item_file for ServiceItem:
             dst=f"{self._service._items_folder.path}/{self.name}.json",
             purged=self._purged,
             send_event=true,
-            reload=true,
             requires=[self.requires, self._service._items_folder, item_file],
             provides=self.provides,
         )

@@ -1,4 +1,4 @@
-inmanta-module-std==5.2.2
+inmanta-module-std==6.0.0
 inmanta-module-lsm==2.28.11
 inmanta-module-config==0.3.0
 inmanta-module-fs==1.0.0

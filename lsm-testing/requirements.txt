@@ -3,4 +3,4 @@ inmanta-module-std==7.0.0
 # able to fetch the latest version (not available on pypi)
 # inmanta-module-lsm==X.Y.Z
 inmanta-module-config==0.5.0
-inmanta-module-fs==1.1.0
+inmanta-module-fs==1.1.1

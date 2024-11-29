@@ -11,4 +11,6 @@ mypy_mode: fail
 # This module doesn't have its own repo, the module_path option ensures that the generic
 # module ci can still be used with it.
 module_path: lsm-testing
+# We can't rely on the generic module ci to find out the correct python binary since this
+# module doesn't have its own repo. Pass it as a config option instead:
 python_binary: python3

@@ -10,4 +10,4 @@ dir="/var/lib/inmanta/server/${1}"
 mkdir $dir
 cp -r /code/* $dir
 
-sudo chown -R inmanta $dir
+chown -R inmanta $dir

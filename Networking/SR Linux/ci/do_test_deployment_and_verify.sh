@@ -40,6 +40,7 @@ function export_and_assert_successful_deploy() {
    #   echo "${list_version_output}"
    #   exit 1
    #fi
+    sleep 10
 }
 
 # test main

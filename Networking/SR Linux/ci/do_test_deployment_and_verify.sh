@@ -33,13 +33,13 @@ function export_and_assert_successful_deploy() {
    while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
 
    # Verify outcome of deployment
-   #list_version_output=$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux)
-   #if [ -z "$(echo "${list_version_output}" |grep '^|' |cut -d '|' -f 3,8 |grep "${exported_version}" |grep -i success)" ]; then
-   #   echo "${cf_file} was not deployed successfully"
-   #   echo ""
-   #   echo "${list_version_output}"
-   #   exit 1
-   #fi
+   list_version_output=$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux)
+   if [ -z "$(echo "${list_version_output}" |grep '^|' |cut -d '|' -f 3,8 |grep "${exported_version}" |grep -i success)" ]; then
+      echo "${cf_file} was not deployed successfully"
+      echo ""
+      echo "${list_version_output}"
+      exit 1
+   fi
 }
 
 # test main

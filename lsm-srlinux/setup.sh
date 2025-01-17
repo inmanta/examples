@@ -5,7 +5,7 @@ if [ -z "${1}" ]; then
    exit 1
 fi
 
-dir="/var/lib/inmanta/server/environments/${1}"
+dir="/var/lib/inmanta/server/${1}"
 
 mkdir $dir
 cp -r /code/* $dir

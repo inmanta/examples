@@ -5,9 +5,9 @@ if [ -z "${1}" ]; then
    exit 1
 fi
 
-dir="/var/lib/inmanta/server/${1}"
+dir="/var/lib/inmanta/server/${1}/compiler/"
 
-mkdir $dir
+mkdir -p $dir
 cp -r /code/* $dir
 
 chown -R inmanta $dir

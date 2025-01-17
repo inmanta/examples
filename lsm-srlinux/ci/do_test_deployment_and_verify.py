@@ -79,4 +79,4 @@ async def main():
     await retry_limited(is_service_instance_up, timeout=600, interval=1)
 
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())

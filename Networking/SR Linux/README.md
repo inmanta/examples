@@ -117,13 +117,13 @@ A:spine#
 
 ## Applying the examples
 
-In order to run the provided examples, you need to prepare a development environment using **Python 3.9** by creating a `Python virtual environment` and installing the required packages:
+In order to run the provided examples, you need to prepare a development environment using **Python 3.11** by creating a `Python virtual environment` and installing the required packages:
 
 Check the current Python version:
 
 ```bash
-$ python3 -V
-Python 3.9.10
+$ python3 --version
+Python 3.11.6
 ```
 
 Create a virtual environment and install `Inmanta`:

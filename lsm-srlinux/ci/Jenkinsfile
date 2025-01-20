@@ -66,7 +66,12 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
             formattedVersion += "-rc"
         }
         return "containers.inmanta.com/containers/service-orchestrator:${formattedVersion}"
-    } else {
+    }
+    // Use latest dev tag
+    matcher = isoProductVersion =~ /dev/
+    if (matcher.matches()) {
+        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:dev"
+    else {
         error("Invalid version format: ${isoProductVersion}")
     }
 }
@@ -90,9 +95,15 @@ def get_tear_down_script(boolean strict = true) {
 
 pipeline {
     agent any
-
     parameters {
-        string(name: 'version', defaultValue: '9dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1, 6, 6dev or 6.5.0rc.')
+        string(
+            name: 'version',
+            defaultValue: 'dev',
+            description:
+                'Run the lsm quickstart against the specified version of ISO product.
+                The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use
+                the latest dev image.'
+        )
     }
 
     environment {

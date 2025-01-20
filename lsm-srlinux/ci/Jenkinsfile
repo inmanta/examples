@@ -100,10 +100,11 @@ pipeline {
         string(
             name: 'version',
             defaultValue: 'dev',
-            description:
-                'Run the lsm quickstart against the specified version of ISO product.
-                The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use
-                the latest dev image.'
+            description:'''
+                Run the lsm quickstart against the specified version of ISO product.
+                The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use \
+                the latest dev image.
+            '''
         )
     }
 

@@ -30,7 +30,7 @@ function export_and_assert_successful_deploy() {
    inmanta -vvv export -f ${cf_file}
 
    # Wait until deployment finishes
-   while inmanta-cli  --host 172.30.0.3  version list -e SR_Linux | grep deploying; do sleep 1; done
+   inmanta-cli  --host 172.30.0.3  version list -e SR_Linux
 
    # Verify outcome of deployment
    #list_version_output=$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux)

@@ -176,7 +176,9 @@ pipeline {
                             source "venv/bin/activate"
                             pip install -U pip
 
-                            if [[ ${version} == *dev ]]; then
+                            if [[ ${version} == dev ]]; then
+                                constraint=""
+                            elif [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             elif [[ ${version} == *rc ]]; then
                                 constraint="~=${version::-2}.0rc"

@@ -22,6 +22,12 @@ fi
 inmanta -vvvv project install
 
 inmanta-cli --host 172.30.0.3 project create -n test
+
+curl -X PUT -H "Content-Type: multipart/form-data;" -d "name=test" "http://172.30.0.3:8888/api/v2/project"
+json_output=$(curl --silent  -H "Accept: application/json" -d "name=test" -X PUT "http://172.30.0.3:8888/api/v2/project" | python -m json.tool)
+project_id= $json_output | grep project_id
+json_output=$(curl --silent  -H "Accept: application/json" -d "tid=f083e899-2f1f-4f63-b6e0-8c560079da25" --put "http://172.30.0.3:8888/api/v2/environment" | python -m json.tool)
+
 inmanta-cli --host 172.30.0.3 environment create -p test -n SR_Linux --save
 
 function export_and_assert_successful_deploy() {
@@ -37,12 +43,12 @@ function export_and_assert_successful_deploy() {
    json_output=$(curl --silent  -H "Accept: application/json" -d "tid=f083e899-2f1f-4f63-b6e0-8c560079da25" --get "http://172.30.0.3:8888/api/v2/resource" | python -m json.tool)
 
    error=0
-   if [[ $(json_output | grep "v=$exported_version" | wc -l) -ne 6 ]]; then
+   if [[ $("$json_output" | grep "v=$exported_version" | wc -l) -ne 6 ]]; then
       echo "Not all resources are in the latest expected version $exported_version."
       error=1
    fi
 
-   if [[ $(json_output | grep "status": "deployed" | wc -l) -ne 6 ]]; then
+   if [[ $("$json_output" | grep "status": "deployed" | wc -l) -ne 6 ]]; then
       echo "Not all resources were deployed sucessfully."
       error=1
    fi

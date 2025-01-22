@@ -98,7 +98,17 @@ pipeline {
                                 constraint=""
                             fi
 
-                            ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
+                            # Create python environment
+                            python${python_version} -m venv venv
+                            source "venv/bin/activate"
+                            pip install -U pip
+
+                            # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
+                            # help pip find matching candidates (see inmanta/infra-tickets#180)
+                            pip install "inmanta${constraint}"
+                            python -u ci/do_test_deployment_and_verify.py
+
+                            # ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
                         '''
                     }
                 }

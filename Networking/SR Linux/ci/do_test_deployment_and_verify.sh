@@ -37,12 +37,12 @@ function export_and_assert_successful_deploy() {
    json_output=$(curl --silent  -H "Accept: application/json" -d "tid=f083e899-2f1f-4f63-b6e0-8c560079da25" --get "http://172.30.0.3:8888/api/v2/resource" | python -m json.tool)
 
    error=0
-   if [[ $(json_output | grep "v=$exported_version" | wc -l) -ne 6 ]]
+   if [[ $(json_output | grep "v=$exported_version" | wc -l) -ne 6 ]]; then
       echo "Not all resources are in the latest expected version $exported_version."
       error=1
    fi
 
-   if [[ $(json_output | grep "status": "deployed" | wc -l) -ne 6 ]]
+   if [[ $(json_output | grep "status": "deployed" | wc -l) -ne 6 ]]; then
       echo "Not all resources were deployed sucessfully."
       error=1
    fi

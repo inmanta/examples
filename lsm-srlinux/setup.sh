@@ -5,7 +5,16 @@ if [ -z "${1}" ]; then
    exit 1
 fi
 
-dir="/var/lib/inmanta/server/${1}/compiler/"
+layout_version=$(<'/var/lib/inmanta/.inmanta_disk_layout_version')
+if [[ $layout_version = "2" ]]
+then
+    dir="/var/lib/inmanta/server/${1}/compiler/"
+else
+    dir="/var/lib/inmanta/server/environments/${1}"
+fi
+
+mkdir -p $dir
+
 
 mkdir -p $dir
 cp -r /code/* $dir

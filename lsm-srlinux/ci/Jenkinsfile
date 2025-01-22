@@ -6,6 +6,8 @@
 * @param token: The token to connect to the private Python package repository for the Inmanta project.
 */
 def update_project_yml(String isoProductVersion, String token) {
+    echo "function update_project_yml"
+    echo isoProductVersion
     def pythonPackageRepoUrl = ""
     if (isoProductVersion.endsWith("dev")) {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/dev"
@@ -16,10 +18,17 @@ def update_project_yml(String isoProductVersion, String token) {
         pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
+    echo "fileName"
+    echo fileName
+
     def yamlDct = readYaml file: fileName
-    yamlDct['repo'][0]['url'] = pythonPackageRepoUrl
-    yamlDct['pip']['index_url'] = pythonPackageRepoUrl
+    echo pythonPackageRepoUrl
+
+    yamlDct.pip.index_url = pythonPackageRepoUrl
+    echo "done updating yml dict"
+
     writeYaml file: fileName, data: yamlDct, overwrite: true
+    echo "done function update_project_yml"
 }
 
 
@@ -160,8 +169,11 @@ pipeline {
                         ),
                     ]) {
                         // update_topology validates whether the given version has a valid format
+                        echo 'updating topology...'
                         update_topology(env.version)
+                        echo 'updating project yml...'
                         update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
+                        echo 'done updating project yml.'
                         sh '''
                             cd "${WORKSPACE}/lsm-srlinux"
                             # Ensure we have the latest version of the srlinux image
@@ -176,7 +188,8 @@ pipeline {
                             source "venv/bin/activate"
                             pip install -U pip
 
-                            if [[ ${version} == dev ]]; then
+
+                             if [[ ${version} == dev ]]; then
                                 constraint=""
                             elif [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"

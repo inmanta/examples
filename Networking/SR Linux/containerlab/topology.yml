@@ -16,6 +16,7 @@ topology:
         - 8888:8888
       binds:
         - ./inmanta.cfg:/etc/inmanta/inmanta.cfg
+        - ..:/code
     postgres:
       kind: linux
       image: postgres:16

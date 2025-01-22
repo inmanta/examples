@@ -40,13 +40,16 @@ function export_and_assert_successful_deploy() {
 #      echo "${list_version_output}"
 #      exit 1
 #   fi
-   monitor_output=$(inmanta-cli --host 172.30.0.3 monitor -e SR_Linux)
-
-   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}")
-   echo "${version_report}"
-
-   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}" -l)
-   echo "${version_report}"
+#   monitor_output=$(inmanta-cli --host 172.30.0.3 monitor -e SR_Linux)
+#
+#   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}")
+#   echo "${version_report}"
+#
+#   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}" -l)
+#   echo "${version_report}"
+#
+   resources=$(curl --silent --fail --get http://172.30.0.3:8888/resource/)
+   echo "${resources}"
 
 
    sleep 10

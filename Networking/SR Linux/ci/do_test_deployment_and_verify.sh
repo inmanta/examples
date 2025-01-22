@@ -42,7 +42,7 @@ function export_and_assert_successful_deploy() {
 #   fi
    monitor_output=$(inmanta-cli --host 172.30.0.3 monitor -e SR_Linux)
 
-   version_report=$(inmanta-cli --host 172.30.0.3 report -e SR_Linux -i "${exported_version}")
+   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}")
    echo "${version_report}"
 
    version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}" -l)

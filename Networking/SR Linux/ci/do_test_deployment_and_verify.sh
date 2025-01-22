@@ -33,26 +33,26 @@ function export_and_assert_successful_deploy() {
    inmanta-cli  --host 172.30.0.3  version list -e SR_Linux
 
    # Verify outcome of deployment
-#   list_version_output=$(inmanta-cli --host 172.30.0.3 version list -e SR_Linux)
-#   if [ -z "$(echo "${list_version_output}" |grep '^|' |cut -d '|' -f 3,8 |grep "${exported_version}" |grep -i active)" ]; then
-#      echo "${cf_file} was not deployed successfully"
-#      echo ""
-#      echo "${list_version_output}"
-#      exit 1
-#   fi
-#   monitor_output=$(inmanta-cli --host 172.30.0.3 monitor -e SR_Linux)
-#
-#   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}")
-#   echo "${version_report}"
-#
-#   version_report=$(inmanta-cli --host 172.30.0.3 version report -e SR_Linux -i "${exported_version}" -l)
-#   echo "${version_report}"
-#
-   resources=$(curl --silent --fail --get http://172.30.0.3:8888/resource/)
-   echo "${resources}"
+
+   json_output=$(curl --silent  -H "Accept: application/json" -d "tid=f083e899-2f1f-4f63-b6e0-8c560079da25" --get "http://172.30.0.3:8888/api/v2/resource" | python -m json.tool)
+
+   error=0
+   if [[ $(json_output | grep "v=$exported_version" | wc -l) -ne 6 ]]
+      echo "Not all resources are in the latest expected version $exported_version."
+      error=1
+   fi
+
+   if [[ $(json_output | grep "status": "deployed" | wc -l) -ne 6 ]]
+      echo "Not all resources were deployed sucessfully."
+      error=1
+   fi
+
+   if [ $error -eq 1 ]; then
+       echo "$json_output"
+       exit 1
+   fi
 
 
-   sleep 10
 
 
 }
@@ -74,3 +74,4 @@ sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/ag
 
 # check if deployment was successful
 venv/bin/python3 ci/validate_config.py
+

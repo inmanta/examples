@@ -49,6 +49,7 @@ async def main():
     subprocess.check_call(f"sudo docker exec clab-srlinux-inmanta-server ls -la", shell=True)
     print("ls -la success")
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server ls -la", shell=True)
+    sudo chown -R 997:995 myfolder/
     print("ls -la success -w /code success")
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
     print("setup.sh script success")

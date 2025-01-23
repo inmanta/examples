@@ -15,8 +15,11 @@ fi
 
 mkdir -p $dir
 
+whoami
+pwd
+ls -la /code
 
-mkdir -p $dir
+
 cp -r /code/* $dir
 
 chown -R inmanta $dir

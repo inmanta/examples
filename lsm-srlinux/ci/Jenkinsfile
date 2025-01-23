@@ -189,7 +189,7 @@ pipeline {
                             pip install -U pip
 
 
-                             if [[ ${version} == dev ]]; then
+                            if [[ ${version} == dev ]]; then
                                 constraint=""
                             elif [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"

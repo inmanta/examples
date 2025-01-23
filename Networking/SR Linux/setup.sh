@@ -15,12 +15,13 @@ fi
 
 mkdir -p $dir
 
-whoami
-pwd
-ls -la /code
+#whoami
+#pwd
+#ls -la /code
+#
+#chown -R 997:995 /code/
 
-chown -R 997:995 /code/
-
-cp -r /code/* $dir
+cp -r /code/*.cf $dir
+cp -r /code/project.yml $dir
 
 chown -R inmanta $dir

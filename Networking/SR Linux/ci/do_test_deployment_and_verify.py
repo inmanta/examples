@@ -53,31 +53,39 @@ async def main():
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
     print("setup.sh script success")
 
+    async def check_successful_deploy(file: str, n_resources: int):
+        cmd = [
+            "python",
+            "-m",
+            "inmanta.app",
+            "-vvv",
+            "export",
+            "-f",
+            file,
+        ]
+        process = await asyncio.subprocess.create_subprocess_exec(
+            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
+        )
+        try:
+            (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
+        except asyncio.TimeoutError as e:
+            process.kill()
+            (stdout, stderr) = await process.communicate()
+            print(stdout.decode())
+            print(stderr.decode())
+            raise e
+        async def done_deploying():
+            result = await client.resource_list(tid=environment_id, deploy_summary=True)
+            assert result.code == 200
+            print(result.result["data"])
+            assert len(result.result["data"]) == n_resources
 
-    cmd = [
-        "python",
-        "-m",
-        "inmanta.app",
-        "-vvv",
-        "export",
-        "-f",
-        "main.cf",
-    ]
-    process = await asyncio.subprocess.create_subprocess_exec(
-        *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
-    )
-    try:
-        (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
-    except asyncio.TimeoutError as e:
-        process.kill()
-        (stdout, stderr) = await process.communicate()
-        print(stdout.decode())
-        print(stderr.decode())
-        raise e
+        await retry_limited(done_deploying, timeout=60, interval=1)
 
-    result = await client.resource_list(tid=environment_id, deploy_summary=True)
-    assert result.code == 200
-    print(result.result["data"])
+
+    await check_successful_deploy("main.cf", 0)
+    await check_successful_deploy("interfaces.cf", 6)
+    await check_successful_deploy("ospf.cf", 6)
 
 
     # assert process.returncode == 0, f"{stdout}\n\n{stderr}"

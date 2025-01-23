@@ -49,6 +49,7 @@ async def main():
     print("Exporting service definition")
     result = await client.lsm_export_service_definition(tid=environment_id)
     assert result.code == 200, result.result
+    print(result.result)
 
     # Wait until service type is added to the catalog
     async def is_service_definition_available() -> bool:
@@ -58,7 +59,7 @@ async def main():
         return len(result.result["data"]) > 0
 
     print("Waiting until the service definition is available in the catalog...")
-    await retry_limited(is_service_definition_available, timeout=600, interval=1)
+    await retry_limited(is_service_definition_available, timeout=60, interval=1)
 
     # Create service instance
     print("Creating service instance")

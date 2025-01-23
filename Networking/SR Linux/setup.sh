@@ -17,7 +17,7 @@ mkdir -p $dir
 
 #whoami
 #pwd
-#ls -la /code
+ls -la /code
 #
 #chown -R 997:995 /code/
 

@@ -57,10 +57,7 @@ async def main():
         assert result.code == 200
         services = result.result["data"]
 
-
-        status = await client.get_server_status()
-        assert status.code == 200
-        print(status.result["data"])
+        print(services)
 
         return len(services) > 0
 

@@ -109,6 +109,8 @@ async def main():
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
             assert len(result.result["data"]) == n_resources
+            print(result.result["data"])
+            print(result.result["metadata"])
             return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == n_resources
 
         await retry_limited(done_deploying, timeout=20, interval=1)
@@ -118,51 +120,6 @@ async def main():
     await check_successful_deploy("interfaces.cf", 6)
     await check_successful_deploy("ospf.cf", 6)
 
-
-    # assert process.returncode == 0, f"{stdout}\n\n{stderr}"
-    #
-    # # Export service definition
-    # print("Exporting service definition")
-    # result = await client.lsm_export_service_definition(tid=environment_id)
-    # assert result.code == 200, result.result
-    #
-    # # Wait until service type is added to the catalog
-    # async def is_service_definition_available() -> bool:
-    #     result = await client.lsm_service_catalog_list(tid=environment_id)
-    #     assert result.code == 200
-    #     return len(result.result["data"]) > 0
-    #
-    # print("Waiting until the service definition is available in the catalog...")
-    # await retry_limited(is_service_definition_available, timeout=600, interval=1)
-    #
-    # # Create service instance
-    # print("Creating service instance")
-    # service_entity_name = "interface-ip-assignment"
-    # result = await client.lsm_services_create(
-    #     tid=environment_id,
-    #     service_entity=service_entity_name,
-    #     attributes={
-    #         "router_ip": "172.30.0.100",
-    #         "router_name": "spline",
-    #         "interface_name": "ethernet-1/1",
-    #         "address": "10.0.0.4/16"
-    #     },
-    # )
-    # assert result.code == 200
-    # service_instance_id = result.result["data"]["id"]
-    #
-    # # Wait until the service instance goes into the up state
-    # async def is_service_instance_up() -> bool:
-    #     result = await client.lsm_services_get(
-    #         tid=environment_id,
-    #         service_entity=service_entity_name,
-    #         service_id=service_instance_id,
-    #     )
-    #     assert result.code == 200
-    #     return result.result["data"]["state"] == "up"
-    #
-    # print("Waiting until the service instance goes into the up state...")
-    # await retry_limited(is_service_instance_up, timeout=600, interval=1)
 
 
 asyncio.run(main())

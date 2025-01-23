@@ -62,7 +62,7 @@ async def main():
         return len(services) > 0
 
     print("Waiting until the service definition is available in the catalog...")
-    await retry_limited(is_service_definition_available, timeout=60, interval=1)
+    await retry_limited(is_service_definition_available, timeout=600, interval=1)
 
     # Create service instance
     print("Creating service instance")

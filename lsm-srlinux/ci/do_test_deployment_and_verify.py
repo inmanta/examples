@@ -55,8 +55,14 @@ async def main():
     async def is_service_definition_available() -> bool:
         result = await client.lsm_service_catalog_list(tid=environment_id, instance_summary=True)
         assert result.code == 200
-        print(result.result["data"])
-        return len(result.result["data"]) > 0
+        services = result.result["data"]
+
+
+        status = await client.get_server_status()
+        assert status.code == 200
+        print(status.result["data"])
+
+        return len(services) > 0
 
     print("Waiting until the service definition is available in the catalog...")
     await retry_limited(is_service_definition_available, timeout=60, interval=1)

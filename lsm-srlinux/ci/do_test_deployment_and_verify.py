@@ -85,7 +85,14 @@ async def main():
             service_id=service_instance_id,
         )
         assert result.code == 200
-        return result.result["data"]["state"] == "up"
+        is_up = result.result["data"]["state"] == "up"
+
+        status = await client.get_server_status()
+        assert status.code == 200
+        print(status.result["data"])
+
+        return is_up
+
 
     print("Waiting until the service instance goes into the up state...")
     await retry_limited(is_service_instance_up, timeout=600, interval=1)

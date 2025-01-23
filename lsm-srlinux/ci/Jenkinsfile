@@ -6,8 +6,6 @@
 * @param token: The token to connect to the private Python package repository for the Inmanta project.
 */
 def update_project_yml(String isoProductVersion, String token) {
-    echo "function update_project_yml"
-    echo isoProductVersion
     def pythonPackageRepoUrl = ""
     if (isoProductVersion.endsWith("dev")) {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/dev"
@@ -18,17 +16,12 @@ def update_project_yml(String isoProductVersion, String token) {
         pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
-    echo "fileName"
-    echo fileName
 
     def yamlDct = readYaml file: fileName
-    echo pythonPackageRepoUrl
 
     yamlDct.pip.index_url = pythonPackageRepoUrl
-    echo "done updating yml dict"
 
     writeYaml file: fileName, data: yamlDct, overwrite: true
-    echo "done function update_project_yml"
 }
 
 
@@ -109,9 +102,9 @@ pipeline {
             name: 'version',
             defaultValue: 'dev',
             description:'''
-                Run the lsm quickstart against the specified version of ISO product.
-                The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use \
-                the latest dev image.
+Run the lsm quickstart against the specified version of ISO product.
+The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use \
+the latest dev image.
             '''
         )
     }
@@ -169,11 +162,8 @@ pipeline {
                         ),
                     ]) {
                         // update_topology validates whether the given version has a valid format
-                        echo 'updating topology...'
                         update_topology(env.version)
-                        echo 'updating project yml...'
                         update_project_yml(env.version, env.CLOUDSMITH_PKGS_TOKEN)
-                        echo 'done updating project yml.'
                         sh '''
                             cd "${WORKSPACE}/lsm-srlinux"
                             # Ensure we have the latest version of the srlinux image

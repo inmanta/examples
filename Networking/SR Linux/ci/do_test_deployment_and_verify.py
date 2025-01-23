@@ -4,7 +4,6 @@ import subprocess
 from packaging.version import Version
 
 from inmanta.protocol.endpoints import Client
-from inmanta.protocol import methods_v2
 from inmanta.config import Config
 from inmanta_tests.utils import retry_limited
 
@@ -12,8 +11,8 @@ from inmanta_tests.utils import retry_limited
 import argparse
 
 async def main():
-    # Create client
 
+    # Create client
     parser = argparse.ArgumentParser()
     parser.add_argument('--workdir')
     args = parser.parse_args()
@@ -22,12 +21,12 @@ async def main():
     Config.set("client_rest_transport", "port", "8888")
     client = Client(name="client")
 
-    version: Version | None = None
+    orchestator_version: Version | None = None
     async def is_inmanta_server_up() -> bool:
-        nonlocal version
+        nonlocal orchestator_version
         status = await client.get_server_status()
         if status.code == 200:
-            version = Version(status.result["data"]["version"])
+            orchestator_version = Version(status.result["data"]["version"])
             return True
         return False
 
@@ -35,7 +34,8 @@ async def main():
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
 
-    print(f"Version is {version}.")
+    print(f"Orchestrator version:{orchestator_version}.")
+
     print("Creating project env-test")
     result = await client.create_project("env-test")
     assert result.code == 200
@@ -47,35 +47,31 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
-    subprocess.check_call(f"sudo docker exec clab-srlinux-inmanta-server ls -la", shell=True)
-    print("ls -la success")
-    subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server ls -la", shell=True)
-    print("ls -la success -w /code success")
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
-    print("setup.sh script success")
 
-    cmd = [
-        "python",
-        "-m",
-        "inmanta.app",
-        "-vvv",
-        "project",
-        "install",
-        "--host",
-        "172.30.0.3",
-    ]
-    process = await asyncio.subprocess.create_subprocess_exec(
-        *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
-    )
-    try:
-        (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
-    except asyncio.TimeoutError as e:
-        process.kill()
-        (stdout, stderr) = await process.communicate()
-        raise e
-    finally:
-        print(stdout.decode())
-        print(stderr.decode())
+    async def install_project() -> None:
+        cmd = [
+            "python",
+            "-m",
+            "inmanta.app",
+            "-vvv",
+            "project",
+            "install",
+            "--host",
+            "172.30.0.3",
+        ]
+        process = await asyncio.subprocess.create_subprocess_exec(
+            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
+        )
+        try:
+            (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
+        except asyncio.TimeoutError as e:
+            process.kill()
+            (stdout, stderr) = await process.communicate()
+            raise e
+        finally:
+            print(stdout.decode())
+            print(stderr.decode())
 
     async def check_successful_deploy(file: str, expected_resources: set[str]):
         print(f"Checking sucessful deploy of {file}")
@@ -125,6 +121,7 @@ async def main():
             f'std::AgentConfig[internal,agentname=leaf1],v={version}',
         ])
 
+    await install_project()
 
     await check_successful_deploy("main.cf", set())
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))

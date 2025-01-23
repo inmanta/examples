@@ -16,18 +16,21 @@ async def main():
     Config.set("client_rest_transport", "port", "8888")
     client = Client(name="client")
 
-    version: Version | None = None
+    orchestator_version: Version | None = None
     async def is_inmanta_server_up() -> bool:
-        nonlocal version
+        nonlocal orchestator_version
         status = await client.get_server_status()
         if status.code == 200:
-            version = Version(status.result["data"]["version"])
+            orchestator_version = Version(status.result["data"]["version"])
             return True
         return False
 
 
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
+
+    print(f"Orchestrator version:{orchestator_version}.")
+
 
     print("Creating project env-test")
     result = await client.create_project("env-test")

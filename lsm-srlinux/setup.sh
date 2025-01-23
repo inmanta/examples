@@ -15,8 +15,6 @@ fi
 
 mkdir -p $dir
 
-
-mkdir -p $dir
 cp -r /code/* $dir
 
 chown -R inmanta $dir

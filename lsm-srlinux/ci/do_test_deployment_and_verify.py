@@ -53,7 +53,7 @@ async def main():
 
     # Wait until service type is added to the catalog
     async def is_service_definition_available() -> bool:
-        result = await client.lsm_service_catalog_list(tid=environment_id)
+        result = await client.lsm_service_catalog_list(tid=environment_id, instance_summary=True)
         assert result.code == 200
         print(result.result["data"])
         return len(result.result["data"]) > 0

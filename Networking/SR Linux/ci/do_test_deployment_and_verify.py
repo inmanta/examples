@@ -88,6 +88,9 @@ async def main():
             file,
             "--host",
             "172.30.0.3",
+            "-e",
+            environment_id,
+
         ]
         process = await asyncio.subprocess.create_subprocess_exec(
             *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)

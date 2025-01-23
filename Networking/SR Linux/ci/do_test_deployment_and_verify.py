@@ -75,6 +75,11 @@ async def main():
         print(stderr.decode())
         raise e
 
+    result = await client.resource_list(tid=environment_id, deploy_summary=True)
+    assert result.code == 200
+    print(result.result["data"])
+
+
     # assert process.returncode == 0, f"{stdout}\n\n{stderr}"
     #
     # # Export service definition

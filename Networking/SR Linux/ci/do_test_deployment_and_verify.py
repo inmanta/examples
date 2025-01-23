@@ -74,9 +74,11 @@ async def main():
         except asyncio.TimeoutError as e:
             process.kill()
             (stdout, stderr) = await process.communicate()
+            raise e
+        finally:
             print(stdout.decode())
             print(stderr.decode())
-            raise e
+
         async def done_deploying() -> bool:
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200

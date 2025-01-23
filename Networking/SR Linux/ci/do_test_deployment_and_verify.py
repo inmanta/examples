@@ -54,6 +54,7 @@ async def main():
     print("setup.sh script success")
 
     async def check_successful_deploy(file: str, n_resources: int):
+        print(f"Checking sucessful deploy of {file}")
         cmd = [
             "python",
             "-m",
@@ -62,6 +63,8 @@ async def main():
             "export",
             "-f",
             file,
+            "--host",
+            "172.30.0.3",
         ]
         process = await asyncio.subprocess.create_subprocess_exec(
             *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)

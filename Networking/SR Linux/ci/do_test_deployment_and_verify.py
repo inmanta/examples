@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import subprocess
 from packaging.version import Version
 
@@ -76,7 +77,7 @@ async def main():
         print(stdout.decode())
         print(stderr.decode())
 
-    async def check_successful_deploy(file: str, n_resources: int):
+    async def check_successful_deploy(file: str, expected_resources: set[str]):
         print(f"Checking sucessful deploy of {file}")
         cmd = [
             "python",
@@ -105,20 +106,29 @@ async def main():
             print(stdout.decode())
             print(stderr.decode())
 
-        async def done_deploying() -> bool:
+        async def done_deploying(expected_resources: set[str]) -> bool:
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
-            assert len(result.result["data"]) == n_resources
-            print(result.result["data"])
-            print(result.result["metadata"])
-            return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == n_resources
+            assert {res["resource_version_id"] for res in result.result["data"]} == expected_resources
+            
+            return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == len(expected_resources)
 
-        await retry_limited(done_deploying, timeout=20, interval=1)
+        await retry_limited(functools.partial(done_deploying, expected_resources), timeout=20, interval=1)
+
+    def make_expected_rids(version: int) -> set[str]:
+        return {
+            f'yang::GnmiResource[spine,name=global],v={version}',
+            f'yang::GnmiResource[leaf2,name=global],v={version}',
+            f'yang::GnmiResource[leaf1,name=global],v={version}',
+            f'std::AgentConfig[internal,agentname=spine],v={version}',
+            f'std::AgentConfig[internal,agentname=leaf2],v={version}',
+            f'std::AgentConfig[internal,agentname=leaf1],v={version}',
+        }
 
 
-    await check_successful_deploy("main.cf", 0)
-    await check_successful_deploy("interfaces.cf", 6)
-    await check_successful_deploy("ospf.cf", 6)
+    await check_successful_deploy("main.cf", {})
+    await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
+    await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 
 
 

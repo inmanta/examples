@@ -8,9 +8,15 @@ from inmanta.config import Config
 from inmanta_tests.utils import retry_limited
 
 
+import argparse
 
 async def main():
     # Create client
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--workdir')
+    args = parser.parse_args()
+
     Config.set("client_rest_transport", "host", "172.30.0.3")
     Config.set("client_rest_transport", "port", "8888")
     client = Client(name="client")
@@ -42,7 +48,7 @@ async def main():
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
 
 
-    args = [
+    cmd = [
         "python",
         "-m",
         "inmanta.app",
@@ -52,7 +58,7 @@ async def main():
         "main.cf",
     ]
     process = await asyncio.subprocess.create_subprocess_exec(
-        *args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(project_dir)
+        *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
     )
     try:
         (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)

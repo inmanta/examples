@@ -108,7 +108,7 @@ pipeline {
                             pip install "inmanta${constraint}" inmanta-dev-dependencies[extension]
                             python -u ci/do_test_deployment_and_verify.py
 
-                            # ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
+                            # ci/do_test_deployment_and_verify.sh ${python_version} ${constraint} --workdir pwd()
                         '''
                     }
                 }

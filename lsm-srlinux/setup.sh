@@ -17,4 +17,9 @@ mkdir -p $dir
 
 cp -r /code/* $dir
 
+cp /code/main.cf $dir
+cp /code/project.yml $dir
+cp /code/requirements.txt $dir
+
+
 chown -R inmanta $dir

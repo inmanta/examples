@@ -109,6 +109,7 @@ async def main():
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
             print(result.result["data"])
+            print(result.result["metadata"])
             return len(result.result["data"]) == n_resources
 
         await retry_limited(done_deploying, timeout=6, interval=1)

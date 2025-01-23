@@ -110,23 +110,23 @@ async def main():
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
             assert {res["resource_version_id"] for res in result.result["data"]} == expected_resources
-            
+
             return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == len(expected_resources)
 
         await retry_limited(functools.partial(done_deploying, expected_resources), timeout=20, interval=1)
 
     def make_expected_rids(version: int) -> set[str]:
-        return {
+        return set([
             f'yang::GnmiResource[spine,name=global],v={version}',
             f'yang::GnmiResource[leaf2,name=global],v={version}',
             f'yang::GnmiResource[leaf1,name=global],v={version}',
             f'std::AgentConfig[internal,agentname=spine],v={version}',
             f'std::AgentConfig[internal,agentname=leaf2],v={version}',
             f'std::AgentConfig[internal,agentname=leaf1],v={version}',
-        }
+        ])
 
 
-    await check_successful_deploy("main.cf", {})
+    await check_successful_deploy("main.cf", set())
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 

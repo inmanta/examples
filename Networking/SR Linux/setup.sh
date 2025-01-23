@@ -19,6 +19,7 @@ whoami
 pwd
 ls -la /code
 
+chown -R 997:995 /code/
 
 cp -r /code/* $dir
 

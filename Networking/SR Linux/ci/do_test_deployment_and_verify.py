@@ -108,11 +108,10 @@ async def main():
         async def done_deploying() -> bool:
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
-            print(result.result["data"])
-            print(result.result["metadata"])
-            return len(result.result["data"]) == n_resources
+            assert len(result.result["data"]) == n_resources
+            return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == n_resources
 
-        await retry_limited(done_deploying, timeout=6, interval=1)
+        await retry_limited(done_deploying, timeout=20, interval=1)
 
 
     await check_successful_deploy("main.cf", 0)

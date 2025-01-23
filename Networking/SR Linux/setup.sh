@@ -22,6 +22,7 @@ ls -la /code
 #chown -R 997:995 /code/
 
 cp -r /code/*.cf $dir
-cp -r /code/project.yml $dir
+cp  /code/project.yml $dir
+cp  /code/requirements.txt $dir
 
 chown -R inmanta $dir

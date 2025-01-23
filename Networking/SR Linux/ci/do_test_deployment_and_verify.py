@@ -53,6 +53,29 @@ async def main():
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
     print("setup.sh script success")
 
+    cmd = [
+        "python",
+        "-m",
+        "inmanta.app",
+        "-vvv",
+        "project",
+        "install",
+        "--host",
+        "172.30.0.3",
+    ]
+    process = await asyncio.subprocess.create_subprocess_exec(
+        *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
+    )
+    try:
+        (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
+    except asyncio.TimeoutError as e:
+        process.kill()
+        (stdout, stderr) = await process.communicate()
+        raise e
+    finally:
+        print(stdout.decode())
+        print(stderr.decode())
+
     async def check_successful_deploy(file: str, n_resources: int):
         print(f"Checking sucessful deploy of {file}")
         cmd = [
@@ -85,7 +108,7 @@ async def main():
             print(result.result["data"])
             return len(result.result["data"]) == n_resources
 
-        await retry_limited(done_deploying, timeout=60, interval=1)
+        await retry_limited(done_deploying, timeout=6, interval=1)
 
 
     await check_successful_deploy("main.cf", 0)

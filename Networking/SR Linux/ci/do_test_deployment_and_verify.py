@@ -34,6 +34,7 @@ async def main():
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
 
+    print(f"Version is {version}.")
     print("Creating project env-test")
     result = await client.create_project("env-test")
     assert result.code == 200
@@ -45,7 +46,12 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
+    subprocess.check_call(f"sudo docker exec clab-srlinux-inmanta-server ls -la", shell=True)
+    print("ls -la success")
+    subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server ls -la", shell=True)
+    print("ls -la success -w /code success")
     subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
+    print("setup.sh script success")
 
 
     cmd = [

@@ -5,7 +5,8 @@ if [ -z "${1}" ]; then
    exit 1
 fi
 
-layout_version=$(<'/var/lib/inmanta/.inmanta_disk_layout_version')
+layout_version=$(cat /var/lib/inmanta/.inmanta_disk_layout_version)
+
 if [ "$layout_version" = "2" ];
 then
     dir="/var/lib/inmanta/server/${1}/compiler/"

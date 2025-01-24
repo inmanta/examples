@@ -4,9 +4,9 @@ import subprocess
 from inmanta.config import Config
 from inmanta.protocol.endpoints import Client
 # Load API endpoint definitions
+from inmanta_lsm import methods
 from inmanta_tests.utils import retry_limited
 from packaging.version import Version
-
 
 async def main():
     # Create client

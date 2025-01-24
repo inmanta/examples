@@ -70,9 +70,6 @@ pipeline {
                         '''
                     }
                 }
-                # early return to be able to test lsm-srlinux quicker
-                currentBuild.result = 'SUCCESS'
-                return
                 stage('Build') {
                     options {
                         timeout(time: 1, unit: 'HOURS')
@@ -110,6 +107,7 @@ pipeline {
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
                             pip install "inmanta${constraint}" inmanta-dev-dependencies[extension]
                             python -u ci/do_test_deployment_and_verify.py --workdir "$(pwd)"
+                            python -u ci/validate_config.py
 
                         '''
                     }
@@ -126,7 +124,6 @@ pipeline {
                         # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
                         sudo docker network rm -f inmanta_mgmt
                     '''
-                    // archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
                 }
             }
         }

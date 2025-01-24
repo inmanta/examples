@@ -1,13 +1,11 @@
 import asyncio
 import subprocess
-from packaging.version import Version
 
-from inmanta.protocol.endpoints import Client
 from inmanta.config import Config
-from inmanta_tests.utils import retry_limited
-
+from inmanta.protocol.endpoints import Client
 # Load API endpoint definitions
-from inmanta_lsm import methods
+from inmanta_tests.utils import retry_limited
+from packaging.version import Version
 
 
 async def main():
@@ -17,6 +15,7 @@ async def main():
     client = Client(name="client")
 
     orchestator_version: Version | None = None
+
     async def is_inmanta_server_up() -> bool:
         nonlocal orchestator_version
         status = await client.get_server_status()
@@ -25,12 +24,10 @@ async def main():
             return True
         return False
 
-
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
 
     print(f"Orchestrator version:{orchestator_version}.")
-
 
     print("Creating project env-test")
     result = await client.create_project("env-test")
@@ -43,23 +40,23 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
-    subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
+    subprocess.check_call(
+        f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}",
+        shell=True,
+    )
 
     # Export service definition
     print("Exporting service definition")
     result = await client.lsm_export_service_definition(tid=environment_id)
     assert result.code == 200, result.result
-    print(result.result)
 
     # Wait until service type is added to the catalog
     async def is_service_definition_available() -> bool:
-        result = await client.lsm_service_catalog_list(tid=environment_id, instance_summary=True)
+        result = await client.lsm_service_catalog_list(
+            tid=environment_id, instance_summary=True
+        )
         assert result.code == 200
-        services = result.result["data"]
-
-        print(services)
-
-        return len(services) > 0
+        return len(result.result["data"]) > 0
 
     print("Waiting until the service definition is available in the catalog...")
     await retry_limited(is_service_definition_available, timeout=600, interval=1)
@@ -74,7 +71,7 @@ async def main():
             "router_ip": "172.30.0.100",
             "router_name": "spline",
             "interface_name": "ethernet-1/1",
-            "address": "10.0.0.4/16"
+            "address": "10.0.0.4/16",
         },
     )
     assert result.code == 200
@@ -88,14 +85,7 @@ async def main():
             service_id=service_instance_id,
         )
         assert result.code == 200
-        is_up = result.result["data"]["state"] == "up"
-
-        status = await client.get_server_status()
-        assert status.code == 200
-        print(status.result["data"])
-
-        return is_up
-
+        return result.result["data"]["state"] == "up"
 
     print("Waiting until the service instance goes into the up state...")
     await retry_limited(is_service_instance_up, timeout=600, interval=1)

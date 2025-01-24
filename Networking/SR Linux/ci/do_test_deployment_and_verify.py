@@ -1,20 +1,19 @@
+import argparse
 import asyncio
 import functools
 import subprocess
+
+from inmanta.config import Config
+from inmanta.protocol.endpoints import Client
+from inmanta_tests.utils import retry_limited
 from packaging.version import Version
 
-from inmanta.protocol.endpoints import Client
-from inmanta.config import Config
-from inmanta_tests.utils import retry_limited
-
-
-import argparse
 
 async def main():
 
     # Create client
     parser = argparse.ArgumentParser()
-    parser.add_argument('--workdir')
+    parser.add_argument("--workdir")
     args = parser.parse_args()
 
     Config.set("client_rest_transport", "host", "172.30.0.3")
@@ -22,6 +21,7 @@ async def main():
     client = Client(name="client")
 
     orchestator_version: Version | None = None
+
     async def is_inmanta_server_up() -> bool:
         nonlocal orchestator_version
         status = await client.get_server_status()
@@ -29,7 +29,6 @@ async def main():
             orchestator_version = Version(status.result["data"]["version"])
             return True
         return False
-
 
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
@@ -47,7 +46,10 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
-    subprocess.check_call(f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}", shell=True)
+    subprocess.check_call(
+        f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}",
+        shell=True,
+    )
 
     async def install_project() -> None:
         cmd = [
@@ -87,7 +89,6 @@ async def main():
             "172.30.0.3",
             "-e",
             environment_id,
-
         ]
         process = await asyncio.subprocess.create_subprocess_exec(
             *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
@@ -105,28 +106,37 @@ async def main():
         async def done_deploying(expected_resources: set[str]) -> bool:
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
-            assert {res["resource_version_id"] for res in result.result["data"]} == expected_resources
+            assert {
+                res["resource_version_id"] for res in result.result["data"]
+            } == expected_resources
 
-            return result.result["metadata"]["deploy_summary"]["by_state"]["deployed"] == len(expected_resources)
+            return result.result["metadata"]["deploy_summary"]["by_state"][
+                "deployed"
+            ] == len(expected_resources)
 
-        await retry_limited(functools.partial(done_deploying, expected_resources), timeout=20, interval=1)
+        await retry_limited(
+            functools.partial(done_deploying, expected_resources),
+            timeout=20,
+            interval=1,
+        )
 
     def make_expected_rids(version: int) -> set[str]:
-        return set([
-            f'yang::GnmiResource[spine,name=global],v={version}',
-            f'yang::GnmiResource[leaf2,name=global],v={version}',
-            f'yang::GnmiResource[leaf1,name=global],v={version}',
-            f'std::AgentConfig[internal,agentname=spine],v={version}',
-            f'std::AgentConfig[internal,agentname=leaf2],v={version}',
-            f'std::AgentConfig[internal,agentname=leaf1],v={version}',
-        ])
+        return set(
+            [
+                f"yang::GnmiResource[spine,name=global],v={version}",
+                f"yang::GnmiResource[leaf2,name=global],v={version}",
+                f"yang::GnmiResource[leaf1,name=global],v={version}",
+                f"std::AgentConfig[internal,agentname=spine],v={version}",
+                f"std::AgentConfig[internal,agentname=leaf2],v={version}",
+                f"std::AgentConfig[internal,agentname=leaf1],v={version}",
+            ]
+        )
 
     await install_project()
 
     await check_successful_deploy("main.cf", set())
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
-
 
 
 asyncio.run(main())

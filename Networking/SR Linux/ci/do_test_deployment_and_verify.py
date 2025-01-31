@@ -13,9 +13,6 @@ from packaging.version import Version
 async def main():
 
     # Create client
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--workdir")
-    args = parser.parse_args()
 
     Config.set("client_rest_transport", "host", "172.30.0.3")
     Config.set("client_rest_transport", "port", "8888")
@@ -64,7 +61,7 @@ async def main():
             "172.30.0.3",
         ]
         process = await asyncio.subprocess.create_subprocess_exec(
-            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
+            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         try:
             (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
@@ -92,7 +89,7 @@ async def main():
             environment_id,
         ]
         process = await asyncio.subprocess.create_subprocess_exec(
-            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=str(args.workdir)
+            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         try:
             (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)

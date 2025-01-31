@@ -142,20 +142,18 @@ async def main():
     validate_config()
     # fetch logs
     subprocess.check_call(
-        f"sudo docker logs clab-srlinux-inmanta-server >server.log",
-        shell=True
+        "sudo docker logs clab-srlinux-inmanta-server >server.log", shell=True
     )
     subprocess.check_call(
-        "sudo docker logs clab-srlinux-postgres >postgres.log",
-        shell=True
+        "sudo docker logs clab-srlinux-postgres >postgres.log", shell=True
     )
     subprocess.check_call(
         "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/resource-*.log >resource-actions.log",
-        shell=True
+        shell=True,
     )
     subprocess.check_call(
         "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/agent-*.log >agents.log",
-        shell=True
+        shell=True,
     )
 
 

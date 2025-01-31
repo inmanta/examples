@@ -140,12 +140,41 @@ async def main():
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 
     validate_config()
-    # [TODO convert to python]
     # fetch logs
-    # sudo docker logs clab-srlinux-inmanta-server >server.log
-    # sudo docker logs clab-srlinux-postgres >postgres.log
-    # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/resource-*.log" >resource-actions.log
-    # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/agent-*.log" >agents.log
+    subprocess.check_call(
+        [f"sudo", "docker", "logs", "clab-srlinux-inmanta-server", ">server.log"]
+    )
+    subprocess.check_call(
+        ["sudo", "docker", "logs", "clab-srlinux-postgres", ">postgres.log"]
+    )
+    subprocess.check_call(
+        [
+            "sudo",
+            "docker",
+            "exec",
+            "-i",
+            "clab-srlinux-inmanta-server",
+            "sh",
+            "-c",
+            "cat",
+            "/var/log/inmanta/resource-*.log",
+            ">resource-actions.log",
+        ]
+    )
+    subprocess.check_call(
+        [
+            "sudo",
+            "docker",
+            "exec",
+            "-i",
+            "clab-srlinux-inmanta-server",
+            "sh",
+            "-c",
+            "cat",
+            "/var/log/inmanta/agent-*.log",
+            ">agents.log",
+        ]
+    )
 
 
 def fetch_config(gc):
@@ -165,6 +194,7 @@ def fetch_config(gc):
 
 
 def validate_config() -> None:
+    # Only available after inmanta project install
     from pygnmi.client import gNMIclient
 
     with gNMIclient(

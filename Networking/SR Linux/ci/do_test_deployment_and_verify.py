@@ -53,12 +53,6 @@ async def main():
     assert result.code == 200
     environment_id = result.result["environment"]["id"]
 
-    # Add project directory to environment directory on server
-    # subprocess.check_call(
-    #     f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}",
-    #     shell=True,
-    # )
-
     async def install_project() -> None:
         cmd = [
             sys.executable,
@@ -146,7 +140,6 @@ async def main():
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 
-    print("Run validation script")
     validate_config()
     # [TODO convert to python]
     # fetch logs

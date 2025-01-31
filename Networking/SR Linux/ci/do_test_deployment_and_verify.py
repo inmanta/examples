@@ -9,7 +9,6 @@ from inmanta.config import Config
 from inmanta.protocol.endpoints import Client
 from inmanta_tests.utils import retry_limited
 from packaging.version import Version
-from pygnmi.client import gNMIclient
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -166,6 +165,8 @@ def fetch_config(gc):
 
 
 def validate_config() -> None:
+    from pygnmi.client import gNMIclient
+
     with gNMIclient(
         target=HOST,
         username="admin",

@@ -1,13 +1,23 @@
-import argparse
 import asyncio
 import functools
+import logging
 import subprocess
 import sys
+import time
 
 from inmanta.config import Config
 from inmanta.protocol.endpoints import Client
 from inmanta_tests.utils import retry_limited
 from packaging.version import Version
+from pygnmi.client import gNMIclient
+
+logging.basicConfig(level=logging.DEBUG)
+
+HOST = ("172.30.0.100", "57400")
+
+INTERFACE_PATH = "srl_nokia-interfaces:interface"
+NS_INSTANCE_PATH = "srl_nokia-network-instance:network-instance"
+OSPF_PATH = "srl_nokia-ospf:ospf"
 
 
 async def main():
@@ -136,11 +146,74 @@ async def main():
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 
+    print("Run validation script")
+    validate_config()
     # [TODO convert to python]
     # fetch logs
     # sudo docker logs clab-srlinux-inmanta-server >server.log
     # sudo docker logs clab-srlinux-postgres >postgres.log
     # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/resource-*.log" >resource-actions.log
     # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/agent-*.log" >agents.log
+
+
+def fetch_config(gc):
+    result = gc.get(path=["interface", "network-instance"], encoding="json_ietf")
+
+    notifications = result["notification"]
+
+    interface_result = None
+    ospf_result = None
+    for response in notifications:
+        if list(response["update"][0]["val"].keys())[0] == INTERFACE_PATH:
+            interface_result = response["update"][0]["val"][INTERFACE_PATH][0]
+        if list(response["update"][0]["val"].keys())[0] == NS_INSTANCE_PATH:
+            ospf_result = response["update"][0]["val"][NS_INSTANCE_PATH][0]
+
+    return interface_result, ospf_result
+
+
+def validate_config() -> None:
+    with gNMIclient(
+        target=HOST,
+        username="admin",
+        password="NokiaSrl1!",
+        insecure=False,
+        skip_verify=True,
+    ) as gc:
+        interface_result, ospf_result = fetch_config(gc)
+
+        assert interface_result is not None
+        assert ospf_result is not None
+
+        router_id = ospf_result["protocols"][OSPF_PATH]["instance"][0]["router-id"]
+        assert router_id == "10.20.30.100"
+
+        sub_int_ip_address = interface_result["subinterface"][0]["ipv4"]["address"][0][
+            "ip-prefix"
+        ]
+        assert sub_int_ip_address == "10.10.11.1/30"
+
+        # Check if we see the two neighbours
+        neigbours = ["10.20.30.210", "10.20.30.220"]
+        count = 0
+        while neigbours and count < 60:
+            for interface in ospf_result["protocols"][OSPF_PATH]["instance"][0]["area"][
+                0
+            ]["interface"]:
+                if "neighbor" not in interface or len(interface["neighbor"]) == 0:
+                    count += 1
+                    break
+
+                if interface["neighbor"][0]["router-id"] in neigbours:
+                    neigbours.remove(interface["neighbor"][0]["router-id"])
+
+            if not neigbours:
+                break
+
+            interface_result, ospf_result = fetch_config(gc)
+            time.sleep(1)
+
+    print("[+] Deployment was successful!")
+
 
 asyncio.run(main())

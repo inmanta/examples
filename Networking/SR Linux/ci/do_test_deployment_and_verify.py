@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import functools
 import subprocess
+import sys
 
 from inmanta.config import Config
 from inmanta.protocol.endpoints import Client
@@ -46,14 +47,14 @@ async def main():
     environment_id = result.result["environment"]["id"]
 
     # Add project directory to environment directory on server
-    subprocess.check_call(
-        f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}",
-        shell=True,
-    )
+    # subprocess.check_call(
+    #     f"sudo docker exec -w /code clab-srlinux-inmanta-server /code/setup.sh {environment_id}",
+    #     shell=True,
+    # )
 
     async def install_project() -> None:
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "inmanta.app",
             "-vvv",
@@ -76,9 +77,9 @@ async def main():
             print(stderr.decode())
 
     async def check_successful_deploy(file: str, expected_resources: set[str]):
-        print(f"Checking sucessful deploy of {file}")
+        print(f"Checking successful deploy of {file}")
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "inmanta.app",
             "-vvv",
@@ -138,5 +139,11 @@ async def main():
     await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
     await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
 
+    # [TODO convert to python]
+    # fetch logs
+    # sudo docker logs clab-srlinux-inmanta-server >server.log
+    # sudo docker logs clab-srlinux-postgres >postgres.log
+    # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/resource-*.log" >resource-actions.log
+    # sudo docker exec -i "clab-srlinux-inmanta-server" sh -c "cat /var/log/inmanta/agent-*.log" >agents.log
 
 asyncio.run(main())

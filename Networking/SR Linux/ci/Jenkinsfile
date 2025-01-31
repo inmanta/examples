@@ -1,5 +1,5 @@
 /**@
-* Updates the topology.yml so that the lab environement
+* Updates the topology.yml so that the lab environment
 * uses the same version as the specified Python package of the OSS product
 */
 def update_topology() {

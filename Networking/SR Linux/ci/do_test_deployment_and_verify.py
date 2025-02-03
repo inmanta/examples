@@ -31,7 +31,7 @@ async def main():
         status = await client.get_server_status()
         if status.code == 200:
             orchestator_version = Version(status.result["data"]["version"])
-            print(f"Orchestrator version:{orchestator_version}.")
+            print(f"Orchestrator version: {orchestator_version}.")
             return True
         return False
 

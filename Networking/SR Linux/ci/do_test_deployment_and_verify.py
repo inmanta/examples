@@ -38,7 +38,6 @@ async def main():
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
 
-
     print("Creating project env-test")
     result = await client.create_project("env-test")
     assert result.code == 200

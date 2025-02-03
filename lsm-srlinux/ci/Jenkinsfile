@@ -16,9 +16,11 @@ def update_project_yml(String isoProductVersion, String token) {
         pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     }
     def fileName = "${env.WORKSPACE}/lsm-srlinux/project.yml"
+
     def yamlDct = readYaml file: fileName
-    yamlDct['repo'][0]['url'] = pythonPackageRepoUrl
-    yamlDct['pip']['index_url'] = pythonPackageRepoUrl
+
+    yamlDct.pip.index_url = pythonPackageRepoUrl
+
     writeYaml file: fileName, data: yamlDct, overwrite: true
 }
 
@@ -49,10 +51,21 @@ def convert_iso_version_to_docker_image_url(String isoProductVersion) {
     if (matcher.matches()) {
         return "containers.inmanta.com/containers/service-orchestrator:${isoProductVersion}"
     }
-    matcher = isoProductVersion =~ /(\d+)dev/
+    matcher = isoProductVersion =~ /(\d*)dev/
     // It's a development version
     if (matcher.matches()) {
-        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:${matcher.group(1)}-dev"
+        def dev_version_tag
+
+        def specific_dev_version = matcher.group(1)
+        if (specific_dev_version) {
+            // Use this specific dev version
+            dev_version_tag = "${specific_dev_version}-dev"
+        } else {
+            // Use latest dev tag
+            dev_version_tag = "dev"
+        }
+
+        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:${dev_version_tag}"
     }
     // Is it a three-dotted version number
     matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
@@ -90,9 +103,16 @@ def get_tear_down_script(boolean strict = true) {
 
 pipeline {
     agent any
-
     parameters {
-        string(name: 'version', defaultValue: '7dev', description: 'Run the lsm quickstart against the specified version of ISO product. The version can be of format 6.1.1, 6, 6dev or 6.5.0rc.')
+        string(
+            name: 'version',
+            defaultValue: 'dev',
+            description:'''
+Run the lsm quickstart against the specified version of ISO product.
+The version can be of format 6.1.1, 6, 6dev, 6.5.0rc or dev to use \
+the latest dev image.
+            '''
+        )
     }
 
     environment {
@@ -157,14 +177,17 @@ pipeline {
 
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
-                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
+                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
                             # Create python environment
                             python${python_version} -m venv venv
                             source "venv/bin/activate"
                             pip install -U pip
 
-                            if [[ ${version} == *dev ]]; then
+
+                            if [[ ${version} == dev ]]; then
+                                constraint=""
+                            elif [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             elif [[ ${version} == *rc ]]; then
                                 constraint="~=${version::-2}.0rc"

@@ -5,9 +5,20 @@ if [ -z "${1}" ]; then
    exit 1
 fi
 
-dir="/var/lib/inmanta/server/environments/${1}"
+layout_version=$(cat /var/lib/inmanta/.inmanta_disk_layout_version)
 
-mkdir $dir
-cp -r /code/* $dir
+if [ "$layout_version" = "2" ];
+then
+    dir="/var/lib/inmanta/server/${1}/compiler"
+else
+    dir="/var/lib/inmanta/server/environments/${1}"
+fi
 
-sudo chown -R inmanta $dir
+mkdir -p $dir
+
+
+cp /code/main.cf $dir
+cp /code/project.yml $dir
+cp /code/requirements.txt $dir
+
+chown -R inmanta $dir

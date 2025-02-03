@@ -10,18 +10,23 @@ topology:
   nodes:
     inmanta-server:
       kind: linux
-      image: containers.inmanta.com/containers/service-orchestrator:7
+      image: containers.inmanta.com/containers/service-orchestrator:8
       ports:
-          - 8888:8888
+          - 127.0.0.1:8888:8888
       binds:
-          - ./resources/com.inmanta.license:/etc/inmanta/license/com.inmanta.license
-          - ./resources/com.inmanta.jwe:/etc/inmanta/license/com.inmanta.jwe
+          - ./resources/com.inmanta.license:/etc/inmanta/license/com.inmanta.license  # License files for iso<8
+          - ./resources/com.inmanta.jwe:/etc/inmanta/license/com.inmanta.jwe          # kept for backwards compatibility
+          - ./resources/com.inmanta.license:/etc/inmanta/license.key                  # License files for iso>=8
+          - ./resources/com.inmanta.jwe:/etc/inmanta/entitlement.jwe
           - ..:/code
       mgmt-ipv4: 172.30.0.3
-      cmd: "server --wait-for-host inmanta_db --wait-for-port 5432"
+      env:
+         INMANTA_DATABASE_HOST: 172.30.0.2
+         INMANTA_DATABASE_USERNAME: inmanta
+         INMANTA_DATABASE_PASSWORD: inmanta
     inmanta_db:
       kind: linux
-      image: postgres:13
+      image: postgres:16
       env:
         POSTGRES_USER: inmanta
         POSTGRES_PASSWORD: inmanta

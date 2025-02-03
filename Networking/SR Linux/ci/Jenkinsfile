@@ -122,6 +122,7 @@ pipeline {
                         # Workaround for: https://github.com/srl-labs/containerlab/issues/1306
                         sudo docker network rm -f inmanta_mgmt
                     '''
+                    archiveArtifacts artifacts: 'Networking/SR Linux/*.log'
                 }
             }
         }

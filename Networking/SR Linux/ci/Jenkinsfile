@@ -1,5 +1,5 @@
 /**@
-* Updates the topology.yml so that the lab environement
+* Updates the topology.yml so that the lab environment
 * uses the same version as the specified Python package of the OSS product
 */
 def update_topology() {
@@ -22,7 +22,7 @@ def convert_python_version_to_docker_tag() {
             def year = matcher.group(1)
             def minor = matcher.group(2)
             def patch = matcher.group(3) ?: ""
-            def rc = matcher.group(4) ?: ""            
+            def rc = matcher.group(4) ?: ""
             // Constructing the formatted version
             def formattedVersion = "${year}.${minor}${patch}"
             if (rc) {
@@ -82,8 +82,8 @@ pipeline {
                             sudo docker pull ghcr.io/nokia/srlinux:latest
                             sudo clab deploy -t containerlab/topology.yml --reconfigure
                             # Get python version used to build the container
-                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//')
-                            
+                            python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
+
                             if [ -n "$version" ]; then
                                 if [[ $version == *dev ]]; then
                                     constraint="~=${version::-3}.0.dev"
@@ -97,8 +97,16 @@ pipeline {
                                 # Leave constraint undefined if version is not defined
                                 constraint=""
                             fi
-                            
-                            ci/do_test_deployment_and_verify.sh ${python_version} ${constraint}
+
+                            # Create python environment
+                            python${python_version} -m venv venv
+
+                            venv/bin/pip install -U pip
+
+                            # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
+                            # help pip find matching candidates (see inmanta/infra-tickets#180)
+                            venv/bin/pip install "inmanta${constraint}" inmanta-dev-dependencies[extension]
+                            venv/bin/python -u ci/do_test_deployment_and_verify.py
                         '''
                     }
                 }

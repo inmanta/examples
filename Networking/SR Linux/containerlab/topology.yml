@@ -14,12 +14,11 @@ topology:
       mgmt-ipv4: 172.30.0.3
       ports:
         - 8888:8888
-      cmd: "server --wait-for-host 172.30.0.2 --wait-for-port 5432"
       binds:
         - ./inmanta.cfg:/etc/inmanta/inmanta.cfg
     postgres:
       kind: linux
-      image: postgres:13
+      image: postgres:16
       env:
         POSTGRES_USER: inmanta
         POSTGRES_PASSWORD: inmanta

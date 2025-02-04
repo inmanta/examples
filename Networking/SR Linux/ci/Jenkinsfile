@@ -106,7 +106,7 @@ pipeline {
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
                             venv/bin/pip install "inmanta${constraint}" inmanta-dev-dependencies[extension]
-                            venv/bin/python ci/do_test_deployment_and_verify.py
+                            venv/bin/python -u ci/do_test_deployment_and_verify.py
                         '''
                     }
                 }

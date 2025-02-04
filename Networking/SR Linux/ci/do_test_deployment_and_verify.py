@@ -20,6 +20,13 @@ OSPF_PATH = "srl_nokia-ospf:ospf"
 
 
 async def main():
+    try:
+        await do_deploy_and_validate_config()
+    finally:
+        fetch_logs()
+
+
+async def do_deploy_and_validate_config():
 
     # Create client
 
@@ -59,20 +66,13 @@ async def main():
             "--host",
             "172.30.0.3",
         ]
-        process = await asyncio.subprocess.create_subprocess_exec(
-            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        try:
-            (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
-        except asyncio.TimeoutError as e:
-            process.kill()
-            (stdout, stderr) = await process.communicate()
-            raise e
-        finally:
-            print(stdout.decode())
-            print(stderr.decode())
+        subprocess.check_call(cmd)
 
-    async def check_successful_deploy(file: str, expected_resources: set[str]):
+    async def deploy_and_check(file: str, expected_resources: set[str]):
+        """
+        Export a given .cf file and check that the deployed
+        resources are as expected.
+        """
         print(f"Checking successful deploy of {file}")
         cmd = [
             sys.executable,
@@ -87,20 +87,11 @@ async def main():
             "-e",
             environment_id,
         ]
-        process = await asyncio.subprocess.create_subprocess_exec(
-            *cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        try:
-            (stdout, stderr) = await asyncio.wait_for(process.communicate(), timeout=30)
-        except asyncio.TimeoutError as e:
-            process.kill()
-            (stdout, stderr) = await process.communicate()
-            raise e
-        finally:
-            print(stdout.decode())
-            print(stderr.decode())
+        subprocess.check_call(cmd)
 
         async def done_deploying(expected_resources: set[str]) -> bool:
+            if not expected_resources:
+                return True
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
             assert {
@@ -118,39 +109,22 @@ async def main():
         )
 
     def make_expected_rids(version: int) -> set[str]:
-        return set(
-            [
-                f"yang::GnmiResource[spine,name=global],v={version}",
-                f"yang::GnmiResource[leaf2,name=global],v={version}",
-                f"yang::GnmiResource[leaf1,name=global],v={version}",
-                f"std::AgentConfig[internal,agentname=spine],v={version}",
-                f"std::AgentConfig[internal,agentname=leaf2],v={version}",
-                f"std::AgentConfig[internal,agentname=leaf1],v={version}",
-            ]
-        )
+        return {
+            f"yang::GnmiResource[spine,name=global],v={version}",
+            f"yang::GnmiResource[leaf2,name=global],v={version}",
+            f"yang::GnmiResource[leaf1,name=global],v={version}",
+            f"std::AgentConfig[internal,agentname=spine],v={version}",
+            f"std::AgentConfig[internal,agentname=leaf2],v={version}",
+            f"std::AgentConfig[internal,agentname=leaf1],v={version}",
+        }
 
     await install_project()
 
-    await check_successful_deploy("main.cf", set())
-    await check_successful_deploy("interfaces.cf", make_expected_rids(version=2))
-    await check_successful_deploy("ospf.cf", make_expected_rids(version=3))
+    await deploy_and_check("main.cf", set())
+    await deploy_and_check("interfaces.cf", make_expected_rids(version=2))
+    await deploy_and_check("ospf.cf", make_expected_rids(version=3))
 
     validate_config()
-    # fetch logs
-    subprocess.check_call(
-        "sudo docker logs clab-srlinux-inmanta-server >server.log", shell=True
-    )
-    subprocess.check_call(
-        "sudo docker logs clab-srlinux-postgres >postgres.log", shell=True
-    )
-    subprocess.check_call(
-        "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/resource-*.log >resource-actions.log",
-        shell=True,
-    )
-    subprocess.check_call(
-        "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/agent-*.log >agents.log",
-        shell=True,
-    )
 
 
 def fetch_config(gc):
@@ -214,6 +188,23 @@ def validate_config() -> None:
             time.sleep(1)
 
     print("[+] Deployment was successful!")
+
+
+def fetch_logs():
+    subprocess.check_call(
+        "sudo docker logs clab-srlinux-inmanta-server >server.log", shell=True
+    )
+    subprocess.check_call(
+        "sudo docker logs clab-srlinux-postgres >postgres.log", shell=True
+    )
+    subprocess.check_call(
+        "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/resource-*.log >resource-actions.log",
+        shell=True,
+    )
+    subprocess.check_call(
+        "sudo docker exec -i clab-srlinux-inmanta-server sh -c cat /var/log/inmanta/agent-*.log >agents.log",
+        shell=True,
+    )
 
 
 asyncio.run(main())

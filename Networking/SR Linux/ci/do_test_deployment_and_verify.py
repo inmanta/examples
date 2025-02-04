@@ -94,13 +94,14 @@ async def do_deploy_and_validate_config():
                 return True
             result = await client.resource_list(tid=environment_id, deploy_summary=True)
             assert result.code == 200
-            assert {
+            if result.result["metadata"]["deploy_summary"]["by_state"][
+                "deployed"
+            ] != len(expected_resources):
+                return False
+
+            return {
                 res["resource_version_id"] for res in result.result["data"]
             } == expected_resources
-
-            return result.result["metadata"]["deploy_summary"]["by_state"][
-                "deployed"
-            ] == len(expected_resources)
 
         await retry_limited(
             functools.partial(done_deploying, expected_resources),

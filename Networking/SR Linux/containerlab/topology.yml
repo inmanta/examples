@@ -7,10 +7,12 @@ topology:
   kinds:
     srl:
       image: ghcr.io/nokia/srlinux:latest
+      image-pull-policy: Always
   nodes:
     inmanta-server:
       kind: linux
       image: ghcr.io/inmanta/orchestrator:latest
+      image-pull-policy: Always
       mgmt-ipv4: 172.30.0.3
       ports:
         - 8888:8888
@@ -19,6 +21,7 @@ topology:
     postgres:
       kind: linux
       image: postgres:16
+      image-pull-policy: Always
       env:
         POSTGRES_USER: inmanta
         POSTGRES_PASSWORD: inmanta

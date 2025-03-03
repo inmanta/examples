@@ -55,7 +55,8 @@ implementation interfaceIPAssignment for InterfaceIPAssignment:
              x_index=0,
              ipv4=srsubinterface::Ipv4(
                  address=sripv4::Address(
-                     ip_prefix=self.address,
+                    ip_prefix=self.address,
+                    purged = self.purge_resources,
                   ),
              ),
          ),

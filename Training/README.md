@@ -6,6 +6,27 @@ The goal of this training is multiple:
 3. Assert basic networking knowledge, such as ip and ospf
 4. Discover the inmanta orchestrator and use it to configure a network
 
+In the training, we perform the same configuration (interface config and OSPF) with increasingly sophisticated automation. 
+1. the lab is configured by hand. The goal is to learn how the lab works and what service we will automate.
+2. the manual config is converted to an inmanta model. The goal is to learn the basic functions of the orchestrator
+3. the model is refactored to form a blueprint/template. The goal is to learn how to model a config to make re-usable building blocks.
+4. the model is exposed via an api. The goal is to lear the basics of Lifecycle and Service Management
+
+## Modules
+
+The lab consist of different modules. Some modules are different between Open Source version of the orchestrator (OSS) and licensed version (ISO).
+The final module (LSM) is only available for ISO. 
+Use the table below for navigation.
+
+| Module                  | Goal                                                        | Open Source | Licensed | Depends on              |
+|-------------------------|-------------------------------------------------------------|-------------|----------|-------------------------|
+| Clab                    | Set up a containerized lab for the rest of the training     | [Open Source setup](lab/README.md)            |   [Licenses Setup](isolab/README.md)        |                         |
+| Srlinux Basics          | Manually configure the lab                                  |             |          | clab                    |
+| Convert to model        | Automatically convert the device config to an inmanta model | -           |          | clab                    |
+| Basic Inmanta Model     | A flat configuration model                                  |             |          | clab                    |
+| Templating and modeling | Refactor the model to have common components                |             |          | Basic Inmanta Model     |
+| LSM                     | Expose the functionality via an API                         | -           |          | Templating and modeling |
+
 
 ## Discovering clab
 

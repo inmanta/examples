@@ -21,7 +21,7 @@ Use the table below for navigation.
 | Module                  | Goal                                                        | Open Source | Licensed | Depends on              |
 |-------------------------|-------------------------------------------------------------|-------------|----------|-------------------------|
 | Clab                    | Set up a containerized lab for the rest of the training     | [Open Source setup](lab/README.md)            |   [Licenses Setup](isolab/README.md)        |                         |
-| Srlinux Basics          | Manually configure the lab                                  |             |          | clab                    |
+| Srlinux Basics          | Manually configure the lab                                  | [Manual Configuration](0-manual-configuration.md) | [Manual Configuration](0-manual-configuration.md) | clab                    |
 | Convert to model        | Automatically convert the device config to an inmanta model | -           |          | clab                    |
 | Basic Inmanta Model     | A flat configuration model                                  |             |          | clab                    |
 | Templating and modeling | Refactor the model to have common components                |             |          | Basic Inmanta Model     |

@@ -16,10 +16,8 @@ topology:
       mgmt-ipv4: 172.30.0.3
       ports:
         - 8888:8888
-      end:
-        INMANTA_DATABASE_HOST: 172.30.0.2
-        INMANTA_DATABASE_USERNAME: inmanta
-        INMANTA_DATABASE_PASSWORD: inmanta
+      binds:
+        - ./inmanta.cfg:/etc/inmanta/inmanta.cfg
     postgres:
       kind: linux
       image: postgres:16

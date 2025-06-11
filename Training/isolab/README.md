@@ -18,6 +18,17 @@ The diagram below shows the desired ip plan we will configure.  When deploying t
 -   Entitlement file (.jwe)
 -   License file (.license)
 
+## Install clab 
+
+Follow the instuctions in the [containerlab install guide](https://containerlab.dev/install/). 
+
+## Clone this repo
+
+```console
+git clone https://github.com/inmanta/examples.git
+cd examples/Training/lab
+```
+
 ## Install license
 
 1. Place your license and entitlement files in the resources foldaer. The names of the files have to be `inmanta.jwe` for the entitlement file and `inmanta.license` for the license file.

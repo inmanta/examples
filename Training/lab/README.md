@@ -9,6 +9,17 @@ The diagram below shows the desired ip plan we will configure.  When deploying t
 
 ![Desired network topology](topology.png)
 
+## Install clab 
+
+Follow the instuctions in the [containerlab install guide](https://containerlab.dev/install/). 
+
+## Clone this repo
+
+```console
+git clone git@github.com:inmanta/examples.git
+cd examples/Training/lab
+```
+
 ## Start the lab
 ```console
 $sudo clab deploy --topo topology.yml 

@@ -50,7 +50,7 @@ $sudo clab deploy --topo topology.yml
 14:41:03 INFO Parsing & checking topology file=topology.yml
 14:41:03 INFO Pulling containers.inmanta.com/containers/service-orchestrator:8 Docker image
 14:41:32 INFO Done pulling containers.inmanta.com/containers/service-orchestrator:8
-14:41:32 INFO Creating lab directory path=/home/wouter/projects/examples/Training/isolab/clab-srlinux
+14:41:32 INFO Creating lab directory path=/home/wouter/projects/examples/Training/lab-iso/clab-srlinux
 14:41:32 INFO Creating container name=inmanta-server
 14:41:32 INFO Creating container name=spine
 14:41:32 INFO Creating container name=leaf1

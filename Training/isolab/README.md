@@ -1,6 +1,6 @@
 # Srlinux lab setup (ISO)
 
-The topology file in thicd s folder will deploy the following:
+The topology file in this folder will deploy the following:
 - An inmanta orchestrator together with a database
 - Two routers (srlinux)
 - Two subscribers (nfv-test-api), basic containers containing some nice networking tools

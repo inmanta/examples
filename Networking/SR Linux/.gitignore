@@ -1,0 +1,4 @@
+containerlab/clab-srlinux
+containerlab/pgdata
+containerlab/*.bak
+.inmanta

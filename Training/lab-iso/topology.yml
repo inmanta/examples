@@ -8,13 +8,16 @@ topology:
   nodes:
     inmanta-server:
       kind: linux
-      image: ghcr.io/inmanta/orchestrator:latest
+      image: containers.inmanta.com/containers/service-orchestrator:8
       image-pull-policy: Always
       mgmt-ipv4: 172.30.0.3
       env:
         INMANTA_DATABASE_HOST: inmanta_db
         INMANTA_DATABASE_USERNAME: inmanta
         INMANTA_DATABASE_PASSWORD: inmanta
+      binds:
+          - ./resources/inmanta.license:/etc/inmanta/license.key
+          - ./resources/inmanta.jwe:/etc/inmanta/entitlement.jwe
     inmanta_db:
       kind: linux
       image: postgres:16

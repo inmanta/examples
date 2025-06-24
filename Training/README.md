@@ -29,6 +29,7 @@ Use the table below for navigation.
 | Clab                    | Set up a containerized lab for the rest of the training     | [Open Source setup](lab/README.md)            |   [Licenses Setup](lab-iso/README.md)        |                         |
 | Srlinux Basics          | Manually configure the lab                                  | [Manual Configuration](0-manual-configuration.md) | [Manual Configuration](0-manual-configuration.md) | clab                    |
 | Convert to model        | Automatically convert the device config to an inmanta model | -           |          | clab                    |
+| Developer setup         | Know how to set up the develop tooling on you machine       | [Developer setup](https://docs.inmanta.com/inmanta-service-orchestrator/latest/model_developers/developer_getting_started.html) | [Developer setup](https://docs.inmanta.com/inmanta-service-orchestrator/latest/model_developers/developer_getting_started.html) | |
 | Basic Inmanta Model     | A flat configuration model                                  |             |          | clab                    |
 | Templating and modeling | Refactor the model to have common components                |             |          | Basic Inmanta Model     |
 | LSM                     | Expose the functionality via an API                         | -           |          | Templating and modeling |

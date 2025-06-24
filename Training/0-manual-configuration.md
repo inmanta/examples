@@ -1,5 +1,11 @@
 # Manual configuration
 
+## Preqrequites
+
+To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md)
+
+## Intro
+
 Despite already being deployed, the routers and subscribers are still not connected to each other. We can test this using `ping`. Here we try to ping from leaf1 to leaf2:
 
 ```console

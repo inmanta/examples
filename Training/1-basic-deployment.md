@@ -1,21 +1,80 @@
 # Configure the network with the orchestrator
 
-## Initial deployment
+## Prequisites 
+
+To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md) 
+
+
+## Orchestration primer
+
+TODO
 
 To tell the orchestrator what to do, we need to create a desired state for it to apply.  We do this by creating a `project` (locally), which contains a `model` (you can see the top level of the model in the [main.cf](main.cf) file), `compiling` it, and `exporting` its `resources` to the orchestrator.  
 For this training, the `project` already exists, this is the folder you are currently working on.  An inmanta `project` is recognized by the  [project.yml file](https://docs.inmanta.com/community/dev/reference/projectyml.html#project-yml) at its root.
 
+
 Please make sure that the orchestrator is running and that the project and environment were created like instructed on the [README.md](README.md). Don't forget to include your access token on the repository url on the [project.yml file](project.yml)
 
-1. Install the project, and its dependencies.  Due to the specific setup of this project, you need to install the `srlinux_helper` module.
-    ```console
-    (env) $ pip install -e inmanta-module-srlinux-helper
-    (env) $ inmanta project install
+## Create a virtual environment
+
+A Python virtual environment is an isolated workspace for a Python project, allowing you to manage  project-specific dependencies without affecting other projects or the global Python installation. 
+For Inmanta projects, we always work in a virtual environment
+
+1. execute the follow commands to create the venv
+
+    ```shell
+    mkdir -p ~/.virtualenvs
+    python3 -m venv ~/.virtualenvs/inmanta-training
+    source ~/.virtualenvs/inmanta-training/bin/activate
+    ```
+2. install the basic inmanta tools 
+
+    ```shell
+    pip install inmanta-core inmantals
     ```
 
-2. Export the resources to the orchestrator, the command will first compile our model, verifying it is correct, then serialize it into resources and send them to the orchestrator.  For each resource it receives, the orchestrator will then have as mission to deploy them, ensuring their desired state is enforced.
+## Set up a project
+
+This folder contains a valid project. If you want to understand more about what a project is, take a look at the [Developer setup](https://docs.inmanta.com/inmanta-service-orchestrator/latest/model_developers/developer_getting_started.html).
+
+
+1. To install the project, and its dependencies. Run the following command in this folder
     ```console
-    (env) $ inmanta export -f configure_ospf.cf
+    (env) $ inmanta project install
+    ```
+2. To verify the setup is correct, run
+    ```console
+    (env) $ inmanta compile
+    ```
+
+## Register the project with the orchestrator
+
+To be able to deploy this project, we have to register it with the orchestrator. 
+To do so, run 
+
+```console
+inmanta-cli --host 172.30.0.3  project create -n training
+inmanta-cli --host 172.30.0.3  environment create -n srlinux -p training --save
+```
+
+Where we create both a project and an environment:
+- An environment is a single domain of management for the orchestrator. Each environment is completely isolated from every other one. 
+- For historic reasons, the term project has two meanings. A project (as we create here) is a folder for one or more environments. This is not the same thing as the project that has the `project.yml` which is the main entry point for the orchestrator to manage something.  
+
+
+> [!NOTE] 
+> the `inmanta` command is used to run command locally, the `inmanta-cli` is the remote control for the server.
+
+> [!NOTE] 
+> `--save` writes out the `.inmanta` file. This file configures the compile export to the correct environment automatically. 
+
+
+## Initial deployment
+
+
+2. Export the resources to the orchestrator, the command will first compile our model, verifying it is correct, then serialize it into resources and send them to the orchestrator.  For each resource it receives, the orchestrator will then deploy them, ensuring their desired state is enforced.
+    ```console
+    (env) $ inmanta -vv export
     ```
 
 3. Open the orchestrator resource view, and see all the elements of the desired state, being deployed.  Once again, click around to see what is happening.

@@ -1,1 +1,102 @@
-import srlinux_helper
+import nokia_srlinux
+import nokia_srlinux::interface
+import nokia_srlinux::interface::subinterface
+import nokia_srlinux::interface::subinterface::ipv4
+import nokia_srlinux::interface::subinterface::ipv6
+import nokia_srlinux::network_instance
+import nokia_srlinux::network_instance::protocols
+import nokia_srlinux::network_instance::protocols::ospf
+import nokia_srlinux::network_instance::protocols::ospf::instance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area
+import yang
+
+
+leaf1 = nokia_srlinux::GnmiDevice(
+    mgmt_ip="172.30.0.210",
+    name="leaf1",
+    yang_credentials=yang::Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
+)
+
+
+nokia_srlinux::Interface(
+    device=leaf1,
+    name="ethernet-1/1",
+    admin_state="enable",
+    subinterface=nokia_srlinux::interface::Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ipv4=nokia_srlinux::interface::subinterface::Ipv4(
+            admin_state="enable",
+            address=nokia_srlinux::interface::subinterface::ipv4::Address(
+                ip_prefix="10.10.11.2/30",
+            ),
+        ),
+    ),
+)
+
+nokia_srlinux::Interface(
+    device=leaf1,
+    name="mgmt0",
+    admin_state="enable",
+    subinterface=nokia_srlinux::interface::Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ip_mtu=1500,
+        ipv4=nokia_srlinux::interface::subinterface::Ipv4(
+            admin_state="enable",
+            dhcp_client=nokia_srlinux::interface::subinterface::ipv4::DhcpClient(),
+        ),
+        ipv6=nokia_srlinux::interface::subinterface::Ipv6(
+            admin_state="enable",
+            dhcp_client=nokia_srlinux::interface::subinterface::ipv6::DhcpClient(),
+        ),
+    ),
+)
+
+nokia_srlinux::NetworkInstance(
+    device=leaf1,
+    name="default",
+    admin_state="enable",
+    interface=nokia_srlinux::network_instance::Interface(
+        name="ethernet-1/1.0",
+    ),
+    protocols=nokia_srlinux::network_instance::Protocols(
+        ospf=nokia_srlinux::network_instance::protocols::Ospf(
+            instance=nokia_srlinux::network_instance::protocols::ospf::Instance(
+                name="1",
+                admin_state="enable",
+                version="srl_nokia-ospf-types:ospf-v2",
+                router_id="172.30.0.210",
+                area=nokia_srlinux::network_instance::protocols::ospf::instance::Area(
+                    area_id="0.0.0.0",
+                    interface=nokia_srlinux::network_instance::protocols::ospf::instance::area::Interface(
+                        interface_name="ethernet-1/1.0",
+                    ),
+                ),
+            ),
+        ),
+    ),
+)
+
+nokia_srlinux::NetworkInstance(
+    device=leaf1,
+    name="mgmt",
+    type="ip-vrf",
+    admin_state="enable",
+    description="Management network instance",
+    interface=nokia_srlinux::network_instance::Interface(
+        name="mgmt0.0",
+    ),
+    protocols=nokia_srlinux::network_instance::Protocols(
+        linux=nokia_srlinux::network_instance::protocols::Linux(
+            import_routes=true,
+            export_routes=true,
+            export_neighbors=true,
+        ),
+    ),
+)
+
+

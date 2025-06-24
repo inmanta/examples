@@ -1,6 +1,6 @@
 # Configure the network with the orchestrator
 
-## Prequisites 
+## Prerequisites
 
 To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md) 
 

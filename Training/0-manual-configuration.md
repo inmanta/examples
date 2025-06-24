@@ -2,7 +2,7 @@
 
 ## Preqrequites
 
-To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md)
+To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/README.md)) or [here (licensed version)](lab-iso/README.md)).
 
 ## Intro
 

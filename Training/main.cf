@@ -68,7 +68,7 @@ nokia_srlinux::NetworkInstance(
 leaf2 = nokia_srlinux::GnmiDevice(
     mgmt_ip="172.30.0.220",
     name="leaf2",
-    yang_credentials=redentials(
+    yang_credentials=Credentials(
         username="admin",
         password="NokiaSrl1!",
     ),

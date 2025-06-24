@@ -1,6 +1,6 @@
 # Manual configuration
 
-## Preqrequites
+## Prerequisites
 
 To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/README.md)) or [here (licensed version)](lab-iso/README.md)).
 

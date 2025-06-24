@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md) 
+To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/README.md)) or [here (licensed version)](lab-iso/README.md)).
 
 
 ## Orchestration primer
@@ -18,16 +18,16 @@ Please make sure that the orchestrator is running and that the project and envir
 ## Create a virtual environment
 
 A Python virtual environment is an isolated workspace for a Python project, allowing you to manage  project-specific dependencies without affecting other projects or the global Python installation. 
-For Inmanta projects, we always work in a virtual environment
+For Inmanta projects, we always work in a virtual environment.
 
-1. execute the follow commands to create the venv
+1. Create the virtual environment:
 
     ```shell
     mkdir -p ~/.virtualenvs
     python3 -m venv ~/.virtualenvs/inmanta-training
     source ~/.virtualenvs/inmanta-training/bin/activate
     ```
-2. install the basic inmanta tools 
+2. Install basic inmanta tools:
 
     ```shell
     pip install inmanta-core inmantals
@@ -38,11 +38,11 @@ For Inmanta projects, we always work in a virtual environment
 This folder contains a valid project. If you want to understand more about what a project is, take a look at the [Developer setup](https://docs.inmanta.com/inmanta-service-orchestrator/latest/model_developers/developer_getting_started.html).
 
 
-1. To install the project, and its dependencies. Run the following command in this folder
+1. Move inside the project folder and install the project, and its dependencies:
     ```console
     (env) $ inmanta project install
     ```
-2. To verify the setup is correct, run
+2. Verify the setup is correct:
     ```console
     (env) $ inmanta compile
     ```
@@ -58,7 +58,7 @@ inmanta-cli --host 172.30.0.3  environment create -n srlinux -p training --save
 ```
 
 Where we create both a project and an environment:
-- An environment is a single domain of management for the orchestrator. Each environment is completely isolated from every other one. 
+- An environment is a single domain of management for the orchestrator. Each environment is completely isolated from all the other environments.
 - For historic reasons, the term project has two meanings. A project (as we create here) is a folder for one or more environments. This is not the same thing as the project that has the `project.yml` which is the main entry point for the orchestrator to manage something.  
 
 

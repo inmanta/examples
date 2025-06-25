@@ -15,6 +15,7 @@ topology:
         INMANTA_DATABASE_HOST: inmanta_db
         INMANTA_DATABASE_USERNAME: inmanta
         INMANTA_DATABASE_PASSWORD: inmanta
+        INMANTA_YANG_DIFF_MODE: non-ncdiff
       binds:
           - ./resources/inmanta.license:/etc/inmanta/license.key
           - ./resources/inmanta.jwe:/etc/inmanta/entitlement.jwe

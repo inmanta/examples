@@ -1,4 +1,4 @@
-inmanta-module-std==8.4.2
+inmanta-module-std==8.5.0
 # `inmanta-module-lsm` should also be pinned but the constraint on LSM has been removed, given that dependabot is not
 # able to fetch the latest version (not available on pypi)
 # inmanta-module-lsm==X.Y.Z

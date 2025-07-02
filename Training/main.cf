@@ -1,1 +1,199 @@
-import srlinux_helper
+import nokia_srlinux
+import nokia_srlinux::interface
+import nokia_srlinux::interface::subinterface
+import nokia_srlinux::interface::subinterface::ipv4
+import nokia_srlinux::network_instance
+import nokia_srlinux::network_instance::protocols
+import nokia_srlinux::network_instance::protocols::ospf
+import nokia_srlinux::network_instance::protocols::ospf::instance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area
+import yang
+
+
+# Leaf 1
+
+leaf1 = nokia_srlinux::GnmiDevice(
+    mgmt_ip="172.30.0.210",
+    name="leaf1",
+    yang_credentials=Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
+)
+
+
+nokia_srlinux::Interface(
+    device=leaf1,
+    name="ethernet-1/1",
+    admin_state="enable",
+    subinterface=Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ipv4=Ipv4(
+            admin_state="enable",
+            address=Address(
+                ip_prefix="10.10.11.2/30",
+            ),
+        ),
+    ),
+)
+
+nokia_srlinux::NetworkInstance(
+    device=leaf1,
+    name="default",
+    admin_state="enable",
+    interface=Interface(
+        name="ethernet-1/1.0",
+    ),
+    protocols=Protocols(
+        ospf=Ospf(
+            instance=Instance(
+                name="1",
+                admin_state="enable",
+                version="srl_nokia-ospf-types:ospf-v2",
+                router_id="172.30.0.210",
+                area=Area(
+                    area_id="0.0.0.0",
+                    interface=Interface(
+                        interface_name="ethernet-1/1.0",
+                    ),
+                ),
+            ),
+        ),
+    ),
+)
+
+# Leaf 2
+
+leaf2 = nokia_srlinux::GnmiDevice(
+    mgmt_ip="172.30.0.220",
+    name="leaf2",
+    yang_credentials=Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
+)
+
+nokia_srlinux::Interface(
+    device=leaf2,
+    name="ethernet-1/1",
+    admin_state="enable",
+    subinterface=Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ipv4=Ipv4(
+            admin_state="enable",
+            address=Address(
+                ip_prefix="10.10.21.2/30",
+            ),
+        ),
+    ),
+)
+
+
+nokia_srlinux::NetworkInstance(
+    device=leaf2,
+    name="default",
+    admin_state="enable",
+    interface=Interface(
+        name="ethernet-1/1.0",
+    ),
+    protocols=Protocols(
+        ospf=Ospf(
+            instance=Instance(
+                name="1",
+                admin_state="enable",
+                version="srl_nokia-ospf-types:ospf-v2",
+                router_id="172.30.0.220",
+                area=Area(
+                    area_id="0.0.0.0",
+                    interface=Interface(
+                        interface_name="ethernet-1/1.0",
+                    ),
+                ),
+            ),
+        ),
+    ),
+)
+
+
+# Spine
+
+spine = nokia_srlinux::GnmiDevice(
+    mgmt_ip="172.30.0.100",
+    name="spine",
+    yang_credentials=Credentials(
+        username="admin",
+        password="NokiaSrl1!",
+    ),
+)
+
+
+nokia_srlinux::Interface(
+    device=spine,
+    name="ethernet-1/1",
+    admin_state="enable",
+    subinterface=Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ipv4=Ipv4(
+            admin_state="enable",
+            address=Address(
+                ip_prefix="10.10.11.1/30",
+            ),
+        ),
+    ),
+)
+
+nokia_srlinux::Interface(
+    device=spine,
+    name="ethernet-1/2",
+    admin_state="enable",
+    subinterface=Subinterface(
+        x_index=0,
+        admin_state="enable",
+        ipv4=Ipv4(
+            admin_state="enable",
+            address=Address(
+                ip_prefix="10.10.21.1/30",
+            ),
+        ),
+    ),
+)
+
+
+nokia_srlinux::NetworkInstance(
+    device=spine,
+    name="default",
+    admin_state="enable",
+    interface=[
+        Interface(
+            name="ethernet-1/1.0",
+        ),
+        Interface(
+            name="ethernet-1/2.0",
+        ),
+    ],
+    protocols=Protocols(
+        ospf=Ospf(
+            instance=Instance(
+                name="1",
+                admin_state="enable",
+                version="srl_nokia-ospf-types:ospf-v2",
+                router_id="172.30.0.100",
+                area=Area(
+                    area_id="0.0.0.0",
+                    interface=[
+                        Interface(
+                            interface_name="ethernet-1/1.0",
+                        ),
+                        Interface(
+                            interface_name="ethernet-1/2.0",
+                        ),
+                    ],
+                ),
+            ),
+        ),
+    ),
+)
+

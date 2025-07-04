@@ -48,8 +48,7 @@ def update_topology(String isoProductVersion) {
     writeYaml file: topology_file, data: yamlDct, overwrite: true
     writeFile (
         file: env_file,
-        data: "PIP_CONSTRAINT=https://docs.inmanta.com/inmanta-service-orchestrator-dev/${major}/reference/requirements.txt",
-        overwrite: true,
+        text: "PIP_CONSTRAINT=https://docs.inmanta.com/inmanta-service-orchestrator-dev/${major}/reference/requirements.txt",
     )
 }
 

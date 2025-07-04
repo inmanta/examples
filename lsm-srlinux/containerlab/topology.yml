@@ -21,11 +21,18 @@ topology:
           - ./resources/com.inmanta.license:/etc/inmanta/license.key                  # License files for iso>=8
           - ./resources/com.inmanta.jwe:/etc/inmanta/entitlement.jwe
           - ..:/code
+          # Prior to iso8 containers, the env var of the orchestrator needed to be placed
+          # at /etc/inanta/env inside the container
+          - ./resources/orchestrator.env:/etc/inmanta/env
       mgmt-ipv4: 172.30.0.3
       env:
          INMANTA_DATABASE_HOST: 172.30.0.2
          INMANTA_DATABASE_USERNAME: inmanta
          INMANTA_DATABASE_PASSWORD: inmanta
+      env-files:
+          # From iso8 containers onward, the env var of the orchestrator need to be given
+          # to the container runtime directly
+          - ./resources/orchestrator.env
     inmanta_db:
       kind: linux
       image: postgres:16

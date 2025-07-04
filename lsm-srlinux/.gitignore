@@ -1,5 +1,6 @@
 containerlab/clab-srlinux
 containerlab/pgdata
-containerlab/resources
+containerlab/resources/*.jwe
+containerlab/resources/*.license
 containerlab/*.bak
 .inmanta

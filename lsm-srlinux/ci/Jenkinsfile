@@ -42,7 +42,7 @@ def update_topology(String isoProductVersion) {
     }
     def dockerImageUrl = convert_iso_version_to_docker_image_url(isoProductVersion)
     def topology_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
-    def env_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/resources/container.env"
+    def env_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/resources/orchestrator.env"
     def yamlDct = readYaml file: topology_file
     yamlDct['topology']['nodes']['inmanta-server']['image'] = dockerImageUrl
     writeYaml file: topology_file, data: yamlDct, overwrite: true

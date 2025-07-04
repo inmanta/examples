@@ -155,7 +155,7 @@ the latest dev image.
                         cd "${WORKSPACE}/lsm-srlinux/containerlab"
                         # The `clab destroy` command expects the com.inmanta.jwe and
                         # com.inmanta.license files to exist in disk.
-                        mkdir resources
+                        mkdir -p resources
                         cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
                         cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license
                         # The inmanta container is running as a different user then Jenkins

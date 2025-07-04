@@ -41,13 +41,16 @@ def update_topology(String isoProductVersion) {
         error("Invalid version specifier")
     }
     def dockerImageUrl = convert_iso_version_to_docker_image_url(isoProductVersion)
-    def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
-    def yamlDct = readYaml file: fileName
+    def topology_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
+    def env_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/resources/container.env"
+    def yamlDct = readYaml file: topology_file
     yamlDct['topology']['nodes']['inmanta-server']['image'] = dockerImageUrl
-    yamlDct['topology']['nodes']['inmanta-server']['env']['PIP_CONSTRAINT'] = (
-        "https://docs.inmanta.com/inmanta-service-orchestrator-dev/${major}/reference/requirements.txt"
+    writeYaml file: topology_file, data: yamlDct, overwrite: true
+    writeFile (
+        file: env_file,
+        data: "PIP_CONSTRAINT=https://docs.inmanta.com/inmanta-service-orchestrator-dev/${major}/reference/requirements.txt",
+        overwrite: true,
     )
-    writeYaml file: fileName, data: yamlDct, overwrite: true
 }
 
 

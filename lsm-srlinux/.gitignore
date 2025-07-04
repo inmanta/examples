@@ -1,4 +1,5 @@
 containerlab/clab-srlinux
 containerlab/pgdata
+containerlab/resources
 containerlab/*.bak
 .inmanta

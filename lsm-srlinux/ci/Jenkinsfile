@@ -32,11 +32,24 @@ def update_project_yml(String isoProductVersion, String token) {
 * @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 */
 def update_topology(String isoProductVersion) {
+    def major
+    try {
+        // do not store Matcher object in variable!
+        // see https://www.jenkins.io/doc/book/pipeline/pipeline-best-practices/#avoiding-notserializableexception
+        major = (isoProductVersion =~ /(\d+).*/)[0][1]
+    } catch (IndexOutOfBoundsException) {
+        error("Invalid version specifier")
+    }
     def dockerImageUrl = convert_iso_version_to_docker_image_url(isoProductVersion)
-    def fileName = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
-    def yamlDct = readYaml file: fileName
+    def topology_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"
+    def env_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/resources/orchestrator.env"
+    def yamlDct = readYaml file: topology_file
     yamlDct['topology']['nodes']['inmanta-server']['image'] = dockerImageUrl
-    writeYaml file: fileName, data: yamlDct, overwrite: true
+    writeYaml file: topology_file, data: yamlDct, overwrite: true
+    writeFile (
+        file: env_file,
+        text: "PIP_CONSTRAINT=https://docs.inmanta.com/inmanta-service-orchestrator-dev/${major}/reference/requirements.txt",
+    )
 }
 
 
@@ -141,7 +154,7 @@ the latest dev image.
                         cd "${WORKSPACE}/lsm-srlinux/containerlab"
                         # The `clab destroy` command expects the com.inmanta.jwe and
                         # com.inmanta.license files to exist in disk.
-                        mkdir resources
+                        mkdir -p resources
                         cp "${ENTITLEMENTS_FILE}" resources/com.inmanta.jwe
                         cp "${LICENSE_KEY_FILE}" resources/com.inmanta.license
                         # The inmanta container is running as a different user then Jenkins

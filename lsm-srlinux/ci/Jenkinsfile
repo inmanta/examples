@@ -33,12 +33,16 @@ def update_project_yml(String isoProductVersion, String token) {
 */
 def update_topology(String isoProductVersion) {
     def major
-    try {
-        // do not store Matcher object in variable!
-        // see https://www.jenkins.io/doc/book/pipeline/pipeline-best-practices/#avoiding-notserializableexception
-        major = (isoProductVersion =~ /(\d+).*/)[0][1]
-    } catch (IndexOutOfBoundsException) {
-        error("Invalid version specifier")
+    if (isoProductVersion == "dev") {
+        major = "latest"
+    } else {
+        try {
+            // do not store Matcher object in variable!
+            // see https://www.jenkins.io/doc/book/pipeline/pipeline-best-practices/#avoiding-notserializableexception
+            major = (isoProductVersion =~ /(\d+).*/)[0][1]
+        } catch (IndexOutOfBoundsException) {
+            error("Invalid version specifier")
+        }
     }
     def dockerImageUrl = convert_iso_version_to_docker_image_url(isoProductVersion)
     def topology_file = "${env.WORKSPACE}/lsm-srlinux/containerlab/topology.yml"

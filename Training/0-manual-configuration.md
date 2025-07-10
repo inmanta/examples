@@ -1,5 +1,7 @@
 # Manual configuration
 
+In this chapter we configure the lab by hand. The goal is to get familiar with SR linux. It can be safely skipped. 
+
 ## Preqrequites
 
 To follow these instructions, you should have alreayd completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md)

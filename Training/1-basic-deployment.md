@@ -104,7 +104,7 @@ In this step we use the compiler to export our model to the server to start depl
 
 ## Discovering the configuration model
 
-In this step we take a look a the model we deployed and try to understand it.
+In this step we take a look at the model we deployed and try to understand it.
 
 
 The model we compiled and sent to the orchestrator is the one in [main.cf](./main.cf).  Let's have a look at the different elements in there.  Overall, the file looks like a configuration file, for a distributed system, and it is exactly what it is.
@@ -267,7 +267,7 @@ After a short time, the ping will start to work again.
 
 ## Dry run
 
-We can also use the orchestrator to determine what would change if we would deploy a specific config. This helps when automatically pushing out larger changes, without surpises. 
+We can also use the orchestrator to determine what would change if we would deploy a specific config. This helps when automatically pushing out larger changes, without surprises. 
 
 1. To test this, we first have to disable auto deploy. Auto deploy causes the server to automatically start deploying any new version it receives.
 

@@ -11,15 +11,15 @@ To understand what is going on, I need to first explain how the orchestrator wor
 
 ![architecture](images/architecture.svg)
 
-1. the *model* contains all configuration we want to push. But, not nescesarily in the form of flat config: it can contain code and templates to generate the config. 
+1. the *model* contains all configuration we want to push. But, not necessarily in the form of flat config: it can contain code and templates to generate the config. 
    * the main entry point is the *project* with a [project.yml](project.yml) and [main.cf](main.cf).
    * it uses *modules*, which are re-usable building blocks. They are downloaded by the compiler based on the [requirements.txt](requirements.txt)
 2. the *compiler* is responsible for taking the model and converting it into a deployable form (*desired state*). The compiler applies all templates and executes the code to get actual deployable *resources*. 
 3. the server manages the actual deployment, it is accesible via [the dashboard](http://172.30.0.3:8889/].
-    * the server can host multiple independant projects. For each project, we have to create an *environment* on the server
+    * the server can host multiple independent projects. For each project, we have to create an *environment* on the server
     * the compiler exports the resource to a specific environment
     * the server can send this on towards the agent to be deployed
-4. the *agent* host the actual deployment of the resources onto the managed infrastructure 
+4. the *agent* hosts the actual deployment of the resources onto the managed infrastructure 
 
 
 ## Setting up the model:
@@ -180,7 +180,7 @@ The model we compiled and sent to the orchestrator is the one in [main.cf](./mai
 In this section, we update an ip address. 
 
 
-First, we change the in the model
+First, we change the ip in the model:
 
 ```diff
 
@@ -269,22 +269,24 @@ After a short time, the ping will start to work again.
 
 We can also use the orchestrator to determine what would change if we would deploy a specific config. This helps when automatically pushing out larger changes, without surpises. 
 
-1. To test this, we first have to disable auto deploy. Auto deploy causes the server to automatically start deploying any new version is receives.
+1. To test this, we first have to disable auto deploy. Auto deploy causes the server to automatically start deploying any new version it receives.
 
-    1. To disable auto deploy go to `setting -> configuration`
+    1. To disable auto deploy go to `Settings -> Configuration`
     2. disable `auto_deploy`
-    3. click `save`
+    3. click `Save`
 
-    ![dryrun](images/dryrun.png)
+    ![Disable auto-deploy](images/auto_Deploy.png)
 
 
 2. Next, make an [update to the model](#making-changes)
 3. Perform an export `inmanta export`
-4. If you now go to the `desired state`view, you will see that the latest version is not `active` but in a `candidate` state. This means that the orchestrator will still enforce the current intent. By exeucting a promote operation, the candidate can become active.
-    ![dryrun2](images/dryrun_2.png)
+4. If you now go to the `desired state`view, you will see that the latest version is not `active` but in a `candidate` state. This means that the orchestrator will still enforce the current intent. By executing a promote operation, the candidate can become active.
+    ![dryrun](images/dryrun.png)
 5. Now, to perform a dryrun, click `Compare with current state` in the kebab menu for the `candidate` version. 
+    ![dryrun2](images/dryrun_2.png)
+6. Click on `Perform dry run`.
     ![dryrun3](images/dryrun_3.png)
-6. The orchestrator will now start to compare the desired config against the actual config
+7. The orchestrator will now start to compare the desired config against the actual config.
     ![dryrun4](images/dryrun_4.png)
 
 

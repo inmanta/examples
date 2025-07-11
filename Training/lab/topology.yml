@@ -15,6 +15,7 @@ topology:
         INMANTA_DATABASE_HOST: inmanta_db
         INMANTA_DATABASE_USERNAME: inmanta
         INMANTA_DATABASE_PASSWORD: inmanta
+        INMANTA_YANG_DIFF_MODE: non-ncdiff
     inmanta_db:
       kind: linux
       image: postgres:16

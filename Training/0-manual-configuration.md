@@ -1,5 +1,13 @@
 # Manual configuration
 
+In this chapter we configure the lab by hand. The goal is to get familiar with SR linux. It can be safely skipped. 
+
+## Prerequisites
+
+To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/README.md)) or [here (licensed version)](lab-iso/README.md)).
+
+## Intro
+
 Despite already being deployed, the routers and subscribers are still not connected to each other. We can test this using `ping`. Here we try to ping from leaf1 to leaf2:
 
 ```console

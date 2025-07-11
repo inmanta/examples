@@ -81,7 +81,7 @@ Where we create both a project and an environment:
 > the `inmanta` command is used to run command locally, the `inmanta-cli` is the remote control for the server.
 
 > [!NOTE] 
-> `--save` writes out the `.inmanta` file. This file configures the compile export to the correct environment automatically. 
+> `--save` writes out the `.inmanta` file. This file configures the compiler to export to the correct environment automatically. 
 
 
 ## Initial deployment
@@ -99,7 +99,7 @@ In this step we use the compiler to export our model to the server to start depl
 
 4. (Optional) Investigating deployment issues.  If you didn't use exactly the same ip plan, or ospf area id or network instance name in the manual configuration as in the inmanta model, the orchestrator might struggle to push the configuration.  You would notice it as some resources would be marked as `failed`.  To fix this you have two options:
     1. Restart the lab and redeploy with the orchestrator, this model will always work on a clean lab.  But it means you will need to reconfigure the subscribers manually.
-    2. Open the resource details, and look into the logs for the reason of the failure.  The resource will log the explanation from the router that rejected the config we tried to push.  This should give you the information required to manually fix the device, until its existing configuration doesn't conflict with the one the orchestrator tries to push.
+    2. Open the resource details, and look into the logs for the reason of the failure.  The resource will log the explanation from the router that rejected the config the orchestrator tried to push.  This should give you the information required to manually fix the device, until its existing configuration doesn't conflict with the one the orchestrator tries to push.
 
 
 ## Discovering the configuration model
@@ -121,7 +121,7 @@ The model we compiled and sent to the orchestrator is the one in [main.cf](./mai
     )
     ```
 
-    These entities represent the devices on which we want to push config.  They don't result in any config themselves, but all the resources we will deploy will be attached to one of them.
+    These entities represent the devices on which we want to push config.  They don't result in any config themselves, but all the resources the orchestrator will deploy will be attached to one of them.
 
 2. The `Interface` entities.
     ```
@@ -234,7 +234,7 @@ A:admin@leaf1# show interface ethernet-1/1.0
 A:admin@leaf1#
 ```
 > [!NOTE] 
->  We set `comanaged` to `false` on the sub interface. This changes the management mode. When co-management is set to true (the default), we ignore all config we have no desired state about. When setting co-managed to 'false', we want the config to be exactly as specified. Anything we have no desired state about is removed. If we would not set co-managed to false, changing the ip address would add an ip address: the old one is no longer mentioned so we ignore it. By setting the subinterface to allow no co management, we make sure we only have the ips we specify. We still allow other sub interfaces to exist, as the interface above still alows comanagement.
+>  We set `comanaged` to `false` on the sub interface. This changes the management mode. When co-management is set to true (the default), the orchestrator ignores all config it has no desired state about. When setting co-managed to 'false', we want the config to be exactly as specified. Anything the orchestrator has no desired state about is removed. If we would not set co-managed to false, changing the ip address would add an ip address: the old one is no longer mentioned so the orchestrator ignores it. By setting the subinterface to allow no co management, we make sure we only have the ips we specify. The orchestrator still allows other sub interfaces to exist, as the interface above still alows comanagement.
 
 
 ## Self healing

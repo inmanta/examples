@@ -1,0 +1,132 @@
+import nokia_srlinux
+import nokia_srlinux::interface
+import nokia_srlinux::interface::subinterface
+import nokia_srlinux::interface::subinterface::ipv4
+import nokia_srlinux::network_instance
+import nokia_srlinux::network_instance::protocols
+import nokia_srlinux::network_instance::protocols::ospf
+import nokia_srlinux::network_instance::protocols::ospf::instance
+import nokia_srlinux::network_instance::protocols::ospf::instance::area
+import yang
+
+
+# Entity definitions 
+
+entity Router:       # there is a thing called Router 
+    string mgmt_ip   # it has a mgmt_ip that is a string
+    string name      # it has a name that is a string
+end
+
+entity Interface:    # there is a thing called Inteface
+    string name      # it has a name that is a string
+    string ip        # it has an ip that is a string
+end
+
+Router.interfaces [0:] -- Interface.router [1]
+# Every Router has 0 or more interfaces of the type Interface
+# Every Interface has exactly one router of the type Router
+
+
+# Inventory
+
+Router(                          # Construct a Router
+    name="leaf1",                # set the `name` attribute to `leaf1`
+    mgmt_ip="172.30.0.210",      # set the `mgmt_ip` attribute to `172.30.0.210`
+    interfaces = [               # add to the interfaces relation a list containing
+        Interface(               # A newly constructed Interface
+            name="ethernet-1/1", # With the `name` attribute set to `ethernet-1/1`
+            ip="10.10.11.2/30", # and the `ip` attribute set to `10.10.11.12/30`
+        )    
+    ]
+)
+
+Router(
+    name="leaf2",
+    mgmt_ip="172.30.0.220",
+    interfaces = [
+        Interface(
+            name="ethernet-1/1",
+            ip="10.10.21.2/30",
+        )    
+    ]
+)
+
+Router(
+    name="spine",
+    mgmt_ip="172.30.0.100",
+    interfaces = [
+        Interface(
+            name="ethernet-1/1",
+            ip="10.10.11.1/30",
+        ),
+        Interface(
+            name="ethernet-1/1",
+            ip="10.10.21.1/30",
+        )    
+    ]
+)
+
+
+
+
+implementation router_config for Router:         # Create an implementation for Router
+    # This is copy pasted / refactored from the previous chapter! 
+    ours = nokia_srlinux::GnmiDevice(            # Construct a `GnmiDevice` and assign it to the variable `ours` 
+        mgmt_ip=self.mgmt_ip,                    # set the `mgmt_ip` of this new `GnmiDevice` to the `mgmt_ip` of the `Router` we are constructing (referred to as `self`)
+        name=self.name,
+        yang_credentials=yang::Credentials(
+            username="admin",
+            password="NokiaSrl1!",
+        ),
+    )
+
+
+    for interface in self.interfaces:           # For loop! For every `interface` in the `interfaces` relation  of the `Router` we are constructing repeat the following code
+        nokia_srlinux::Interface(               # Construct an Interface 
+            device=ours,                        # Set the device relation to our gnmi device
+            name=interface.name,                # set the name attribute  of the Interface we are constructing to the name of the interface we are handling in this for loop iteration 
+            admin_state="enable",
+            subinterface=Subinterface(          # Construct a Subinterface entity and add it to the subinterface relation
+                x_index=0,
+                admin_state="enable",
+                ipv4=Ipv4(
+                    admin_state="enable",
+                    address=nokia_srlinux::interface::subinterface::ipv4::Address(
+                        ip_prefix=interface.ip, 
+                        primary=true,
+                    ),
+                ),
+            ),
+        )
+    end
+
+
+    # To be added just after the 'end' of the for loop, before the 'end' of the implementation
+
+    nokia_srlinux::NetworkInstance(
+        device=ours,
+        name="routing",
+        interface=[nokia_srlinux::network_instance::Interface(name=f"{interface.name}.0") for interface in self.interfaces],# List comprehension to construct subinterfaces 
+        protocols=Protocols(
+            ospf=Ospf(
+                instance=Instance(
+                    name="1",
+                    admin_state="enable",
+                    version="srl_nokia-ospf-types:ospf-v2",
+                    router_id=self.mgmt_ip,
+                    area=Area(
+                        area_id="0.0.0.0",
+                        interface=[
+                            nokia_srlinux::network_instance::protocols::ospf::instance::area::Interface(
+                                interface_name=f"{interface.name}.0"
+                            ) for interface in self.interfaces]
+                    ),
+                ),
+            ),
+        ),
+    )
+
+end
+
+implement Router using router_config
+implement Interface using std::none # we don't need an implementation, we make this explicit by using the empty `std::none` implementation

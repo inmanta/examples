@@ -35,7 +35,7 @@ Router(                          # Construct a Router
     interfaces = [               # add to the interfaces relation a list containing
         Interface(               # A newly constructed Interface
             name="ethernet-1/1", # With the `name` attribute set to `ethernet-1/1`
-            ip="10.10.11.2/30", # and the `ip` attribute set to `10.10.11.12/30`
+            ip="10.10.11.2/30", # and the `ip` attribute set to `10.10.11.2/30`
         )    
     ]
 )
@@ -84,7 +84,7 @@ implementation router_config for Router:         # Create an implementation for 
     for interface in self.interfaces:           # For loop! For every `interface` in the `interfaces` relation  of the `Router` we are constructing repeat the following code
         nokia_srlinux::Interface(               # Construct an Interface 
             device=ours,                        # Set the device relation to our gnmi device
-            name=interface.name,                # set the name attribute  of the Interface we are constructing to the name of the interface we are handling in this for loop iteration 
+            name=interface.name,                # set the name attribute of the Interface we are constructing to the name of the interface we are handling in this for loop iteration 
             admin_state="enable",
             subinterface=Subinterface(          # Construct a Subinterface entity and add it to the subinterface relation
                 x_index=0,
@@ -106,7 +106,7 @@ implementation router_config for Router:         # Create an implementation for 
     nokia_srlinux::NetworkInstance(
         device=ours,
         name="routing",
-        interface=[nokia_srlinux::network_instance::Interface(name=f"{interface.name}.0") for interface in self.interfaces],# List comprehension to construct subinterfaces 
+        interface=[nokia_srlinux::network_instance::Interface(name=f"{interface.name}.0") for interface in self.interfaces],  # List comprehension to construct subinterfaces 
         protocols=Protocols(
             ospf=Ospf(
                 instance=Instance(

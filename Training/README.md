@@ -8,10 +8,10 @@ In the training, we perform the same configuration (interface config and OSPF) w
 1. the lab is configured by hand. The goal is to learn how the lab works and what service we will automate.
 2. the manual config is converted to an inmanta model. The goal is to learn the basic functions of the orchestrator
 3. the model is refactored to form a blueprint/template. The goal is to learn how to model a config to make re-usable building blocks.
-4. the model is exposed via an api. The goal is to lear the basics of Lifecycle and Service Management
+4. the model is exposed via an api. The goal is to learn the basics of Lifecycle and Service Management
 
 
-As we go alone, we pick up different tools and skils.
+As we go along, we pick up different tools and skills.
 
 
 ## Training Modules

@@ -248,7 +248,7 @@ For example, if we would disable ospf on one device
 ```console
 ssh clab-srlinux-leaf1
 enter candidate  private
-delete network-instance default protocols ospf instance 0
+delete network-instance default protocols ospf instance 1
 commit now
 ```
 

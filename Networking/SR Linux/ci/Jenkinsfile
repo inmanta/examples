@@ -95,7 +95,7 @@ pipeline {
                                 fi
                             else
                                 # Leave constraint undefined if version is not defined
-                                constraint=""
+                                constraint=">=0.dev"
                             fi
 
                             # Create python environment

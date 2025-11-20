@@ -203,7 +203,7 @@ the latest dev image.
 
 
                             if [[ ${version} == dev ]]; then
-                                constraint=""
+                                constraint=">=0.dev"
                             elif [[ ${version} == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"
                             elif [[ ${version} == *rc ]]; then

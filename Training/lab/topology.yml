@@ -28,15 +28,15 @@ topology:
         - ./pgdata:/var/lib/postgresql/data
     spine:
       kind: srl
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.100
     leaf1:
       kind: srl
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.210
     leaf2:
       kind: srl
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.220
   links:
     - endpoints: ["spine:e1-1", "leaf1:e1-1"]

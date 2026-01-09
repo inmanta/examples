@@ -26,12 +26,12 @@ topology:
     router-east:
       kind: srl
       image: ghcr.io/nokia/srlinux:23.10.1
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.4
     router-west:
       kind: srl
       image: ghcr.io/nokia/srlinux:23.10.1
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.5
     subscriber-east:
       kind: linux
@@ -44,7 +44,7 @@ topology:
     router-north:
       kind: srl
       image: ghcr.io/nokia/srlinux:23.10.1
-      type: ixrd2
+      type: ixr-d2
       mgmt-ipv4: 172.30.0.8
     subscriber-north:
       kind: linux

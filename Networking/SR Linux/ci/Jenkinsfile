@@ -3,18 +3,18 @@
 * uses the same version as the specified Python package of the OSS product
 */
 def update_topology() {
-    def version = convert_python_version_to_docker_tag()
-    if (version != 'latest') {
-        def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
-        yamlFile['topology']['nodes']['inmanta-server']['image'] = "ghcr.io/inmanta/orchestrator:${version}"
-        writeYaml file:"Networking/SR Linux/containerlab/topology.yml",data: yamlFile, overwrite: true
-        echo readFile("Networking/SR Linux/containerlab/topology.yml")
-    }
+    def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
+    yamlFile['topology']['nodes']['inmanta-server']['image'] = convert_iso_version_to_docker_image_url()
+    writeYaml file:"Networking/SR Linux/containerlab/topology.yml",data: yamlFile, overwrite: true
+    echo readFile("Networking/SR Linux/containerlab/topology.yml")
 }
 
 
-def convert_python_version_to_docker_tag() {
+def convert_iso_version_to_docker_image_url() {
     def isoProductVersion = env.version
+    if (isoProductVersion == null) {
+        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:dev"
+    }
     def matcher = isoProductVersion =~ /(\d+)/
     // Is it a version number consisting of a single number
     if (matcher.matches()) {

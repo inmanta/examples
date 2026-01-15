@@ -12,7 +12,7 @@ def update_topology() {
 
 def convert_iso_version_to_docker_image_url() {
     def isoProductVersion = env.version
-    if (isoProductVersion == null) {
+    if (!isoProductVersion) {
         return "code.inmanta.com:4567/solutions/containers/service-orchestrator:dev"
     }
     def matcher = isoProductVersion =~ /(\d+)/

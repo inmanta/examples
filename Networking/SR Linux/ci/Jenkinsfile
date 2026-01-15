@@ -11,17 +11,17 @@ def update_topology() {
 
 
 def convert_iso_version_to_docker_image_url() {
-    def isoProductVersion = env.version
+    def ossProductVersion = env.version
     // default option
-    if (!isoProductVersion) {
+    if (!ossProductVersion) {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
-    def matcher = isoProductVersion =~ /(\d+)/
+    def matcher = ossProductVersion =~ /(\d+)/
     // Is it a version number consisting of a single number
     if (matcher.matches()) {
-        return "containers.inmanta.com/containers/orchestrator:${isoProductVersion}"
+        return "containers.inmanta.com/containers/orchestrator:${ossProductVersion}"
     }
-    matcher = isoProductVersion =~ /(\d*)dev/
+    matcher = ossProductVersion =~ /(\d*)dev/
     // It's a development version
     if (matcher.matches()) {
         def dev_version_tag
@@ -38,7 +38,7 @@ def convert_iso_version_to_docker_image_url() {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:${dev_version_tag}"
     }
     // Is it a three-dotted version number
-    matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
+    matcher = ossProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/
     if (matcher.matches()) {
         def major = matcher.group(1)
         def minor = matcher.group(2)
@@ -48,9 +48,9 @@ def convert_iso_version_to_docker_image_url() {
         if (isRcVersion) {
             formattedVersion += "-rc"
         }
-        return "containers.inmanta.com/containers/service-orchestrator:${formattedVersion}"
+        return "containers.inmanta.com/containers/orchestrator:${formattedVersion}"
     } else {
-        error("Invalid version format: ${isoProductVersion}")
+        error("Invalid version format: ${ossProductVersion}")
     }
 }
 

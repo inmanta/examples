@@ -14,12 +14,12 @@ def convert_iso_version_to_docker_image_url() {
     def isoProductVersion = env.version
     // default option
     if (!isoProductVersion) {
-        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:dev"
+        return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
     def matcher = isoProductVersion =~ /(\d+)/
     // Is it a version number consisting of a single number
     if (matcher.matches()) {
-        return "containers.inmanta.com/containers/service-orchestrator:${isoProductVersion}"
+        return "containers.inmanta.com/containers/orchestrator:${isoProductVersion}"
     }
     matcher = isoProductVersion =~ /(\d*)dev/
     // It's a development version
@@ -35,7 +35,7 @@ def convert_iso_version_to_docker_image_url() {
             dev_version_tag = "dev"
         }
 
-        return "code.inmanta.com:4567/solutions/containers/service-orchestrator:${dev_version_tag}"
+        return "code.inmanta.com:4567/solutions/containers/orchestrator:${dev_version_tag}"
     }
     // Is it a three-dotted version number
     matcher = isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)?(\d*)/

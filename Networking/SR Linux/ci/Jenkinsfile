@@ -84,7 +84,7 @@ pipeline {
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
                             if [[ $version == dev ]]; then
-                                # Leave constraint undefined if version is not defined
+                                # Leave constraint undefined if using latest dev version
                                 constraint=">=0.dev"
                             elif [[ $version == *dev ]]; then
                                 constraint="~=${version::-3}.0.dev"

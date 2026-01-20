@@ -84,6 +84,9 @@ pipeline {
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
                             if [ -n "$version" ]; then
+                                if [[ $version == dev ]]; then
+                                    # Leave constraint undefined if version is not defined
+                                    constraint=">=0.dev"
                                 if [[ $version == *dev ]]; then
                                     constraint="~=${version::-3}.0.dev"
                                 elif [[ $version == *rc ]]; then
@@ -92,9 +95,6 @@ pipeline {
                                     # Use exact version
                                     constraint="==$version"
                                 fi
-                            else
-                                # Leave constraint undefined if version is not defined
-                                constraint=">=0.dev"
                             fi
 
                             # Create python environment

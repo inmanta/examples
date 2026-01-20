@@ -12,18 +12,7 @@ def update_topology() {
 
 def convert_iso_version_to_docker_image_url() {
     def ossProductVersion = env.version
-    // default option
-    if (!ossProductVersion) {
-        return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
-    }
-    def matcher = ossProductVersion =~ /(\d+)/
-    // Is it a version number consisting of a single number
-    if (matcher.matches()) {
-        return "containers.inmanta.com/containers/orchestrator:${ossProductVersion}"
-    }
-    matcher = ossProductVersion =~ /dev/
-    // It's a development version
-    if (matcher.matches()) {
+    if (ossProductVersion == "dev") {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
     // Is it a two or three-dotted version number
@@ -33,10 +22,7 @@ def convert_iso_version_to_docker_image_url() {
         def minor = matcher.group(2)
         def patch = matcher.group(3)
         def isRcVersion = matcher.group(4)
-        def formattedVersion = "${major}.${minor}"
-        if (patch) {
-        formattedVersion += ".${patch}"
-        }
+        def formattedVersion = "${major}.${minor}${patch}"
         if (isRcVersion) {
             formattedVersion += "-rc"
         }
@@ -49,7 +35,10 @@ def convert_iso_version_to_docker_image_url() {
 pipeline {
     agent any
     parameters {
-        string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest dev version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1 or 2022.4')
+        string(
+            name: 'version',
+            defaultValue: 'dev',
+            description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1, 2022.4 or dev to use the latest dev image.')
     }
 
     environment {

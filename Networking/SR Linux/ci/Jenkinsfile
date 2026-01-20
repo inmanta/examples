@@ -16,7 +16,7 @@ def convert_iso_version_to_docker_image_url() {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
     // Is it a two or three-dotted version number
-    matcher = ossProductVersion =~ /(\d+)\.(\d+)(\.\d+)?(rc)?(\d*)/
+    def matcher = ossProductVersion =~ /(\d+)\.(\d+)(\.\d+)?(rc)?(\d*)/
     if (matcher.matches()) {
         def major = matcher.group(1)
         def minor = matcher.group(2)

@@ -3,43 +3,42 @@
 * uses the same version as the specified Python package of the OSS product
 */
 def update_topology() {
-    def version = convert_python_version_to_docker_tag()
-    if (version != 'latest') {
-        def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
-        yamlFile['topology']['nodes']['inmanta-server']['image'] = "ghcr.io/inmanta/orchestrator:${version}"
-        writeYaml file:"Networking/SR Linux/containerlab/topology.yml",data: yamlFile, overwrite: true
-        echo readFile("Networking/SR Linux/containerlab/topology.yml")
-    }
+    def yamlFile = readYaml file: "Networking/SR Linux/containerlab/topology.yml"
+    yamlFile['topology']['nodes']['inmanta-server']['image'] = convert_iso_version_to_docker_image_url()
+    writeYaml file:"Networking/SR Linux/containerlab/topology.yml",data: yamlFile, overwrite: true
+    echo readFile("Networking/SR Linux/containerlab/topology.yml")
 }
 
 
-def convert_python_version_to_docker_tag() {
-    def version = env.version
-    version = version.replaceAll("\\s","")
-    if (version) {
-        def matcher = version =~ /(\d{4})\.(\d+)(\.\d+)?(rc\d*)?(\.dev\d*)?/
-        if (matcher.matches()) {
-            def year = matcher.group(1)
-            def minor = matcher.group(2)
-            def patch = matcher.group(3) ?: ""
-            def rc = matcher.group(4) ?: ""
-            // Constructing the formatted version
-            def formattedVersion = "${year}.${minor}${patch}"
-            if (rc) {
-                formattedVersion += "-rc"
-            }
-            return formattedVersion
-        } else {
-            error("Invalid version format: ${version}")
-        }
+def convert_iso_version_to_docker_image_url() {
+    def ossProductVersion = env.version
+    if (ossProductVersion == "dev") {
+        return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
-    return 'latest'
+    // Is it a two or three-dotted version number
+    def matcher = ossProductVersion =~ /(\d+)\.(\d+)(\.\d+)?(rc)?(\d*)/
+    if (matcher.matches()) {
+        def major = matcher.group(1)
+        def minor = matcher.group(2)
+        def patch = matcher.group(3)
+        def isRcVersion = matcher.group(4)
+        def formattedVersion = "${major}.${minor}${patch}"
+        if (isRcVersion) {
+            formattedVersion += "-rc"
+        }
+        return "containers.inmanta.com/containers/orchestrator:${formattedVersion}"
+    } else {
+        error("Invalid version format: ${ossProductVersion}")
+    }
 }
 
 pipeline {
     agent any
     parameters {
-        string(name: 'version', description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nIf left empty it will run against the latest dev version.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1 or 2022.4')
+        string(
+            name: 'version',
+            defaultValue: 'dev',
+            description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1, 2022.4 or dev to use the latest dev image.')
     }
 
     environment {
@@ -84,18 +83,16 @@ pipeline {
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
-                            if [ -n "$version" ]; then
-                                if [[ $version == *dev ]]; then
-                                    constraint="~=${version::-3}.0.dev"
-                                elif [[ $version == *rc ]]; then
-                                    constraint="~=${version::-2}.0rc"
-                                else
-                                    # Use exact version
-                                    constraint="==$version"
-                                fi
-                            else
-                                # Leave constraint undefined if version is not defined
+                            if [[ $version == dev ]]; then
+                                # Leave constraint undefined if using latest dev version
                                 constraint=">=0.dev"
+                            elif [[ $version == *dev ]]; then
+                                constraint="~=${version::-3}.0.dev"
+                            elif [[ $version == *rc ]]; then
+                                constraint="~=${version::-2}.0rc"
+                            else
+                                # Use exact version
+                                constraint="==$version"
                             fi
 
                             # Create python environment

@@ -12,12 +12,10 @@ def test_service_validation(
 ) -> None:
     # Make sure that our service definition is valid, trigger an export
     # into our mocked catalog
-    lsm_project.export_service_entities(
-        """
+    lsm_project.export_service_entities("""
         import integration_example::services::basic::lsm
         import integration_example::services::important_customer::lsm
-        """
-    )
+        """)
 
     assert lsm_project.service_entities is not None
 

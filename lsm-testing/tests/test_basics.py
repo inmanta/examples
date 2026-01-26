@@ -21,10 +21,8 @@ def test_basics(project: pytest_inmanta.plugin.Project) -> None:
         where we might not want to export the lsm services of this module, but
         only reuse their logic.
     """
-    project.compile(
-        """
+    project.compile("""
         import integration_example
         import integration_example::services::basic
         import integration_example::services::important_customer
-        """
-    )
+        """)

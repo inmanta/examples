@@ -1,7 +1,7 @@
 """
-    :copyright: 2023 Inmanta
-    :contact: code@inmanta.com
-    :license: Inmanta EULA
+:copyright: 2023 Inmanta
+:contact: code@inmanta.com
+:license: Inmanta EULA
 """
 
 from inmanta.plugins import plugin, Context

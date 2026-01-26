@@ -15,6 +15,7 @@
 
     Contact: code@inmanta.com
 """
+
 from typing import Dict, Optional
 
 import requests
@@ -55,6 +56,7 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
+
 # https://docs.inmanta.com/community/latest/reference/api.html#resources
 @resource("subscriber::Interface", agent="subscriber.name", id_attribute="name")
 class Interface(PurgeableResource):
@@ -66,6 +68,7 @@ class Interface(PurgeableResource):
         _: inmanta.export.Exporter, entity: inmanta.execute.proxy.DynamicProxy
     ) -> str:
         return entity.subscriber.mgmt_ip
+
 
 # https://docs.inmanta.com/community/latest/reference/api.html#inmanta.agent.handler.provider
 @provider("subscriber::Interface", name="handler")
@@ -89,7 +92,7 @@ class InterfaceHandler(CRUDHandler):
         instance = self.find_instance(resource)
         if instance is None:
             # Ressource doesn't exists
-            raise ResourcePurged() 
+            raise ResourcePurged()
         # Update resource value from learned
         resource.mtu = instance["mtu"]
 
@@ -122,9 +125,7 @@ class InterfaceHandler(CRUDHandler):
         response.raise_for_status()
 
 
-@resource(
-    "subscriber::Gateway", agent="interface.subscriber.name", id_attribute="ip"
-)
+@resource("subscriber::Gateway", agent="interface.subscriber.name", id_attribute="ip")
 class Gateway(PurgeableResource):
     fields = ("ip", "interface_name", "mgmt_ip")
 

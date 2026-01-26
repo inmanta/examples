@@ -3,10 +3,12 @@ import subprocess
 
 from inmanta.config import Config
 from inmanta.protocol.endpoints import Client
+
 # Load API endpoint definitions
 from inmanta_lsm import methods
 from inmanta_tests.utils import retry_limited
 from packaging.version import Version
+
 
 async def main():
     # Create client
@@ -24,7 +26,6 @@ async def main():
 
     print("Waiting until the Inmanta server has finished starting...")
     await retry_limited(is_inmanta_server_up, timeout=60, interval=1)
-
 
     print("Creating project env-test")
     result = await client.create_project("env-test")

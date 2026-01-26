@@ -15,30 +15,23 @@
 
     Contact: code@inmanta.com
 """
+
 import inmanta_plugins.lsm.allocation as lsm
 from typing import Any, Dict
 
-class InnerServiceAllocator(lsm.ExternalAllocator):
-    """ A mock allocator that should get all attributes from the inventory"""
 
+class InnerServiceAllocator(lsm.ExternalAllocator):
+    """A mock allocator that should get all attributes from the inventory"""
 
     def get_attributes(self):
         return ["parameter_a"]
 
-    def allocate_for(
-        self, ctx, instance: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def allocate_for(self, ctx, instance: Dict[str, Any]) -> Dict[str, Any]:
         """
-            The structure of this object should match that of InnerService
+        The structure of this object should match that of InnerService
         """
         service_id = instance["attributes"]["customer_ref"]
-        return {
-            "parameter_a": f"this is allocated for {service_id}"
-        }
+        return {"parameter_a": f"this is allocated for {service_id}"}
 
 
-
-lsm.AllocationSpec(
-    "allocate_OuterService",
-    InnerServiceAllocator()
-)
+lsm.AllocationSpec("allocate_OuterService", InnerServiceAllocator())

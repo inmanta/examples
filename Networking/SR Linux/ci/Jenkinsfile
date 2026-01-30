@@ -20,7 +20,7 @@ def convert_iso_version_to_docker_image_url() {
     if (matcher.matches()) {
         def major = matcher.group(1)
         def minor = matcher.group(2)
-        def patch = matcher.group(3)
+        def patch = matcher.group(3) ?: ""
         def isRcVersion = matcher.group(4)
         def formattedVersion = "${major}.${minor}${patch}"
         if (isRcVersion) {

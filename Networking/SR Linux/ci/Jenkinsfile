@@ -26,7 +26,7 @@ def convert_iso_version_to_docker_image_url() {
         if (isRcVersion) {
             formattedVersion += "-rc"
         }
-        return "containers.inmanta.com/containers/orchestrator:${formattedVersion}"
+        return "ghcr.inmanta.com/containers/orchestrator:${formattedVersion}"
     } else {
         error("Invalid version format: ${ossProductVersion}")
     }

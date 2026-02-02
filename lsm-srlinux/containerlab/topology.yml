@@ -11,7 +11,7 @@ topology:
   nodes:
     inmanta-server:
       kind: linux
-      image: containers.inmanta.com/containers/service-orchestrator:9.0.0-rc
+      image: containers.inmanta.com/containers/service-orchestrator:8
       image-pull-policy: Always
       ports:
           - 127.0.0.1:8888:8888

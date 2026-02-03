@@ -9,9 +9,9 @@ def update_project_yml(String isoProductVersion, String token) {
     def pythonPackageRepoUrl = ""
     if (isoProductVersion.endsWith("dev")) {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/dev"
-    } else if (isoProductVersion.endsWith("rc")) {
+    } else if (isoProductVersion =~ /(\d+)\.(\d+)\.(\d+)(rc)(\d*)/).matches() {
         pythonPackageRepoUrl = "https://artifacts.internal.inmanta.com/inmanta/next"
-    } else{
+    } else {
         def majorVersion = isoProductVersion.split('\\.')[0]
         pythonPackageRepoUrl = "https://packages.inmanta.com/${token}/inmanta-service-orchestrator-${majorVersion}-stable/python/simple/"
     }

@@ -1,0 +1,10 @@
+include inmanta_plugins/training/setup.cfg
+include inmanta_plugins/training/py.typed
+recursive-include inmanta_plugins/training/model *.cf
+graft inmanta_plugins/training/files
+graft inmanta_plugins/training/templates
+graft docs
+graft examples
+graft tests
+include README.md
+include CHANGELOG.md

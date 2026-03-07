@@ -1,0 +1,2 @@
+pipeline_template: ci/modules/Jenkinsfile-integration-tests
+mypy_mode: fail

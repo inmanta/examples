@@ -8,24 +8,30 @@ import nokia_srlinux::network_instance::protocols::ospf
 import nokia_srlinux::network_instance::protocols::ospf::instance
 import nokia_srlinux::network_instance::protocols::ospf::instance::area
 import yang
+import lsm
 
 
 # Entity definitions 
 
-entity Router:       # there is a thing called Router 
+entity Router extends lsm::ServiceEntity:       # there is a thing called Router 
     string mgmt_ip   # it has a mgmt_ip that is a string
     string name      # it has a name that is a string
 end
 
-entity Interface:    # there is a thing called Inteface
+entity Interface extends lsm::EmbeddedEntity:    # there is a thing called Interface
     string name      # it has a name that is a string
     string ip        # it has an ip that is a string
 end
 
-Router.interfaces [0:] -- Interface.router [1]
+Router.interfaces [0:] -- Interface._router [1]
+
+index Interface(_router, name)
 # Every Router has 0 or more interfaces of the type Interface
 # Every Interface has exactly one router of the type Router
 
+
+implement Router using parents
+implement Interface using parents
 
 
 implementation router_config for Router:         # Create an implementation for Router
@@ -39,6 +45,7 @@ implementation router_config for Router:         # Create an implementation for 
         ),
     )
 
+    self.resources += ours.yang_resource
 
     for interface in self.interfaces:           # For loop! For every `interface` in the `interfaces` relation  of the `Router` we are constructing repeat the following code
         nokia_srlinux::Interface(               # Construct an Interface 
@@ -71,7 +78,7 @@ implementation router_config for Router:         # Create an implementation for 
                 instance=Instance(
                     name="1",
                     admin_state="enable",
-                    version="srl_nokia-ospf-types:ospf-v2",
+                    version="ospf-v2",
                     router_id=self.mgmt_ip,
                     area=Area(
                         area_id="0.0.0.0",

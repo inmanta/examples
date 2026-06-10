@@ -12,6 +12,3 @@ mypy_mode: fail
 # This module doesn't have its own repo, the module_path option ensures that the generic
 # module ci can still be used with it.
 module_path: lsm-testing
-# iso_version derives the correct Python version from the ISO compatibility.json, avoiding
-# reliance on the Jenkins runner's default python3 binary.
-iso_version: latest

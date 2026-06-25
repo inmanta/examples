@@ -63,6 +63,7 @@ def update_topology(String isoProductVersion) {
 * @param isoProductVersion: The version of the inmanta-service-orchestrator Python package of the orchestrator we are running against.
 */
 def convert_iso_version_to_docker_image_url(String isoProductVersion) {
+    isoProductVersion = isoProductVersion.replaceAll("\\s", "")
     def matcher = isoProductVersion =~ /(\d+)/
     // Is it a version number consisting of a single number
     if (matcher.matches()) {

@@ -75,7 +75,7 @@ async def do_deploy_and_validate_config():
         processed by the scheduler.
         """
         result = await client.list_desired_state_versions(
-            tid=environment_id, filter={"version": [version]}
+            tid=environment_id, filter={"version": [f"ge:{version}", f"le:{version}"]}
         )
         assert result.code == 200
         desired_state_versions = result.result["data"]

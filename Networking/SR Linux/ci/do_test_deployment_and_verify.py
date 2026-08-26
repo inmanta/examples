@@ -126,11 +126,7 @@ async def do_deploy_and_validate_config():
             timeout=20,
             interval=1,
         )
-        await retry_limited(
-            functools.partial(done_deploying),
-            timeout=20,
-            interval=1,
-        )
+        await retry_limited(done_deploying, timeout=20, interval=1)
 
     await install_project()
 

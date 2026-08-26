@@ -68,10 +68,39 @@ async def do_deploy_and_validate_config():
         ]
         subprocess.check_call(cmd)
 
-    async def deploy_and_check(file: str, expected_resources: set[str]):
+    async def is_version_picked_up_by_scheduler(version: int) -> bool:
+        """
+        Return True iff the scheduler picked up the given desired state version.
+        A desired state version has the status active when it's the latest version
+        processed by the scheduler.
+        """
+        result = await client.list_desired_state_versions(
+            tid=environment_id, filter={"version": [f"ge:{version}", f"le:{version}"]}
+        )
+        assert result.code == 200
+        desired_state_versions = result.result["data"]
+        if not desired_state_versions:
+            raise Exception(f"Desired state version {version} doesn't exist.")
+        version_status = desired_state_versions[0]["status"]
+        return version_status == "active"
+
+    async def done_deploying() -> bool:
+        """
+        Return True iff all resources in the latest released model version are
+        in the deployed status.
+        """
+        result = await client.resource_list(tid=environment_id)
+        assert result.code == 200
+        return all(
+            res["status"] == "deployed" for res in result.result["data"]
+        )
+
+    async def deploy_and_check(file: str, version: int) -> None:
         """
         Export a given .cf file and check that the deployed
         resources are as expected.
+
+        :param version: The desired state version created by exporting the given file.
         """
         print(f"Checking successful deploy of {file}")
         cmd = [
@@ -89,41 +118,21 @@ async def do_deploy_and_validate_config():
         ]
         subprocess.check_call(cmd)
 
-        async def done_deploying(expected_resources: set[str]) -> bool:
-            if not expected_resources:
-                return True
-            result = await client.resource_list(tid=environment_id, deploy_summary=True)
-            assert result.code == 200
-            if result.result["metadata"]["deploy_summary"]["by_state"][
-                "deployed"
-            ] != len(expected_resources):
-                return False
-
-            return {
-                res["resource_version_id"] for res in result.result["data"]
-            } == expected_resources
-
+        # Wait until the scheduler picked up the new desired state version.
+        # Prevents race condition where done_deploying considers the previous
+        # model version.
         await retry_limited(
-            functools.partial(done_deploying, expected_resources),
+            functools.partial(is_version_picked_up_by_scheduler, version),
             timeout=20,
             interval=1,
         )
-
-    def make_expected_rids(version: int) -> set[str]:
-        return {
-            f"yang::GnmiResource[spine,name=global],v={version}",
-            f"yang::GnmiResource[leaf2,name=global],v={version}",
-            f"yang::GnmiResource[leaf1,name=global],v={version}",
-            f"std::AgentConfig[internal,agentname=spine],v={version}",
-            f"std::AgentConfig[internal,agentname=leaf2],v={version}",
-            f"std::AgentConfig[internal,agentname=leaf1],v={version}",
-        }
+        await retry_limited(done_deploying, timeout=20, interval=1)
 
     await install_project()
 
-    await deploy_and_check("main.cf", set())
-    await deploy_and_check("interfaces.cf", make_expected_rids(version=2))
-    await deploy_and_check("ospf.cf", make_expected_rids(version=3))
+    await deploy_and_check("main.cf", version=1)
+    await deploy_and_check("interfaces.cf", version=2)
+    await deploy_and_check("ospf.cf", version=3)
 
     validate_config()
 

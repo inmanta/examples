@@ -135,7 +135,6 @@ the latest dev image.
 
     environment {
         UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev'
-        // The Inmanta compiler installs the project's modules with pip, not with uv.
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }
 

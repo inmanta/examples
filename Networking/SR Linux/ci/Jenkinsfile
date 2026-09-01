@@ -11,7 +11,7 @@ def update_topology() {
 
 
 def convert_iso_version_to_docker_image_url() {
-    def ossProductVersion = env.version ?: "dev"
+    def ossProductVersion = env.version
     if (ossProductVersion == "dev") {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
@@ -42,6 +42,9 @@ pipeline {
     }
 
     environment {
+        // A build triggered by an SCM push carries no parameters, so read the version
+        // from params, which always holds the declared default.
+        version = "${params.version ?: 'dev'}"
         UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev'
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }

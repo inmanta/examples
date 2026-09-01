@@ -134,6 +134,9 @@ the latest dev image.
     }
 
     environment {
+        // A build triggered by an SCM push carries no parameters, so read the version
+        // from params, which always holds the declared default.
+        version = "${params.version ?: 'dev'}"
         UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev'
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }

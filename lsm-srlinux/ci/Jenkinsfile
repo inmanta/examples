@@ -134,6 +134,8 @@ the latest dev image.
     }
 
     environment {
+        UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev'
+        // The Inmanta compiler installs the project's modules with pip, not with uv.
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }
 
@@ -198,10 +200,8 @@ the latest dev image.
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
                             # Create python environment
-                            python${python_version} -m venv venv
+                            uv venv --python python${python_version} venv
                             source "venv/bin/activate"
-                            pip install -U pip
-
 
                             if [[ ${version} == dev ]]; then
                                 constraint=">=0.dev"
@@ -218,7 +218,7 @@ the latest dev image.
                             fi
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
-                            pip install "inmanta-service-orchestrator${constraint}" inmanta-dev-dependencies[extension]
+                            uv pip install --python venv/bin/python "inmanta-service-orchestrator${constraint}" inmanta-dev-dependencies[extension]
 
                             python -u ci/do_test_deployment_and_verify.py
                         '''

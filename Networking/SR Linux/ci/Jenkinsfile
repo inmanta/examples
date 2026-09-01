@@ -11,7 +11,7 @@ def update_topology() {
 
 
 def convert_iso_version_to_docker_image_url() {
-    def ossProductVersion = env.version
+    def ossProductVersion = env.version ?: "dev"
     if (ossProductVersion == "dev") {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
@@ -42,6 +42,7 @@ pipeline {
     }
 
     environment {
+        UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }
 
@@ -96,13 +97,11 @@ pipeline {
                             fi
 
                             # Create python environment
-                            python${python_version} -m venv venv
-
-                            venv/bin/pip install -U pip
+                            uv venv --python python${python_version} venv
 
                             # install inmanta-dev-dependencies[extension] rather than pytest-inmanta-extensions directly to
                             # help pip find matching candidates (see inmanta/infra-tickets#180)
-                            venv/bin/pip install "inmanta${constraint}" inmanta-dev-dependencies[extension]
+                            uv pip install --python venv/bin/python "inmanta${constraint}" inmanta-dev-dependencies[extension]
                             venv/bin/python -u ci/do_test_deployment_and_verify.py
                         '''
                     }

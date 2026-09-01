@@ -42,7 +42,7 @@ pipeline {
     }
 
     environment {
-        UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev
+        UV_DEFAULT_INDEX='https://artifacts.internal.inmanta.com/inmanta/dev'
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
     }
 

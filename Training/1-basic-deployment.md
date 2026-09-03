@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/readme.md)) or [here (licensed version)](lab-iso/README.md) 
+To follow these instructions, you should have already completed the lab setup (either [here (opensource)](lab/readme.md) or [here (licensed version)](lab-iso/README.md))
 
 
 ## Orchestrator Architecture 
@@ -15,7 +15,7 @@ To understand what is going on, I need to first explain how the orchestrator wor
    * the main entry point is the *project* with a [project.yml](project.yml) and [main.cf](main.cf).
    * it uses *modules*, which are re-usable building blocks. They are downloaded by the compiler based on the [requirements.txt](requirements.txt)
 2. the *compiler* is responsible for taking the model and converting it into a deployable form (*desired state*). The compiler applies all templates and executes the code to get actual deployable *resources*. 
-3. the server manages the actual deployment, it is accesible via [the dashboard](http://172.30.0.3:8889/].
+3. the server manages the actual deployment, it is accesible via [the dashboard](http://172.30.0.3:8889/).
     * the server can host multiple independent projects. For each project, we have to create an *environment* on the server
     * the compiler exports the resource to a specific environment
     * the server can send this on towards the agent to be deployed
@@ -88,17 +88,17 @@ Where we create both a project and an environment:
 
 In this step we use the compiler to export our model to the server to start deploying it.
 
-2. Export the resources to the orchestrator, the command will first compile our model, verifying it is correct, then serialize it into resources and send them to the orchestrator.  The orchestrator will then deploy them, ensuring their desired state is enforced.
+1. Export the resources to the orchestrator, the command will first compile our model, verifying it is correct, then serialize it into resources and send them to the orchestrator.  The orchestrator will then deploy them, ensuring their desired state is enforced.
     ```console
     (env) $ inmanta -vv export
     ```
 
-3. Open the [orchestrator](http://172.30.0.3:8888/).
-4. Select the correct environment, go to `Resources`, and see all the elements of the desired state, being deployed.  Once again, click around to see what is happening.
+2. Open the [orchestrator](http://172.30.0.3:8888/).
+3. Select the correct environment, go to `Resources`, and see all the elements of the desired state, being deployed.  Once again, click around to see what is happening.
     ![Alt text](images/orchestrator-resources-page.png)
 
 4. (Optional) Investigating deployment issues.  If you didn't use exactly the same ip plan, or ospf area id or network instance name in the manual configuration as in the inmanta model, the orchestrator might struggle to push the configuration.  You would notice it as some resources would be marked as `failed`.  To fix this you have two options:
-    1. Restart the lab and redeploy with the orchestrator, this model will always work on a clean lab.  But it means you will need to reconfigure the subscribers manually.
+    1. Restart the lab and redeploy with the orchestrator, this model will always work on a clean lab. 
     2. Open the resource details, and look into the logs for the reason of the failure.  The resource will log the explanation from the router that rejected the config the orchestrator tried to push.  This should give you the information required to manually fix the device, until its existing configuration doesn't conflict with the one the orchestrator tries to push.
 
 
@@ -234,7 +234,7 @@ A:admin@leaf1# show interface ethernet-1/1.0
 A:admin@leaf1#
 ```
 > [!NOTE] 
->  We set `comanaged` to `false` on the sub interface. This changes the management mode. When co-management is set to true (the default), the orchestrator ignores all config it has no desired state about. When setting co-managed to 'false', we want the config to be exactly as specified. Anything the orchestrator has no desired state about is removed. If we would not set co-managed to false, changing the ip address would add an ip address: the old one is no longer mentioned so the orchestrator ignores it. By setting the subinterface to allow no co management, we make sure we only have the ips we specify. The orchestrator still allows other sub interfaces to exist, as the interface above still alows comanagement.
+>  We set `comanaged` to `false` on the sub interface. This changes the management mode. When co-management is set to `true` (the default), the orchestrator ignores all config it has no desired state about. When setting co-managed to `false`, we want the config to be exactly as specified. Anything the orchestrator has no desired state about is removed. If we would not set co-managed to false, changing the ip address would add an ip address: the old one is no longer mentioned so the orchestrator ignores it. By setting the subinterface to allow no co-management, we make sure we only have the ips we specify. The orchestrator still allows other sub interfaces to exist, as the interface above still allows comanagement.
 
 
 ## Self healing

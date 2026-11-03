@@ -1,3 +1,7 @@
+// Orchestrator version used when the 'version' build parameter is not set
+@groovy.transform.Field
+final String DEFAULT_VERSION = "dev"
+
 /**@
 * Updates the topology.yml so that the lab environment
 * uses the same version as the specified Python package of the OSS product
@@ -11,7 +15,7 @@ def update_topology() {
 
 
 def convert_iso_version_to_docker_image_url() {
-    def ossProductVersion = env.version
+    def ossProductVersion = env.ORCHESTRATOR_VERSION
     if (ossProductVersion == "dev") {
         return "code.inmanta.com:4567/solutions/containers/orchestrator:dev"
     }
@@ -37,12 +41,14 @@ pipeline {
     parameters {
         string(
             name: 'version',
-            defaultValue: 'dev',
+            defaultValue: DEFAULT_VERSION,
             description: 'Run the quickstart against the specified version of the Python package of the OSS product.\nThe version can be of format 2023.1.1rc20230217144359, 2023.1.1rc, 2023.1.1, 2022.4 or dev to use the latest dev image.')
     }
 
     environment {
         PIP_INDEX_URL='https://artifacts.internal.inmanta.com/inmanta/dev'
+        // The 'version' parameter is not defined on the first build of a branch job
+        ORCHESTRATOR_VERSION = "${params.version ?: DEFAULT_VERSION}"
     }
 
     triggers {
@@ -83,16 +89,16 @@ pipeline {
                             # Get python version used to build the container
                             python_version=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' clab-srlinux-inmanta-server | grep -P "^PYTHON_VERSION=" | sed 's/[^=]*=//' | cut -d . -f 1-2)
 
-                            if [[ $version == dev ]]; then
+                            if [[ $ORCHESTRATOR_VERSION == dev ]]; then
                                 # Leave constraint undefined if using latest dev version
                                 constraint=">=0.dev"
-                            elif [[ $version == *dev ]]; then
-                                constraint="~=${version::-3}.0.dev"
-                            elif [[ $version == *rc ]]; then
-                                constraint="~=${version::-2}.0rc"
+                            elif [[ $ORCHESTRATOR_VERSION == *dev ]]; then
+                                constraint="~=${ORCHESTRATOR_VERSION::-3}.0.dev"
+                            elif [[ $ORCHESTRATOR_VERSION == *rc ]]; then
+                                constraint="~=${ORCHESTRATOR_VERSION::-2}.0rc"
                             else
                                 # Use exact version
-                                constraint="==$version"
+                                constraint="==$ORCHESTRATOR_VERSION"
                             fi
 
                             # Create python environment
